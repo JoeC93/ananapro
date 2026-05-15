@@ -3,92 +3,264 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="description" content="Ananá Producciones EC — Joseph Calvopiña. Producción audiovisual, publicidad digital y diseño multimedia desde Quito, Ecuador."/>
 <title>Ananá Producciones EC | Joseph Calvopiña</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=Inter:wght@300;400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
 <style>
+  :root {
+    --primary:   #00C8FF;
+    --secondary: #0055CC;
+    --bg:        #040810;
+    --surface:   #070d1e;
+    --text:      #E8F4FF;
+    --outline:   #1e4060;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
   body {
-    background-color: #040810;
-    color: #E8F4FF;
+    background-color: var(--bg);
+    color: var(--text);
     font-family: "Inter", sans-serif;
     overflow-x: hidden;
-    background-image: radial-gradient(ellipse at 20% 50%, rgba(0,85,204,0.08) 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 20%, rgba(0,200,255,0.05) 0%, transparent 50%);
+    background-image:
+      radial-gradient(ellipse at 15% 60%, rgba(0,85,204,0.09) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(0,200,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 90%, rgba(0,85,204,0.05) 0%, transparent 60%);
   }
-  .cinematic-grain {
+
+  /* ─── GRAIN ─── */
+  .grain {
     pointer-events: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 9999;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    position: fixed; inset: 0;
+    z-index: 9999; opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
     mix-blend-mode: overlay;
   }
-  .glass-card {
+
+  /* ─── GLASS ─── */
+  .glass {
     background: rgba(255,255,255,0.03);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.08);
   }
-  .marquee-container { overflow: hidden; white-space: nowrap; }
-  .marquee-content {
+
+  /* ─── GLOW ─── */
+  .glow-b  { box-shadow: 0 0 28px rgba(0,200,255,0.35), 0 0 60px rgba(0,85,204,0.18); }
+  .glow-sm { box-shadow: 0 0 14px rgba(0,200,255,0.25); }
+
+  /* ─── MARQUEE ─── */
+  .marquee-wrap { overflow: hidden; white-space: nowrap; }
+  .marquee-track {
     display: inline-block;
-    animation: marquee 30s linear infinite;
+    animation: marquee 32s linear infinite;
   }
   @keyframes marquee {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
-  .glow-blue  { box-shadow: 0 0 28px rgba(0,200,255,0.45), 0 0 60px rgba(0,85,204,0.2); }
-  .glow-blue  { box-shadow: 0 0 28px rgba(0,200,255,0.35), 0 0 50px rgba(0,85,204,0.15); }
-  .watermark  { opacity: 0.18; mix-blend-mode: screen; pointer-events: none; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* photo placeholder */
-  .ph {
-    background: linear-gradient(135deg, #040d1e 0%, #071428 50%, #040d1e 100%);
+  /* ─── SCROLLBAR ─── */
+  .no-scroll::-webkit-scrollbar { display: none; }
+  .no-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ─── REVEAL ANIMATIONS ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left  { opacity: 0; transform: translateX(-32px); transition: opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.16,1,.3,1); }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(32px);  transition: opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.16,1,.3,1); }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+  /* Stagger delays */
+  .d-100 { transition-delay: .1s; }
+  .d-200 { transition-delay: .2s; }
+  .d-300 { transition-delay: .3s; }
+  .d-400 { transition-delay: .4s; }
+  .d-500 { transition-delay: .5s; }
+
+  /* ─── NAV ─── */
+  #navbar { transition: background .3s, box-shadow .3s; }
+  #navbar.scrolled { background: rgba(4,8,16,0.97) !important; box-shadow: 0 1px 0 rgba(0,85,204,0.15); }
+
+  /* ─── HAMBURGER ─── */
+  .ham span {
+    display: block; width: 24px; height: 2px;
+    background: var(--text);
+    transition: transform .3s, opacity .3s;
+    transform-origin: center;
+  }
+  .ham.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .ham.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .ham.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ─── MOBILE MENU ─── */
+  #mobile-menu {
+    position: fixed; inset: 0; z-index: 40;
+    background: rgba(4,8,16,0.97);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    gap: 2.5rem;
+    transform: translateX(100%);
+    transition: transform .4s cubic-bezier(.16,1,.3,1);
+  }
+  #mobile-menu.open { transform: translateX(0); }
+
+  /* ─── HERO TYPED CURSOR ─── */
+  .cursor::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+    color: var(--primary);
+  }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* ─── PORTFOLIO CARDS ─── */
+  .port-card {
+    position: relative; overflow: hidden;
+    cursor: pointer; flex-shrink: 0;
+    transition: transform .4s cubic-bezier(.16,1,.3,1);
+  }
+  .port-card:hover { transform: translateY(-6px); }
+  .port-card img { transition: transform .6s cubic-bezier(.16,1,.3,1), filter .6s; }
+  .port-card:hover img { transform: scale(1.08); filter: grayscale(0%) !important; }
+  .port-card .overlay { background: linear-gradient(to top, rgba(4,8,16,.95) 0%, rgba(4,8,16,.2) 50%, transparent 100%); }
+  .port-card .card-tag {
+    position: absolute; top: 1.25rem; left: 1.25rem;
+    font-size: .65rem; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--primary);
+    background: rgba(0,200,255,.1); border: 1px solid rgba(0,200,255,.3);
+    padding: .25rem .6rem;
+  }
+  .port-card .watermark {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    width: 28px; height: 28px; opacity: .18;
+    background: var(--primary); border-radius: 2px;
     display: flex; align-items: center; justify-content: center;
-    color: rgba(0,200,255,0.3);
-    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 900; font-size: .7rem; color: var(--bg);
   }
 
-  /* reveal */
-  .reveal { opacity:0; transform:translateY(24px); transition: opacity .8s ease, transform .8s ease; }
-  .reveal.on { opacity:1; transform:translateY(0); }
+  /* ─── PROJECT MODAL ─── */
+  #modal-backdrop {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(4,8,16,.92);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s;
+  }
+  #modal-backdrop.open { opacity: 1; pointer-events: all; }
+  #modal-box {
+    width: 100%; max-width: 900px; max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(.94) translateY(20px);
+    transition: transform .4s cubic-bezier(.16,1,.3,1);
+  }
+  #modal-backdrop.open #modal-box { transform: scale(1) translateY(0); }
+
+  /* ─── SKILL BARS ─── */
+  .skill-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary), var(--primary));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1s cubic-bezier(.16,1,.3,1);
+  }
+
+  /* ─── COUNTER ─── */
+  .counter-num { font-variant-numeric: tabular-nums; }
+
+  /* ─── SERVICES ─── */
+  .service-card {
+    padding: 2rem;
+    border: 1px solid rgba(0,85,204,.2);
+    transition: border-color .3s, background .3s, transform .3s;
+  }
+  .service-card:hover {
+    border-color: rgba(0,200,255,.4);
+    background: rgba(0,200,255,.03);
+    transform: translateY(-4px);
+  }
+  .service-icon {
+    width: 3rem; height: 3rem;
+    background: linear-gradient(135deg, rgba(0,85,204,.2), rgba(0,200,255,.1));
+    border: 1px solid rgba(0,200,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+    transition: box-shadow .3s;
+  }
+  .service-card:hover .service-icon { box-shadow: 0 0 18px rgba(0,200,255,.3); }
+
+  /* ─── PLACEHOLDER ─── */
+  .ph-img {
+    background: linear-gradient(135deg, #040d1e, #071428, #040d1e);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(0,200,255,.25); font-size: .65rem;
+    letter-spacing: .15em; text-transform: uppercase;
+  }
+
+  /* ─── FORM ─── */
+  .field {
+    width: 100%; background: transparent;
+    border: 0; border-bottom: 1px solid var(--outline);
+    padding: .75rem 0; color: var(--text);
+    font-family: "Inter", sans-serif; font-size: 1rem;
+    outline: none; transition: border-color .3s;
+  }
+  .field:focus { border-bottom-color: var(--primary); }
+  .field option { background: #070d1e; color: var(--text); }
+
+  /* ─── ACTIVE NAV ─── */
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 2px; background: var(--primary);
+    transition: width .3s;
+  }
+  .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .hero-grid { grid-template-columns: 1fr !important; }
+    .hero-img-col { display: none; }
+    .about-grid { grid-template-columns: 1fr !important; }
+    .contact-grid { grid-template-columns: 1fr !important; }
+    .footer-grid { grid-template-columns: 1fr !important; }
+    h1 { font-size: clamp(2.2rem, 10vw, 5rem) !important; letter-spacing: -.03em; }
+    .stats-row { gap: 1.5rem !important; }
+    .px-desktop { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+  }
+
+  /* ─── SCROLLBAR CUSTOM ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 2px; }
+
+  /* ─── HOVER UNDERLINE LINKS ─── */
+  a { text-decoration: none; }
+
+  /* ─── LINE CLAMP ─── */
+  .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 </style>
+
 <script>
   tailwind.config = {
     darkMode: "class",
     theme: {
       extend: {
         colors: {
-          "primary":   "#00C8FF",
-          "secondary": "#0055CC",
-          "background":"#040810",
-          "on-surface":"#E8F4FF",
-          "surface-container":       "#070d1e",
-          "outline":                 "#1e4060",
-          "surface-container-lowest":"#050a14"
-        },
-        spacing: {
-          "margin-desktop": "80px",
-        },
-        fontFamily: {
-          "display-xl":  ["Montserrat","sans-serif"],
-          "headline-lg": ["Montserrat","sans-serif"],
-          "headline-md": ["Montserrat","sans-serif"],
-          "body-lg":     ["Inter","sans-serif"],
-          "body-md":     ["Inter","sans-serif"],
-          "label-sm":    ["Inter","sans-serif"],
-        },
-        fontSize: {
-          "display-xl":  ["80px",{"lineHeight":"1.1","letterSpacing":"-0.04em","fontWeight":"900"}],
-          "headline-lg": ["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],
-          "headline-md": ["32px",{"lineHeight":"1.3","fontWeight":"600"}],
-          "body-lg":     ["18px",{"lineHeight":"1.6","fontWeight":"400"}],
-          "body-md":     ["16px",{"lineHeight":"1.6","fontWeight":"400"}],
-          "label-sm":    ["12px",{"lineHeight":"1.0","letterSpacing":"0.1em","fontWeight":"600"}],
+          primary: "#00C8FF",
+          secondary: "#0055CC",
+          bg: "#040810",
+          surface: "#070d1e",
         }
       }
     }
@@ -96,460 +268,1007 @@
 </script>
 </head>
 
-<body class="max-w-[1440px] mx-auto overflow-x-hidden">
-<div class="cinematic-grain"></div>
+<body>
+<div class="grain"></div>
 
-<!-- ══════════════════════════ NAV ══════════════════════════ -->
-<header id="navbar" class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-20 bg-background/80 backdrop-blur-xl border-b border-secondary/10 transition-all duration-300">
-  <div class="flex items-center gap-4">
-    <!-- Logo Ananá — usa el sello real -->
-    <div class="w-10 h-10 rounded-sm flex items-center justify-center font-display-xl font-black text-white text-xl" style="background: linear-gradient(135deg, #0055CC, #00C8FF)">A</div>
-    <span class="font-headline-md text-headline-md font-black text-primary">Ananá Producciones EC</span>
-  </div>
+<!-- ══════════ MOBILE MENU ══════════ -->
+<div id="mobile-menu">
+  <a class="text-3xl font-black uppercase tracking-tighter text-on-surface hover:text-primary transition-colors" href="#inicio" onclick="closeMobileMenu()">Inicio</a>
+  <a class="text-3xl font-black uppercase tracking-tighter text-on-surface hover:text-primary transition-colors" href="#servicios" onclick="closeMobileMenu()">Servicios</a>
+  <a class="text-3xl font-black uppercase tracking-tighter text-on-surface hover:text-primary transition-colors" href="#portafolio" onclick="closeMobileMenu()">Portafolio</a>
+  <a class="text-3xl font-black uppercase tracking-tighter text-on-surface hover:text-primary transition-colors" href="#acerca" onclick="closeMobileMenu()">Acerca de</a>
+  <a class="text-3xl font-black uppercase tracking-tighter text-on-surface hover:text-primary transition-colors" href="#contacto" onclick="closeMobileMenu()">Contacto</a>
+  <a href="mailto:ananaproducciones.ec@gmail.com" class="mt-4 border border-primary text-primary px-10 py-3 font-bold text-lg tracking-wide hover:bg-primary/10 transition-all">Contáctame</a>
+</div>
+
+<!-- ══════════ NAV ══════════ -->
+<header id="navbar" class="fixed top-0 w-full z-50 flex justify-between items-center px-desktop h-18 md:h-20 bg-bg/80 backdrop-blur-xl border-b border-secondary/10" style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)">
+  <!-- Logo -->
+  <a href="#inicio" class="flex items-center gap-3 group">
+    <div class="w-9 h-9 relative flex-shrink-0" style="filter: drop-shadow(0 0 8px rgba(0,200,255,0.5))">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+        <circle cx="20" cy="20" r="19" fill="url(#lg1)" stroke="rgba(0,200,255,0.3)" stroke-width="1"/>
+        <!-- Camera shutter blades -->
+        <g opacity="0.9">
+          <path d="M20 4 L24 16 L16 16 Z" fill="rgba(255,255,255,0.7)"/>
+          <path d="M33.1 10.4 L22.9 18.8 L18.2 12.2 Z" fill="rgba(255,255,255,0.55)"/>
+          <path d="M36 24 L24 20.5 L26 13 Z" fill="rgba(255,255,255,0.45)"/>
+          <path d="M29.1 35.2 L20 24.5 L27.6 20 Z" fill="rgba(255,255,255,0.7)"/>
+          <path d="M10.9 35.2 L16 22.5 L23 27 Z" fill="rgba(255,255,255,0.55)"/>
+          <path d="M4 24 L15.5 19.5 L14.5 27.5 Z" fill="rgba(255,255,255,0.45)"/>
+          <path d="M6.9 10.4 L17.5 17.5 L12.5 12 Z" fill="rgba(255,255,255,0.7)"/>
+        </g>
+        <circle cx="20" cy="20" r="6" fill="rgba(4,8,16,0.7)" stroke="rgba(0,200,255,0.3)" stroke-width="0.5"/>
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40">
+            <stop offset="0%" stop-color="#0055CC"/>
+            <stop offset="100%" stop-color="#00C8FF"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="leading-none">
+      <div class="font-black text-white text-base tracking-tight" style="font-family:'Montserrat',sans-serif">ANANÁ</div>
+      <div class="text-primary font-semibold text-xs tracking-widest uppercase">Producciones EC</div>
+    </div>
+  </a>
+
+  <!-- Desktop Nav -->
   <nav class="hidden lg:flex gap-8 items-center">
-    <a class="font-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#inicio">Inicio</a>
-    <a class="font-body-md text-on-surface/70 hover:text-secondary transition-colors" href="#portafolio">Portafolio</a>
-    <a class="font-body-md text-on-surface/70 hover:text-secondary transition-colors" href="#acerca">Acerca de</a>
-    <a class="font-body-md text-on-surface/70 hover:text-secondary transition-colors" href="#contacto">Contacto</a>
+    <a class="nav-link text-sm font-semibold text-white/70 hover:text-white transition-colors" href="#inicio">Inicio</a>
+    <a class="nav-link text-sm font-semibold text-white/70 hover:text-white transition-colors" href="#servicios">Servicios</a>
+    <a class="nav-link text-sm font-semibold text-white/70 hover:text-white transition-colors" href="#portafolio">Portafolio</a>
+    <a class="nav-link text-sm font-semibold text-white/70 hover:text-white transition-colors" href="#acerca">Acerca de</a>
+    <a class="nav-link text-sm font-semibold text-white/70 hover:text-white transition-colors" href="#contacto">Contacto</a>
   </nav>
-  <a href="#contacto" class="bg-primary text-[#040810] px-6 py-2 font-bold hover:scale-95 transition-transform glow-blue" style="color:#040810">Contáctame</a>
+
+  <div class="flex items-center gap-4">
+    <a href="mailto:ananaproducciones.ec@gmail.com" class="hidden md:inline-flex items-center gap-2 bg-primary text-bg px-6 py-2.5 font-bold text-sm glow-sm hover:scale-95 transition-transform" style="color:#040810">
+      Contáctame
+    </a>
+    <!-- Hamburger -->
+    <button class="ham lg:hidden flex flex-col gap-[5px] p-2 z-50 relative" id="ham-btn" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </header>
 
-<!-- ══════════════════════════ HERO ══════════════════════════ -->
-<section class="relative min-h-screen pt-40 pb-20 px-margin-desktop overflow-hidden" id="inicio">
-  <!-- bg glows -->
-  <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-  <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-700/10 rounded-full blur-[100px] pointer-events-none"></div>
-  <div class="absolute top-1/2 left-1/2 w-[800px] h-[400px] -translate-x-1/2 -translate-y-1/2 bg-blue-900/20 rounded-full blur-[140px] pointer-events-none"></div>
 
-  <div class="grid grid-cols-12 gap-6 items-center relative z-10">
-    <!-- Text -->
-    <div class="col-span-7">
-      <span class="inline-block px-4 py-1 border border-secondary/30 text-secondary text-xs font-bold tracking-widest uppercase mb-6 bg-secondary/5">Quito, Ecuador · Producción Independiente</span>
-      <h1 class="font-display-xl text-display-xl mb-6">
-        Producción Visual que <span class="text-secondary">Conecta</span> y <span class="text-primary">Transforma</span>
+<!-- ══════════ HERO ══════════ -->
+<section class="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden" id="inicio" style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)">
+  <!-- Ambient glows -->
+  <div class="absolute top-0 right-0 w-[700px] h-[700px] opacity-10 rounded-full blur-[140px] pointer-events-none" style="background:radial-gradient(circle, #00C8FF, transparent)"></div>
+  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] opacity-8 rounded-full blur-[120px] pointer-events-none" style="background:radial-gradient(circle, #0055CC, transparent)"></div>
+
+  <!-- Star field -->
+  <div class="absolute inset-0 pointer-events-none" id="stars"></div>
+
+  <div class="grid grid-cols-12 gap-8 items-center w-full relative z-10 hero-grid">
+    <!-- Text col -->
+    <div class="col-span-12 lg:col-span-7">
+      <div class="reveal d-100">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 border border-secondary/30 text-secondary text-xs font-bold tracking-widest uppercase mb-8 bg-secondary/5">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+          Quito, Ecuador · Producción Independiente
+        </span>
+      </div>
+      <h1 class="font-black mb-6 reveal d-200 leading-[1.05]" style="font-family:'Montserrat',sans-serif;font-size:clamp(2.4rem,6vw,5rem);letter-spacing:-0.04em">
+        Producción Visual<br/>
+        que <em class="text-secondary not-italic">Conecta</em><br/>
+        y <em class="text-primary not-italic">Transforma</em>
       </h1>
-      <p class="font-body-lg text-body-lg text-on-surface/80 mb-10 max-w-xl">
-        Joseph Calvopiña — Comunicador Cultural & Estratega Visual dedicado a elevar marcas a través del storytelling cinematográfico y la estética digital de vanguardia desde Quito, Ecuador.
+      <p class="text-white/70 text-lg mb-10 max-w-xl leading-relaxed reveal d-300">
+        Joseph Calvopiña — Comunicador Cultural & Estratega Visual. Storytelling cinematográfico y estética digital de vanguardia desde Quito, Ecuador.
       </p>
-      <div class="flex gap-6 mb-16">
-        <a href="#portafolio" class="bg-primary text-[#040810] px-10 py-4 font-bold text-lg glow-blue flex items-center gap-2 hover:scale-105 transition-transform" style="color:#040810">
+      <div class="flex flex-wrap gap-4 mb-14 reveal d-400">
+        <a href="#portafolio" class="flex items-center gap-2 bg-primary font-bold text-base px-10 py-4 glow-b hover:scale-105 transition-transform" style="color:#040810">
           Ver Portafolio
-          <span class="material-symbols-outlined">arrow_forward</span>
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
         </a>
-        <a href="#contacto" class="border border-secondary text-secondary px-10 py-4 font-bold text-lg flex items-center gap-2 hover:bg-secondary/10 transition-all">
-          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">play_circle</span>
+        <a href="#contacto" class="flex items-center gap-2 border border-secondary/60 text-secondary px-10 py-4 font-bold text-base hover:bg-secondary/10 hover:border-secondary transition-all">
+          <span class="material-symbols-outlined text-lg" style="font-variation-settings:'FILL' 1">play_circle</span>
           Hablemos
         </a>
       </div>
-      <!-- Stats reales -->
-      <div class="flex gap-12 border-t border-white/10 pt-10">
+      <!-- Stats -->
+      <div class="flex stats-row gap-10 border-t border-white/10 pt-8 reveal d-500">
         <div>
-          <div class="text-primary font-black text-4xl">7+</div>
-          <div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface/50 mt-1">Proyectos</div>
+          <div class="text-primary font-black text-4xl counter-num" data-target="7">0</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-white/40 mt-1">Proyectos</div>
         </div>
         <div>
-          <div class="text-primary font-black text-4xl">5+</div>
-          <div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface/50 mt-1">Años Exp.</div>
+          <div class="text-primary font-black text-4xl counter-num" data-target="5">0</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-white/40 mt-1">Años Exp.</div>
         </div>
         <div>
           <div class="text-primary font-black text-4xl">100%</div>
-          <div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface/50 mt-1">Independiente</div>
+          <div class="text-xs font-bold uppercase tracking-widest text-white/40 mt-1">Independiente</div>
         </div>
       </div>
     </div>
 
-    <!-- Hero visual — foto de perfil real desde Drive -->
-    <div class="col-span-5 relative group">
-      <div class="absolute -inset-4 bg-gradient-to-tr from-secondary/20 via-primary/10 to-secondary/20 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
-      <div class="relative aspect-[3/4] w-full glass-card overflow-hidden glow-blue p-1">
-        <img
-          src="https://drive.google.com/thumbnail?sz=w1200&id=1_QI3DTzyt7G_nd_QtjgFkNmEQ0RjjSCs"
-          alt="Joseph Calvopiña — Ananá Producciones EC"
-          class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-          onerror="this.parentElement.classList.add('ph'); this.style.display='none'; this.parentElement.innerHTML='<span style=\'color:rgba(10,62,170,0.4);font-size:0.7rem;letter-spacing:0.15em\'>Joseph Calvopiña</span>'"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent"></div>
-        <div class="absolute bottom-8 left-8">
-          <div class="text-secondary font-bold text-lg uppercase tracking-tighter">Ananá Producciones EC</div>
-          <div class="text-on-surface text-sm opacity-70">Quito, Ecuador</div>
+    <!-- Image col -->
+    <div class="col-span-12 lg:col-span-5 hero-img-col reveal-right">
+      <div class="relative group max-w-[420px] mx-auto lg:mx-0 lg:ml-auto">
+        <div class="absolute -inset-6 opacity-40 group-hover:opacity-70 transition-opacity duration-700 blur-3xl pointer-events-none" style="background:radial-gradient(ellipse, rgba(0,85,204,0.5), rgba(0,200,255,0.2), transparent)"></div>
+        <!-- Decorative frame -->
+        <div class="absolute -top-3 -left-3 w-20 h-20 border-t-2 border-l-2 border-primary opacity-40"></div>
+        <div class="absolute -bottom-3 -right-3 w-20 h-20 border-b-2 border-r-2 border-secondary opacity-40"></div>
+        <div class="relative aspect-[3/4] w-full glass glow-b overflow-hidden">
+          <img
+            src="https://drive.google.com/thumbnail?sz=w1200&id=1_QI3DTzyt7G_nd_QtjgFkNmEQ0RjjSCs"
+            alt="Joseph Calvopiña — Ananá Producciones EC"
+            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+            loading="eager"
+            onerror="this.closest('.relative').classList.add('ph-img');this.style.display='none';this.closest('.relative').innerHTML+='<div style=\'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(0,200,255,0.3);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase\'>Joseph Calvopiña</div>'"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/10 to-transparent"></div>
+          <div class="absolute bottom-6 left-6">
+            <div class="text-secondary font-bold text-sm uppercase tracking-widest">Ananá Producciones EC</div>
+            <div class="text-white/50 text-xs mt-0.5">Quito, Ecuador</div>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 animate-bounce">
+    <span class="text-xs font-bold uppercase tracking-widest text-white">Scroll</span>
+    <span class="material-symbols-outlined text-base">expand_more</span>
+  </div>
+</section>
+
+<!-- ══════════ MARQUEE ══════════ -->
+<div class="marquee-wrap py-3.5" style="background:linear-gradient(90deg,#040810,#0055CC 20%,#00C8FF 50%,#0055CC 80%,#040810)">
+  <div class="marquee-track flex gap-12 items-center text-white font-black text-xl uppercase italic" style="text-shadow:0 0 20px rgba(0,200,255,0.7)">
+    <span>Producción Audiovisual</span><span class="text-3xl opacity-25">·</span>
+    <span>Publicidad Digital</span><span class="text-3xl opacity-25">·</span>
+    <span>Diseño Multimedia</span><span class="text-3xl opacity-25">·</span>
+    <span>Arte & Cultura</span><span class="text-3xl opacity-25">·</span>
+    <span>Dirección Creativa</span><span class="text-3xl opacity-25">·</span>
+    <span>Fotografía</span><span class="text-3xl opacity-25">·</span>
+    <span>Storytelling</span><span class="text-3xl opacity-25">·</span>
+    <!-- duplicate -->
+    <span>Producción Audiovisual</span><span class="text-3xl opacity-25">·</span>
+    <span>Publicidad Digital</span><span class="text-3xl opacity-25">·</span>
+    <span>Diseño Multimedia</span><span class="text-3xl opacity-25">·</span>
+    <span>Arte & Cultura</span><span class="text-3xl opacity-25">·</span>
+    <span>Dirección Creativa</span><span class="text-3xl opacity-25">·</span>
+    <span>Fotografía</span><span class="text-3xl opacity-25">·</span>
+    <span>Storytelling</span><span class="text-3xl opacity-25">·</span>
+  </div>
+</div>
+
+
+<!-- ══════════ SERVICIOS ══════════ -->
+<section class="py-28" id="servicios" style="background:#050a14">
+  <div style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)">
+    <div class="text-center mb-16 reveal">
+      <span class="text-secondary text-xs font-bold tracking-widest uppercase">Lo que hago</span>
+      <h2 class="font-black text-white mt-3 mb-4 italic" style="font-family:'Montserrat',sans-serif;font-size:clamp(2rem,4vw,3rem)">
+        Servicios
+      </h2>
+      <div class="w-24 h-1 mx-auto" style="background:linear-gradient(90deg,var(--secondary),var(--primary))"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Card -->
+      <div class="service-card glass reveal d-100">
+        <div class="service-icon">
+          <span class="material-symbols-outlined text-primary">videocam</span>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3" style="font-family:'Montserrat',sans-serif">Producción Audiovisual</h3>
+        <p class="text-white/55 text-sm leading-relaxed">Videoclips, documentales y contenido cinematográfico con narrativa visual potente para marcas, artistas y comunidades.</p>
+      </div>
+
+      <div class="service-card glass reveal d-200">
+        <div class="service-icon">
+          <span class="material-symbols-outlined text-primary">campaign</span>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3" style="font-family:'Montserrat',sans-serif">Publicidad Digital</h3>
+        <p class="text-white/55 text-sm leading-relaxed">Estrategias creativas para redes sociales. Campañas visuales que generan impacto y posicionan tu marca en el entorno digital.</p>
+      </div>
+
+      <div class="service-card glass reveal d-300">
+        <div class="service-icon">
+          <span class="material-symbols-outlined text-primary">brush</span>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3" style="font-family:'Montserrat',sans-serif">Diseño Multimedia</h3>
+        <p class="text-white/55 text-sm leading-relaxed">Motion graphics, identidad visual y piezas gráficas animadas que elevan la percepción de tu marca.</p>
+      </div>
+
+      <div class="service-card glass reveal d-100">
+        <div class="service-icon">
+          <span class="material-symbols-outlined text-primary">photo_camera</span>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3" style="font-family:'Montserrat',sans-serif">Fotografía</h3>
+        <p class="text-white/55 text-sm leading-relaxed">Retratos, fotografía editorial y documental. Capturo momentos con mirada artística y sensibilidad cultural.</p>
+      </div>
+
+      <div class="service-card glass reveal d-200">
+        <div class="service-icon">
+          <span class="material-symbols-outlined text-primary">theater_comedy</span>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3" style="font-family:'Montserrat',sans-serif">Gestión Cultural</h3>
+        <p class="text-white/55 text-sm leading-relaxed">Diseño de creativas para eventos artísticos, talleres y proyectos culturales dirigidos a niños, jóvenes y comunidades.</p>
+      </div>
+
+      <div class="service-card glass reveal d-300">
+        <div class="service-icon">
+          <span class="material-symbols-outlined text-primary">auto_stories</span>
+        </div>
+        <h3 class="font-bold text-white text-lg mb-3" style="font-family:'Montserrat',sans-serif">Dirección Creativa</h3>
+        <p class="text-white/55 text-sm leading-relaxed">Conceptualización y dirección de proyectos visuales de principio a fin. Desde la idea hasta la pieza final lista para publicar.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════ MARQUEE ══════════════════════════ -->
-<div class="py-4 marquee-container" style="background: linear-gradient(90deg, #040810, #0055CC, #00C8FF, #0055CC, #040810);">
-  <div class="marquee-content flex gap-12 items-center text-white font-black text-2xl uppercase italic" style="text-shadow: 0 0 20px rgba(0,200,255,0.8)">
-    <span>Producción Audiovisual</span><span class="text-4xl opacity-30">·</span>
-    <span>Publicidad Digital</span><span class="text-4xl opacity-30">·</span>
-    <span>Diseño Multimedia</span><span class="text-4xl opacity-30">·</span>
-    <span>Arte & Cultura</span><span class="text-4xl opacity-30">·</span>
-    <span>Dirección Creativa</span><span class="text-4xl opacity-30">·</span>
-    <span>Producción Audiovisual</span><span class="text-4xl opacity-30">·</span>
-    <span>Publicidad Digital</span><span class="text-4xl opacity-30">·</span>
-    <span>Diseño Multimedia</span><span class="text-4xl opacity-30">·</span>
-    <span>Arte & Cultura</span><span class="text-4xl opacity-30">·</span>
-    <span>Dirección Creativa</span><span class="text-4xl opacity-30">·</span>
-  </div>
-</div>
 
-<!-- ══════════════════════════ PROYECTOS DESTACADOS ══════════════════════════ -->
-<section class="py-32 bg-surface-container-lowest" id="portafolio">
-  <div class="px-margin-desktop mb-16 flex justify-between items-end reveal">
+<!-- ══════════ PORTAFOLIO ══════════ -->
+<section class="py-28" id="portafolio" style="background:#040810">
+  <div style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)" class="mb-14 flex flex-wrap justify-between items-end gap-6 reveal">
     <div>
       <span class="text-secondary text-xs font-bold tracking-widest uppercase">Portafolio</span>
-      <h2 class="font-headline-lg text-headline-lg mt-2 mb-4 italic">Proyectos Destacados</h2>
-      <div class="w-40 h-1 bg-secondary glow-blue"></div>
+      <h2 class="font-black text-white mt-3 mb-3 italic" style="font-family:'Montserrat',sans-serif;font-size:clamp(2rem,4vw,3rem)">Proyectos Destacados</h2>
+      <div class="w-32 h-1" style="background:linear-gradient(90deg,var(--secondary),var(--primary))"></div>
     </div>
-    <div class="flex gap-4">
-      <button id="prev-btn" class="w-12 h-12 border border-outline rounded-full flex items-center justify-center hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+    <div class="flex gap-3">
+      <button id="prev-btn" class="w-11 h-11 border border-secondary/30 flex items-center justify-center hover:bg-secondary hover:border-secondary transition-all text-white/60 hover:text-white">
         <span class="material-symbols-outlined">chevron_left</span>
       </button>
-      <button id="next-btn" class="w-12 h-12 border border-outline rounded-full flex items-center justify-center hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+      <button id="next-btn" class="w-11 h-11 border border-secondary/30 flex items-center justify-center hover:bg-secondary hover:border-secondary transition-all text-white/60 hover:text-white">
         <span class="material-symbols-outlined">chevron_right</span>
       </button>
     </div>
   </div>
 
   <!-- Carousel -->
-  <div id="carousel" class="flex gap-8 overflow-x-auto no-scrollbar px-margin-desktop pb-10 reveal">
+  <div id="carousel" class="flex gap-6 overflow-x-auto no-scroll pb-8 reveal" style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)">
 
-    <!-- 1. Poder de la Forma -->
-    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 glow-blue flex-shrink-0">
-      <div class="w-full h-full ph"><span>Poder de la Forma</span></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Diseño Visual</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-4">Poder de la Forma</h3>
-        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+    <!-- 1 -->
+    <div class="port-card min-w-[320px] md:min-w-[380px] aspect-[3/4] border border-secondary/20 glow-sm"
+         onclick="openModal('Poder de la Forma','Diseño Visual','Exploración de las formas geométricas y su capacidad expresiva. Un proyecto visual que fusiona el arte abstracto con la comunicación contemporánea.','',['Concepto', 'Diseño Digital', 'Composición Visual'])">
+      <div class="w-full h-full ph-img"><span>Poder de la Forma</span></div>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="card-tag">Diseño Visual</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-xl mb-2" style="font-family:'Montserrat',sans-serif">Poder de la Forma</h3>
+        <span class="text-secondary text-xs font-semibold flex items-center gap-1">Ver Proyecto <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
       </div>
     </div>
 
-    <!-- 2. Intensidad Pura -->
-    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
-      <img
-        src="https://drive.google.com/thumbnail?sz=w1200&id=1aLptgRzQZ6U7_Gjdnr-mtMwXbNUJUdgG"
-        alt="Intensidad Pura"
-        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Audiovisual</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-4">Intensidad Pura</h3>
-        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+    <!-- 2 -->
+    <div class="port-card min-w-[320px] md:min-w-[380px] aspect-[3/4] border border-secondary/20"
+         onclick="openModal('Intensidad Pura','Audiovisual','Proyecto audiovisual que captura la energía y la emoción en su estado más puro. Una exploración cinematográfica de la intensidad humana.','https://drive.google.com/thumbnail?sz=w1200&id=1aLptgRzQZ6U7_Gjdnr-mtMwXbNUJUdgG',['Dirección', 'Cinematografía', 'Edición'])">
+      <img src="https://drive.google.com/thumbnail?sz=w1200&id=1aLptgRzQZ6U7_Gjdnr-mtMwXbNUJUdgG" alt="Intensidad Pura" class="w-full h-full object-cover grayscale" loading="lazy"/>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="card-tag">Audiovisual</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-xl mb-2" style="font-family:'Montserrat',sans-serif">Intensidad Pura</h3>
+        <span class="text-secondary text-xs font-semibold flex items-center gap-1">Ver Proyecto <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
       </div>
     </div>
 
-    <!-- 3. Alquimia Moderna -->
-    <div class="min-w-[460px] aspect-[4/5] relative group overflow-hidden border-2 border-secondary/40 glow-blue flex-shrink-0">
-      <img
-        src="https://drive.google.com/thumbnail?sz=w1200&id=1Hu49lH5B3vp1Iu9NLS6dF38m6w6zQknO"
-        alt="Alquimia Moderna"
-        class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8 right-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Destacado</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-3">Alquimia Moderna</h3>
-        <p class="text-sm text-on-surface/70 mb-4">Exploración visual y narrativa experimental.</p>
-        <a class="inline-block px-6 py-2 bg-secondary text-white font-bold text-sm hover:bg-secondary/80 transition-all" href="#">Explorar</a>
+    <!-- 3 — FEATURED -->
+    <div class="port-card min-w-[360px] md:min-w-[430px] aspect-[3/4] border-2 border-primary/40 glow-b"
+         onclick="openModal('Alquimia Moderna','Destacado','Exploración visual y narrativa experimental que fusiona elementos clásicos con estética contemporánea. El proyecto más ambicioso de Ananá Producciones EC.','https://drive.google.com/thumbnail?sz=w1200&id=1Hu49lH5B3vp1Iu9NLS6dF38m6w6zQknO',['Dirección Creativa', 'Producción', 'Post-producción'])">
+      <img src="https://drive.google.com/thumbnail?sz=w1200&id=1Hu49lH5B3vp1Iu9NLS6dF38m6w6zQknO" alt="Alquimia Moderna" class="w-full h-full object-cover" loading="lazy"/>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="absolute top-4 left-4 px-3 py-1 bg-primary text-bg text-xs font-bold uppercase tracking-wider" style="color:#040810">✦ Destacado</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-2xl mb-2" style="font-family:'Montserrat',sans-serif">Alquimia Moderna</h3>
+        <p class="text-white/50 text-xs mb-3">Exploración visual y narrativa experimental.</p>
+        <span class="inline-block px-5 py-2 bg-secondary text-white text-xs font-bold hover:bg-secondary/80 transition-all">Explorar</span>
       </div>
     </div>
 
-    <!-- 4. Susurros & Miradas -->
-    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
-      <img
-        src="https://drive.google.com/thumbnail?sz=w1200&id=1984cyJM6vrlBhdeV9uOpZ5obGSq1Znqq"
-        alt="Susurros & Miradas"
-        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Fotografía</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-4">Susurros & Miradas</h3>
-        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+    <!-- 4 -->
+    <div class="port-card min-w-[320px] md:min-w-[380px] aspect-[3/4] border border-secondary/20"
+         onclick="openModal('Susurros & Miradas','Fotografía','Serie fotográfica que documenta la intimidad y los silencios elocuentes. Retratos y momentos capturados con sensibilidad y profundidad.','https://drive.google.com/thumbnail?sz=w1200&id=1984cyJM6vrlBhdeV9uOpZ5obGSq1Znqq',['Fotografía', 'Dirección', 'Edición'])">
+      <img src="https://drive.google.com/thumbnail?sz=w1200&id=1984cyJM6vrlBhdeV9uOpZ5obGSq1Znqq" alt="Susurros & Miradas" class="w-full h-full object-cover grayscale" loading="lazy"/>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="card-tag">Fotografía</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-xl mb-2" style="font-family:'Montserrat',sans-serif">Susurros & Miradas</h3>
+        <span class="text-secondary text-xs font-semibold flex items-center gap-1">Ver Proyecto <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
       </div>
     </div>
 
-    <!-- 5. Marcas Asociadas -->
-    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
-      <img
-        src="https://drive.google.com/thumbnail?sz=w1200&id=1TqWhwSHz2pYwv0eT7Y4kCi3zQc4_AlZY"
-        alt="Marcas Asociadas"
-        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Branding</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-4">Marcas Asociadas</h3>
-        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+    <!-- 5 -->
+    <div class="port-card min-w-[320px] md:min-w-[380px] aspect-[3/4] border border-secondary/20"
+         onclick="openModal('Marcas Asociadas','Branding','Identidad visual y estrategia de marca para empresas y emprendimientos. Construcción de marcas con propósito, personalidad y coherencia visual.','https://drive.google.com/thumbnail?sz=w1200&id=1TqWhwSHz2pYwv0eT7Y4kCi3zQc4_AlZY',['Branding', 'Diseño', 'Estrategia'])">
+      <img src="https://drive.google.com/thumbnail?sz=w1200&id=1TqWhwSHz2pYwv0eT7Y4kCi3zQc4_AlZY" alt="Marcas Asociadas" class="w-full h-full object-cover grayscale" loading="lazy"/>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="card-tag">Branding</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-xl mb-2" style="font-family:'Montserrat',sans-serif">Marcas Asociadas</h3>
+        <span class="text-secondary text-xs font-semibold flex items-center gap-1">Ver Proyecto <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
       </div>
     </div>
 
-    <!-- 6. El Tejido de una Comunidad -->
-    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
-      <img
-        src="https://drive.google.com/thumbnail?sz=w1200&id=1yAydUcziXS_fG-_WLEDGSdogcFN1gOnT"
-        alt="El Tejido de una Comunidad"
-        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Cultural</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-4">El Tejido de una Comunidad</h3>
-        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+    <!-- 6 -->
+    <div class="port-card min-w-[320px] md:min-w-[380px] aspect-[3/4] border border-secondary/20"
+         onclick="openModal('El Tejido de una Comunidad','Cultural','Proyecto documental que retrata la riqueza cultural y los vínculos humanos de comunidades de Quito. Arte al servicio de la identidad colectiva.','https://drive.google.com/thumbnail?sz=w1200&id=1yAydUcziXS_fG-_WLEDGSdogcFN1gOnT',['Documental', 'Cultural', 'Fotografía'])">
+      <img src="https://drive.google.com/thumbnail?sz=w1200&id=1yAydUcziXS_fG-_WLEDGSdogcFN1gOnT" alt="El Tejido de una Comunidad" class="w-full h-full object-cover grayscale" loading="lazy"/>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="card-tag">Cultural</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-xl mb-2" style="font-family:'Montserrat',sans-serif">El Tejido de una Comunidad</h3>
+        <span class="text-secondary text-xs font-semibold flex items-center gap-1">Ver Proyecto <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
       </div>
     </div>
 
-    <!-- 7. Anónimos Urbanos -->
-    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
-      <img
-        src="https://drive.google.com/thumbnail?sz=w1200&id=1qxqgL_XyrT3GniUHvvcgFCEvaiit1YXV"
-        alt="Anónimos Urbanos"
-        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
-      <div class="absolute bottom-8 left-8">
-        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Documental</p>
-        <h3 class="font-headline-md text-headline-md leading-none mb-4">Anónimos Urbanos</h3>
-        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ══════════════════════════ ACERCA DE ══════════════════════════ -->
-<section class="py-32 bg-surface-container" id="acerca">
-  <div class="px-margin-desktop grid grid-cols-12 gap-6 items-center">
-    <!-- Foto perfil -->
-    <div class="col-span-5 reveal">
-      <div class="relative">
-        <div class="absolute -top-8 -left-8 text-[160px] font-black opacity-5 select-none italic pointer-events-none">JOSEPH</div>
-        <div class="aspect-square w-full border-4 border-primary p-3 glow-blue relative z-10">
-          <img
-            src="https://drive.google.com/thumbnail?sz=w1200&id=1_QI3DTzyt7G_nd_QtjgFkNmEQ0RjjSCs"
-            alt="Joseph Calvopiña"
-            class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-          />
-        </div>
-      </div>
-    </div>
-
-    <!-- Bio -->
-    <div class="col-span-7 pl-10 reveal">
-      <span class="text-secondary text-xs font-bold tracking-widest uppercase">Acerca de mí</span>
-      <h2 class="font-headline-lg text-headline-lg mt-3 mb-8 italic">
-        El Estratega detrás del <span class="text-primary">Lente</span>
-      </h2>
-      <div class="font-body-lg text-body-lg text-on-surface/80 space-y-5 mb-10">
-        <p>Soy Joseph Calvopiña, comunicador especializado en arte y cultura. Con años de experiencia diseñando creativas para niños y adolescentes, fusiono el mundo artístico con estrategias de comunicación moderna.</p>
-        <p>En Ananá Producciones EC, mi misión es convertir la esencia del arte y la cultura en narrativas digitales impactantes. Mi dominio abarca la publicidad en redes sociales, la producción audiovisual y el diseño multimedia.</p>
-      </div>
-      <div class="flex flex-wrap gap-3 mb-10">
-        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Dirección Creativa</span>
-        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Producción Audiovisual</span>
-        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Publicidad Digital</span>
-        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Gestión Cultural</span>
-        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Diseño Multimedia</span>
-        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Storytelling</span>
-      </div>
-      <div class="grid grid-cols-2 gap-6">
-        <div class="p-6 glass-card">
-          <p class="text-primary font-bold mb-2 italic">Misión</p>
-          <p class="text-sm text-on-surface/70">Digitalizar la esencia de cada historia con calidad cinematográfica auténtica desde Quito.</p>
-        </div>
-        <div class="p-6 glass-card">
-          <p class="text-secondary font-bold mb-2 italic">Estilo</p>
-          <p class="text-sm text-on-surface/70">Minimalista, vibrante y centrado en el impacto emocional.</p>
-        </div>
+    <!-- 7 -->
+    <div class="port-card min-w-[320px] md:min-w-[380px] aspect-[3/4] border border-secondary/20"
+         onclick="openModal('Anónimos Urbanos','Documental','Serie documental que visibiliza historias invisibles en el tejido urbano de Quito. Voces y rostros que construyen la ciudad desde los márgenes.','https://drive.google.com/thumbnail?sz=w1200&id=1qxqgL_XyrT3GniUHvvcgFCEvaiit1YXV',['Documental', 'Dirección', 'Edición'])">
+      <img src="https://drive.google.com/thumbnail?sz=w1200&id=1qxqgL_XyrT3GniUHvvcgFCEvaiit1YXV" alt="Anónimos Urbanos" class="w-full h-full object-cover grayscale" loading="lazy"/>
+      <div class="absolute inset-0 overlay"></div>
+      <div class="card-tag">Documental</div>
+      <div class="watermark">A</div>
+      <div class="absolute bottom-6 left-6 right-6">
+        <h3 class="font-bold text-white text-xl mb-2" style="font-family:'Montserrat',sans-serif">Anónimos Urbanos</h3>
+        <span class="text-secondary text-xs font-semibold flex items-center gap-1">Ver Proyecto <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════ CONTACTO ══════════════════════════ -->
-<section class="py-32 px-margin-desktop" id="contacto">
 
-  <!-- CTA banner -->
-  <div class="relative glass-card p-16 text-center border border-primary/20 overflow-hidden mb-20 reveal glow-blue" style="background:linear-gradient(135deg,rgba(0,85,204,0.12),rgba(0,200,255,0.04))">
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50"></div>
-    <h2 class="font-headline-lg text-headline-lg mb-6 italic">¿Tienes un proyecto en <span class="text-primary">mente?</span></h2>
-    <p class="text-on-surface/60 text-lg mb-10 max-w-2xl mx-auto">Hagamos que tus ideas cobren vida con una producción audiovisual de alto impacto desde Quito.</p>
-    <a href="mailto:ananaproducciones.ec@gmail.com" class="inline-block bg-primary text-[#040810] px-14 py-4 font-black text-xl glow-blue hover:scale-105 transition-transform">
-      Iniciar Proyecto →
+<!-- ══════════ PROJECT MODAL ══════════ -->
+<div id="modal-backdrop" onclick="closeModalOutside(event)">
+  <div id="modal-box" class="glass" style="border:1px solid rgba(0,200,255,0.15)">
+    <div class="relative">
+      <!-- Image -->
+      <div id="modal-img-wrap" class="w-full aspect-video overflow-hidden bg-surface relative">
+        <img id="modal-img" src="" alt="" class="w-full h-full object-cover" loading="lazy"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent"></div>
+        <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 bg-bg/80 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- No image fallback close btn -->
+      <button onclick="closeModal()" id="modal-close-top" class="hidden absolute top-4 right-4 w-10 h-10 bg-bg/80 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <!-- Content -->
+      <div class="p-8 md:p-10">
+        <div class="flex items-start justify-between gap-4 mb-6">
+          <div>
+            <p id="modal-category" class="text-primary text-xs font-bold uppercase tracking-widest mb-2"></p>
+            <h3 id="modal-title" class="font-black text-white text-2xl md:text-3xl" style="font-family:'Montserrat',sans-serif"></h3>
+          </div>
+          <button onclick="closeModal()" class="flex-shrink-0 hidden md:flex items-center gap-1 text-white/40 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+            <span class="material-symbols-outlined text-sm">close</span> Cerrar
+          </button>
+        </div>
+        <p id="modal-desc" class="text-white/65 leading-relaxed mb-8"></p>
+        <div class="mb-8">
+          <p class="text-secondary text-xs font-bold uppercase tracking-widest mb-4">Disciplinas</p>
+          <div id="modal-tags" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div class="flex flex-wrap gap-4">
+          <a href="#contacto" onclick="closeModal()" class="flex items-center gap-2 bg-primary text-bg px-8 py-3 font-bold text-sm glow-sm hover:scale-105 transition-transform" style="color:#040810">
+            Proyecto Similar <span class="material-symbols-outlined text-sm">send</span>
+          </a>
+          <button onclick="closeModal()" class="border border-white/20 text-white/60 px-8 py-3 font-bold text-sm hover:bg-white/5 transition-all">
+            Ver más proyectos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ ACERCA DE ══════════ -->
+<section class="py-28" id="acerca" style="background:#050a14">
+  <div style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)">
+    <div class="grid grid-cols-12 gap-10 items-start about-grid">
+      <!-- Photo -->
+      <div class="col-span-12 lg:col-span-5 reveal-left">
+        <div class="relative max-w-md">
+          <div class="absolute -top-10 -left-4 text-[120px] font-black select-none pointer-events-none italic leading-none" style="font-family:'Montserrat',sans-serif;opacity:.04;color:var(--primary)">J</div>
+          <!-- Decorative border -->
+          <div class="absolute -top-4 -left-4 w-full h-full border border-secondary/20"></div>
+          <div class="relative border-2 border-primary/60 p-2 glow-b z-10">
+            <div class="aspect-square overflow-hidden">
+              <img
+                src="https://drive.google.com/thumbnail?sz=w1200&id=1_QI3DTzyt7G_nd_QtjgFkNmEQ0RjjSCs"
+                alt="Joseph Calvopiña"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                loading="lazy"
+              />
+            </div>
+          </div>
+          <!-- Badge -->
+          <div class="absolute -bottom-5 -right-5 z-20 glass px-5 py-3 border border-primary/20 glow-sm">
+            <div class="text-primary font-black text-xl">5+</div>
+            <div class="text-xs text-white/50 font-bold uppercase tracking-wider">Años Exp.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="col-span-12 lg:col-span-7 lg:pl-6 reveal-right">
+        <span class="text-secondary text-xs font-bold tracking-widest uppercase">Acerca de mí</span>
+        <h2 class="font-black text-white mt-3 mb-8 italic" style="font-family:'Montserrat',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem)">
+          El Estratega detrás del <span class="text-primary">Lente</span>
+        </h2>
+        <div class="space-y-5 text-white/70 text-base leading-relaxed mb-10">
+          <p>Soy Joseph Calvopiña, comunicador especializado en arte y cultura. Con años de experiencia diseñando creativas para niños y adolescentes, fusiono el mundo artístico con estrategias de comunicación moderna.</p>
+          <p>En <strong class="text-primary font-semibold">Ananá Producciones EC</strong>, mi misión es convertir la esencia del arte y la cultura en narrativas digitales impactantes. Mi dominio abarca la publicidad en redes sociales, la producción audiovisual y el diseño multimedia.</p>
+          <p>Cada proyecto es una oportunidad para contar historias que trasciendan, conecten y generen impacto real en la comunidad.</p>
+        </div>
+
+        <!-- Skills -->
+        <div class="space-y-4 mb-10">
+          <div>
+            <div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-2">
+              <span class="text-white/60">Producción Audiovisual</span>
+              <span class="text-primary">95%</span>
+            </div>
+            <div class="h-0.5 bg-white/10 rounded"><div class="skill-fill" data-width="95"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-2">
+              <span class="text-white/60">Diseño Multimedia</span>
+              <span class="text-primary">88%</span>
+            </div>
+            <div class="h-0.5 bg-white/10 rounded"><div class="skill-fill" data-width="88"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-2">
+              <span class="text-white/60">Dirección Creativa</span>
+              <span class="text-primary">92%</span>
+            </div>
+            <div class="h-0.5 bg-white/10 rounded"><div class="skill-fill" data-width="92"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-2">
+              <span class="text-white/60">Publicidad Digital</span>
+              <span class="text-primary">85%</span>
+            </div>
+            <div class="h-0.5 bg-white/10 rounded"><div class="skill-fill" data-width="85"></div></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-8">
+          <span class="px-4 py-1.5 border border-secondary/40 text-secondary/80 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-colors cursor-default">Dirección Creativa</span>
+          <span class="px-4 py-1.5 border border-secondary/40 text-secondary/80 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-colors cursor-default">Producción Audiovisual</span>
+          <span class="px-4 py-1.5 border border-secondary/40 text-secondary/80 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-colors cursor-default">Publicidad Digital</span>
+          <span class="px-4 py-1.5 border border-secondary/40 text-secondary/80 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-colors cursor-default">Gestión Cultural</span>
+          <span class="px-4 py-1.5 border border-secondary/40 text-secondary/80 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-colors cursor-default">Diseño Multimedia</span>
+          <span class="px-4 py-1.5 border border-secondary/40 text-secondary/80 text-xs font-bold uppercase tracking-widest hover:border-primary hover:text-primary transition-colors cursor-default">Storytelling</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5">
+          <div class="p-5 glass">
+            <p class="text-primary font-bold mb-2 text-sm italic">Misión</p>
+            <p class="text-white/55 text-sm">Digitalizar la esencia de cada historia con calidad cinematográfica auténtica desde Quito.</p>
+          </div>
+          <div class="p-5 glass">
+            <p class="text-secondary font-bold mb-2 text-sm italic">Estilo</p>
+            <p class="text-white/55 text-sm">Minimalista, vibrante y centrado en el impacto emocional y cultural.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════ CONTACTO ══════════ -->
+<section class="py-28" id="contacto" style="padding-left:clamp(1.25rem,5vw,5rem);padding-right:clamp(1.25rem,5vw,5rem)">
+
+  <!-- CTA Banner -->
+  <div class="relative glass border border-primary/15 p-12 md:p-16 text-center overflow-hidden mb-20 reveal glow-b" style="background:linear-gradient(135deg,rgba(0,85,204,0.1),rgba(0,200,255,0.03))">
+    <div class="absolute top-0 inset-x-0 h-px" style="background:linear-gradient(90deg,transparent,var(--secondary),var(--primary),var(--secondary),transparent)"></div>
+    <h2 class="font-black text-white mb-5 italic" style="font-family:'Montserrat',sans-serif;font-size:clamp(1.8rem,4vw,3rem)">
+      ¿Tienes un proyecto en <span class="text-primary">mente?</span>
+    </h2>
+    <p class="text-white/55 text-lg mb-10 max-w-2xl mx-auto">Hagamos que tus ideas cobren vida con una producción audiovisual de alto impacto desde Quito.</p>
+    <a href="mailto:ananaproducciones.ec@gmail.com" class="inline-flex items-center gap-3 bg-primary font-black text-xl px-14 py-4 glow-b hover:scale-105 transition-transform" style="color:#040810">
+      Iniciar Proyecto <span class="material-symbols-outlined">arrow_forward</span>
     </a>
   </div>
 
-  <!-- Contacto + formulario -->
-  <div class="grid grid-cols-2 gap-16">
+  <!-- Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 contact-grid">
 
-    <!-- Datos reales -->
-    <div class="reveal">
+    <!-- Contact info -->
+    <div class="reveal-left">
       <span class="text-secondary text-xs font-bold tracking-widest uppercase">Contacto Directo</span>
-      <h3 class="font-headline-md text-headline-md mt-3 mb-8 italic">Hablemos de tu<br/><span class="text-primary">próximo proyecto</span></h3>
-      <div class="space-y-5 mb-10">
-        <div class="flex items-center gap-5 p-5 glass-card">
-          <div class="w-12 h-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary flex-shrink-0">
+      <h3 class="font-black text-white mt-3 mb-8 italic" style="font-family:'Montserrat',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem)">
+        Hablemos de tu<br/><span class="text-primary">próximo proyecto</span>
+      </h3>
+      <div class="space-y-4 mb-10">
+        <a href="mailto:ananaproducciones.ec@gmail.com" class="flex items-center gap-4 p-5 glass border border-secondary/10 hover:border-secondary/30 transition-all group">
+          <div class="w-12 h-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary flex-shrink-0 group-hover:glow-sm transition-all">
             <span class="material-symbols-outlined">mail</span>
           </div>
           <div>
             <p class="text-xs text-secondary font-bold uppercase tracking-widest mb-1">Email</p>
-            <a href="mailto:ananaproducciones.ec@gmail.com" class="text-on-surface/70 hover:text-white transition-colors text-sm">ananaproducciones.ec@gmail.com</a>
+            <p class="text-white/60 text-sm hover:text-white transition-colors">ananaproducciones.ec@gmail.com</p>
           </div>
-        </div>
-        <div class="flex items-center gap-5 p-5 glass-card">
-          <div class="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-            <span class="material-symbols-outlined">call</span>
+        </a>
+        <a href="https://wa.me/593984082216" target="_blank" class="flex items-center gap-4 p-5 glass border border-primary/10 hover:border-primary/30 transition-all group">
+          <div class="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0 group-hover:glow-sm transition-all">
+            <span class="material-symbols-outlined">chat</span>
           </div>
           <div>
-            <p class="text-xs text-primary font-bold uppercase tracking-widest mb-1">WhatsApp / Teléfono</p>
-            <a href="tel:+593984082216" class="text-on-surface/70 hover:text-white transition-colors text-sm">+593 98 408 2216</a>
+            <p class="text-xs text-primary font-bold uppercase tracking-widest mb-1">WhatsApp</p>
+            <p class="text-white/60 text-sm">+593 98 408 2216</p>
           </div>
-        </div>
-        <div class="flex items-center gap-5 p-5 glass-card">
+        </a>
+        <div class="flex items-center gap-4 p-5 glass border border-secondary/10">
           <div class="w-12 h-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary flex-shrink-0">
             <span class="material-symbols-outlined">location_on</span>
           </div>
           <div>
             <p class="text-xs text-secondary font-bold uppercase tracking-widest mb-1">Ubicación</p>
-            <p class="text-on-surface/70 text-sm">Quito, Ecuador · Disponible remotamente</p>
+            <p class="text-white/60 text-sm">Quito, Ecuador · Disponible remotamente</p>
           </div>
         </div>
       </div>
+
+      <!-- Social -->
+      <p class="text-xs font-bold uppercase tracking-widest text-white/30 mb-4">Redes Sociales</p>
       <div class="flex gap-3">
-        <a href="https://www.facebook.com" target="_blank" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-primary hover:border-primary transition-all font-bold text-xs">FB</a>
-        <a href="https://www.instagram.com" target="_blank" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-primary hover:border-primary transition-all font-bold text-xs">IG</a>
-        <a href="#" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-secondary hover:border-secondary transition-all font-bold text-xs">TK</a>
-        <a href="#" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-red-500 hover:border-red-500 transition-all font-bold text-xs">YT</a>
+        <a href="https://www.facebook.com/ananaprodec" target="_blank" rel="noopener" title="Facebook — Ananá Producciones EC" aria-label="Facebook" class="w-11 h-11 border border-white/10 flex items-center justify-center text-white/40 hover:text-[#1877F2] hover:border-[#1877F2] transition-all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/anana_producciones.ec/" target="_blank" rel="noopener" title="Instagram — Ananá Producciones EC" aria-label="Instagram" class="w-11 h-11 border border-white/10 flex items-center justify-center text-white/40 hover:text-[#E1306C] hover:border-[#E1306C] transition-all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        <a href="#" title="TikTok — próximamente" class="w-11 h-11 border border-dashed border-white/10 flex items-center justify-center text-white/20 text-xs font-bold cursor-default" aria-disabled="true">TK</a>
+        <a href="#" title="YouTube — próximamente" class="w-11 h-11 border border-dashed border-white/10 flex items-center justify-center text-white/20 text-xs font-bold cursor-default" aria-disabled="true">YT</a>
       </div>
     </div>
 
-    <!-- Formulario -->
-    <div class="reveal">
-      <form onsubmit="enviarForm(event)" class="glass-card p-10 glow-blue space-y-8">
-        <div class="grid grid-cols-2 gap-6">
+    <!-- Form -->
+    <div class="reveal-right">
+      <form id="contact-form" action="https://formspree.io/f/xlgzqeen" method="POST" class="glass border border-primary/10 p-8 md:p-10 space-y-7">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
           <div>
-            <input class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 placeholder:text-on-surface/30 transition-all" placeholder="Nombre" type="text" required/>
+            <label class="text-xs font-bold uppercase tracking-widest text-white/30 block mb-2">Nombre *</label>
+            <input class="field" name="name" type="text" placeholder="Tu nombre" required/>
           </div>
           <div>
-            <input class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 placeholder:text-on-surface/30 transition-all" placeholder="Email" type="email" required/>
+            <label class="text-xs font-bold uppercase tracking-widest text-white/30 block mb-2">Email *</label>
+            <input class="field" name="email" type="email" placeholder="tu@email.com" required/>
           </div>
         </div>
         <div>
-          <select class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 text-on-surface/50">
+          <label class="text-xs font-bold uppercase tracking-widest text-white/30 block mb-2">Teléfono</label>
+          <input class="field" name="phone" type="tel" placeholder="+593 ..."/>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-widest text-white/30 block mb-2">Servicio</label>
+          <select class="field" name="service">
             <option value="">¿En qué puedo ayudarte?</option>
             <option>Producción Audiovisual</option>
             <option>Publicidad Digital</option>
             <option>Diseño Multimedia</option>
             <option>Gestión Cultural</option>
             <option>Fotografía</option>
+            <option>Dirección Creativa</option>
             <option>Otro</option>
           </select>
         </div>
         <div>
-          <textarea class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 placeholder:text-on-surface/30 transition-all resize-none" placeholder="Cuéntame sobre tu proyecto..." rows="4"></textarea>
+          <label class="text-xs font-bold uppercase tracking-widest text-white/30 block mb-2">Mensaje *</label>
+          <textarea class="field resize-none" name="message" rows="4" placeholder="Cuéntame sobre tu proyecto..." required></textarea>
         </div>
-        <div class="text-center">
-          <button type="submit" class="bg-primary text-[#040810] px-16 py-4 font-black text-lg uppercase tracking-tighter glow-blue hover:scale-105 transition-all">
-            Enviar Mensaje
+
+        <!-- Status messages -->
+        <div id="form-success" class="hidden p-4 border border-primary/30 bg-primary/5 text-primary text-sm font-semibold">
+          ✓ ¡Mensaje enviado! Te responderé a la brevedad.
+        </div>
+        <div id="form-error" class="hidden p-4 border border-red-500/30 bg-red-500/5 text-red-400 text-sm font-semibold">
+          ✗ Hubo un error. Por favor escríbeme directamente a ananaproducciones.ec@gmail.com
+        </div>
+
+        <div class="text-center pt-2">
+          <button type="submit" id="form-btn" class="w-full bg-primary font-black text-base uppercase tracking-tighter py-4 glow-b hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" style="color:#040810">
+            <span id="btn-text">Enviar Mensaje</span>
+            <span class="material-symbols-outlined text-lg">send</span>
           </button>
-          <div id="form-ok" class="hidden mt-4 text-secondary font-bold text-sm">✓ ¡Mensaje enviado! Te responderé a la brevedad.</div>
         </div>
       </form>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
-<footer class="w-full py-20 px-margin-desktop grid grid-cols-3 gap-10 bg-surface-container-lowest border-t border-secondary/10">
-  <div class="space-y-6">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 bg-gradient-to-tr from-secondary to-primary rounded-sm flex items-center justify-center font-black text-background text-xl">A</div>
-      <span class="font-headline-md font-bold text-primary">Ananá <span class="text-on-surface">EC</span></span>
-    </div>
-    <p class="text-on-surface/50 text-sm leading-relaxed max-w-xs">Producción independiente de alta fidelidad desde el corazón de Quito. Capturando momentos, creando legados.</p>
-    <div class="flex gap-4 text-sm">
-      <a href="https://www.instagram.com" target="_blank" class="text-on-surface/50 hover:text-primary transition-colors">Instagram</a>
-      <a href="https://www.facebook.com" target="_blank" class="text-on-surface/50 hover:text-primary transition-colors">Facebook</a>
-    </div>
-  </div>
-  <div class="grid grid-cols-2 gap-8">
-    <div>
-      <h5 class="text-primary font-bold mb-5 uppercase tracking-widest text-xs">Portafolio</h5>
-      <ul class="space-y-3 text-sm text-on-surface/60">
-        <li><a class="hover:text-white transition-colors" href="#portafolio">Intensidad Pura</a></li>
-        <li><a class="hover:text-white transition-colors" href="#portafolio">Alquimia Moderna</a></li>
-        <li><a class="hover:text-white transition-colors" href="#portafolio">Susurros & Miradas</a></li>
-        <li><a class="hover:text-white transition-colors" href="#portafolio">Anónimos Urbanos</a></li>
-      </ul>
-    </div>
-    <div>
-      <h5 class="text-secondary font-bold mb-5 uppercase tracking-widest text-xs">Servicios</h5>
-      <ul class="space-y-3 text-sm text-on-surface/60">
-        <li><a class="hover:text-white transition-colors" href="#">Producción Audiovisual</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Publicidad Digital</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Diseño Multimedia</a></li>
-        <li><a class="hover:text-white transition-colors" href="#">Gestión Cultural</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="space-y-8">
-    <div>
-      <h5 class="text-primary font-bold mb-5 uppercase tracking-widest text-xs">Newsletter</h5>
-      <div class="flex">
-        <input class="bg-surface-container border-0 px-4 py-3 w-full focus:ring-1 focus:ring-secondary text-sm placeholder:text-on-surface/30" placeholder="Tu email" type="email"/>
-        <button class="bg-secondary px-5 py-3 text-white hover:bg-secondary/80 transition-colors">
-          <span class="material-symbols-outlined text-sm">send</span>
-        </button>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer style="background:#040810;border-top:1px solid rgba(0,85,204,0.12);padding:5rem clamp(1.25rem,5vw,5rem)">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-10 footer-grid">
+    <!-- Brand -->
+    <div class="space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9" style="filter: drop-shadow(0 0 6px rgba(0,200,255,0.4))">
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <circle cx="20" cy="20" r="19" fill="url(#lg2)"/>
+            <g opacity="0.85">
+              <path d="M20 4 L24 16 L16 16 Z" fill="rgba(255,255,255,0.75)"/>
+              <path d="M33.1 10.4 L22.9 18.8 L18.2 12.2 Z" fill="rgba(255,255,255,0.55)"/>
+              <path d="M36 24 L24 20.5 L26 13 Z" fill="rgba(255,255,255,0.45)"/>
+              <path d="M29.1 35.2 L20 24.5 L27.6 20 Z" fill="rgba(255,255,255,0.75)"/>
+              <path d="M10.9 35.2 L16 22.5 L23 27 Z" fill="rgba(255,255,255,0.55)"/>
+              <path d="M4 24 L15.5 19.5 L14.5 27.5 Z" fill="rgba(255,255,255,0.45)"/>
+              <path d="M6.9 10.4 L17.5 17.5 L12.5 12 Z" fill="rgba(255,255,255,0.75)"/>
+            </g>
+            <circle cx="20" cy="20" r="6" fill="rgba(4,8,16,0.7)"/>
+            <defs>
+              <linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#0055CC"/>
+                <stop offset="100%" stop-color="#00C8FF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <div class="font-black text-white text-base" style="font-family:'Montserrat',sans-serif">ANANÁ</div>
+          <div class="text-primary text-xs font-semibold tracking-widest uppercase">Producciones EC</div>
+        </div>
+      </div>
+      <p class="text-white/40 text-sm leading-relaxed max-w-xs">Producción independiente de alta fidelidad desde el corazón de Quito. Capturando momentos, creando legados.</p>
+      <div class="flex gap-3 text-xs">
+        <a href="https://www.instagram.com/anana_producciones.ec/" target="_blank" rel="noopener" class="text-white/40 hover:text-[#E1306C] transition-colors font-semibold">Instagram</a>
+        <span class="text-white/20">·</span>
+        <a href="https://www.facebook.com/ananaprodec" target="_blank" rel="noopener" class="text-white/40 hover:text-[#1877F2] transition-colors font-semibold">Facebook</a>
+        <span class="text-white/20">·</span>
+        <a href="#" class="text-white/40 hover:text-secondary transition-colors font-semibold">TikTok</a>
       </div>
     </div>
-    <div class="pt-4 border-t border-white/5">
-      <p class="text-on-surface/30 text-xs mb-1">© 2025 Ananá Producciones EC</p>
-      <p class="text-on-surface/20 text-xs">Joseph Calvopiña · Quito, Ecuador</p>
+
+    <!-- Links -->
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <h5 class="text-primary font-bold mb-5 uppercase tracking-widest text-xs">Portafolio</h5>
+        <ul class="space-y-3 text-xs text-white/45">
+          <li><a class="hover:text-white transition-colors" href="#portafolio">Intensidad Pura</a></li>
+          <li><a class="hover:text-white transition-colors" href="#portafolio">Alquimia Moderna</a></li>
+          <li><a class="hover:text-white transition-colors" href="#portafolio">Susurros & Miradas</a></li>
+          <li><a class="hover:text-white transition-colors" href="#portafolio">Anónimos Urbanos</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5 class="text-secondary font-bold mb-5 uppercase tracking-widest text-xs">Servicios</h5>
+        <ul class="space-y-3 text-xs text-white/45">
+          <li><a class="hover:text-white transition-colors" href="#servicios">Producción Audiovisual</a></li>
+          <li><a class="hover:text-white transition-colors" href="#servicios">Publicidad Digital</a></li>
+          <li><a class="hover:text-white transition-colors" href="#servicios">Diseño Multimedia</a></li>
+          <li><a class="hover:text-white transition-colors" href="#servicios">Gestión Cultural</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Newsletter + info -->
+    <div class="space-y-8">
+      <div>
+        <h5 class="text-primary font-bold mb-5 uppercase tracking-widest text-xs">Newsletter</h5>
+        <div class="flex">
+          <input class="bg-surface border-0 px-4 py-3 w-full focus:ring-1 focus:ring-primary text-sm placeholder:text-white/25 text-white outline-none" placeholder="Tu email" type="email" id="nl-email"/>
+          <button onclick="subscribeNL()" class="bg-secondary px-5 py-3 text-white hover:bg-secondary/80 transition-colors flex-shrink-0">
+            <span class="material-symbols-outlined text-base">send</span>
+          </button>
+        </div>
+        <p id="nl-ok" class="hidden mt-2 text-primary text-xs font-bold">✓ ¡Suscrito!</p>
+      </div>
+      <div class="border-t border-white/5 pt-6">
+        <p class="text-white/25 text-xs mb-1">© 2025 Ananá Producciones EC</p>
+        <p class="text-white/15 text-xs">Joseph Calvopiña · Quito, Ecuador</p>
+        <p class="text-white/10 text-xs mt-1">ananapro.com</p>
+      </div>
     </div>
   </div>
 </footer>
 
+
 <script>
-  // NAV scroll
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').style.background =
-      scrollY > 60 ? 'rgba(9,9,15,0.97)' : 'rgba(9,9,15,0.8)';
-  });
-
-  // Reveal
-  const obs = new IntersectionObserver(e =>
-    e.forEach(el => { if (el.isIntersecting) el.target.classList.add('on'); }),
-    { threshold: 0.08 }
-  );
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  // Carousel buttons
-  const carousel = document.getElementById('carousel');
-  document.getElementById('next-btn').addEventListener('click', () => {
-    carousel.scrollBy({ left: 440, behavior: 'smooth' });
-  });
-  document.getElementById('prev-btn').addEventListener('click', () => {
-    carousel.scrollBy({ left: -440, behavior: 'smooth' });
-  });
-
-  // Form
-  function enviarForm(e) {
-    e.preventDefault();
-    document.getElementById('form-ok').classList.remove('hidden');
-    e.target.reset();
+/* ─── STARS ─── */
+(function() {
+  const el = document.getElementById('stars');
+  const count = 80;
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const size = Math.random() * 2 + 0.5;
+    const opacity = Math.random() * 0.5 + 0.1;
+    const dur = Math.random() * 4 + 3;
+    html += `<div style="position:absolute;left:${x}%;top:${y}%;width:${size}px;height:${size}px;border-radius:50%;background:#00C8FF;opacity:${opacity};animation:blink ${dur}s ease-in-out infinite alternate"></div>`;
   }
+  if(el) el.innerHTML = html;
+})();
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (scrollY > 50) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+
+  // Active link
+  const sections = ['inicio','servicios','portafolio','acerca','contacto'];
+  let current = 'inicio';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  document.querySelectorAll('.nav-link').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+/* ─── MOBILE MENU ─── */
+function toggleMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('ham-btn');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('ham-btn').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ─── REVEAL ─── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      // Trigger skill bars when about section visible
+      if (el.target.closest('#acerca')) {
+        el.target.querySelectorAll('.skill-fill').forEach(bar => {
+          const w = bar.dataset.width;
+          setTimeout(() => bar.style.width = w + '%', 300);
+        });
+      }
+    }
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => revealObs.observe(el));
+
+/* ─── SKILL BARS (standalone trigger) ─── */
+const skillObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.skill-fill').forEach(bar => {
+        setTimeout(() => bar.style.width = bar.dataset.width + '%', 200);
+      });
+      skillObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+const aboutSec = document.getElementById('acerca');
+if (aboutSec) skillObs.observe(aboutSec);
+
+/* ─── COUNTERS ─── */
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.counter-num[data-target]').forEach(el => {
+        const target = +el.dataset.target;
+        let current = 0;
+        const inc = target / 30;
+        const tick = () => {
+          current = Math.min(current + inc, target);
+          el.textContent = Math.floor(current) + '+';
+          if (current < target) requestAnimationFrame(tick);
+        };
+        tick();
+      });
+      counterObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+const heroSec = document.getElementById('inicio');
+if (heroSec) counterObs.observe(heroSec);
+
+/* ─── CAROUSEL ─── */
+const carousel = document.getElementById('carousel');
+document.getElementById('next-btn').addEventListener('click', () => {
+  carousel.scrollBy({ left: 400, behavior: 'smooth' });
+});
+document.getElementById('prev-btn').addEventListener('click', () => {
+  carousel.scrollBy({ left: -400, behavior: 'smooth' });
+});
+
+/* ─── PROJECT MODAL ─── */
+function openModal(title, category, desc, imgSrc, tags) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-category').textContent = category;
+  document.getElementById('modal-desc').textContent = desc;
+
+  const imgWrap = document.getElementById('modal-img-wrap');
+  const img = document.getElementById('modal-img');
+  if (imgSrc) {
+    imgWrap.style.display = 'block';
+    img.src = imgSrc;
+    img.alt = title;
+  } else {
+    imgWrap.style.display = 'none';
+  }
+
+  const tagsEl = document.getElementById('modal-tags');
+  tagsEl.innerHTML = tags.map(t =>
+    `<span class="px-4 py-1.5 border border-secondary/30 text-secondary/70 text-xs font-bold uppercase tracking-widest">${t}</span>`
+  ).join('');
+
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ─── CONTACT FORM ─── */
+const form = document.getElementById('contact-form');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('form-btn');
+  const btnText = document.getElementById('btn-text');
+  const successEl = document.getElementById('form-success');
+  const errorEl = document.getElementById('form-error');
+
+  btnText.textContent = 'Enviando...';
+  btn.disabled = true;
+  successEl.classList.add('hidden');
+  errorEl.classList.add('hidden');
+
+  // Check if Formspree ID is set
+  const action = form.action;
+  if (false) { // Formspree configurado
+    // Fallback: open email client
+    const name = form.name.value;
+    const email = form.email.value;
+    const service = form.service.value;
+    const message = form.message.value;
+    const subject = encodeURIComponent(`Proyecto: ${service || 'Consulta'} — ${name}`);
+    const body = encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\nServicio: ${service}\n\n${message}`);
+    window.open(`mailto:ananaproducciones.ec@gmail.com?subject=${subject}&body=${body}`);
+    successEl.classList.remove('hidden');
+    form.reset();
+    btnText.textContent = 'Enviar Mensaje';
+    btn.disabled = false;
+    return;
+  }
+
+  try {
+    const res = await fetch(action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      successEl.classList.remove('hidden');
+      form.reset();
+    } else {
+      throw new Error('Error');
+    }
+  } catch {
+    errorEl.classList.remove('hidden');
+  } finally {
+    btnText.textContent = 'Enviar Mensaje';
+    btn.disabled = false;
+  }
+});
+
+/* ─── NEWSLETTER ─── */
+function subscribeNL() {
+  const email = document.getElementById('nl-email').value;
+  if (!email || !email.includes('@')) return;
+  document.getElementById('nl-ok').classList.remove('hidden');
+  document.getElementById('nl-email').value = '';
+}
 </script>
 
+<!-- ══════════ SOCIAL BANNER ══════════ -->
+<section style="background:#050a14;border-top:1px solid rgba(0,85,204,0.1);padding:4rem clamp(1.25rem,5vw,5rem)">
+  <div class="text-center mb-12 reveal">
+    <span class="text-secondary text-xs font-bold tracking-widest uppercase">Síguenos</span>
+    <h2 class="font-black text-white mt-3 italic" style="font-family:'Montserrat',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem)">
+      Conecta con <span class="text-primary">Ananá Producciones</span>
+    </h2>
+  </div>
+  <div class="flex flex-wrap justify-center gap-6 reveal">
+
+    <!-- Instagram card -->
+    <a href="https://www.instagram.com/anana_producciones.ec/" target="_blank" rel="noopener"
+       class="group flex items-center gap-5 glass border border-white/8 px-8 py-5 hover:border-[#E1306C]/50 transition-all duration-300 max-w-xs w-full"
+       style="text-decoration:none">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+           style="background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </div>
+      <div>
+        <div class="text-white font-bold text-sm mb-0.5" style="font-family:'Montserrat',sans-serif">Instagram</div>
+        <div class="text-white/45 text-xs">@anana_producciones.ec</div>
+        <div class="text-[#E1306C] text-xs font-bold mt-1.5 flex items-center gap-1 group-hover:gap-2 transition-all">
+          Seguir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Facebook card -->
+    <a href="https://www.facebook.com/ananaprodec" target="_blank" rel="noopener"
+       class="group flex items-center gap-5 glass border border-white/8 px-8 py-5 hover:border-[#1877F2]/50 transition-all duration-300 max-w-xs w-full"
+       style="text-decoration:none">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+           style="background:#1877F2">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </div>
+      <div>
+        <div class="text-white font-bold text-sm mb-0.5" style="font-family:'Montserrat',sans-serif">Facebook</div>
+        <div class="text-white/45 text-xs">Ananá Producciones EC</div>
+        <div class="text-[#1877F2] text-xs font-bold mt-1.5 flex items-center gap-1 group-hover:gap-2 transition-all">
+          Me gusta <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- WhatsApp card -->
+    <a href="https://wa.me/593984082216?text=Hola%20Joseph%2C%20vi%20tu%20p%C3%A1gina%20y%20me%20interesa%20un%20proyecto" target="_blank" rel="noopener"
+       class="group flex items-center gap-5 glass border border-white/8 px-8 py-5 hover:border-[#25D366]/50 transition-all duration-300 max-w-xs w-full"
+       style="text-decoration:none">
+      <div class="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+           style="background:#25D366">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </div>
+      <div>
+        <div class="text-white font-bold text-sm mb-0.5" style="font-family:'Montserrat',sans-serif">WhatsApp</div>
+        <div class="text-white/45 text-xs">+593 98 408 2216</div>
+        <div class="text-[#25D366] text-xs font-bold mt-1.5 flex items-center gap-1 group-hover:gap-2 transition-all">
+          Escribir <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ══════════ WHATSAPP FLOAT BUTTON ══════════ -->
+<a href="https://wa.me/593984082216?text=Hola%20Joseph%2C%20vi%20tu%20p%C3%A1gina%20y%20me%20interesa%20un%20proyecto"
+   target="_blank" rel="noopener" aria-label="Contactar por WhatsApp"
+   id="wa-float"
+   style="position:fixed;bottom:1.75rem;right:1.75rem;z-index:9998;
+          width:3.5rem;height:3.5rem;border-radius:50%;
+          background:#25D366;
+          display:flex;align-items:center;justify-content:center;
+          box-shadow:0 4px 20px rgba(37,211,102,0.45);
+          transition:transform .2s,box-shadow .2s;
+          text-decoration:none">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+<style>
+  #wa-float:hover { transform:scale(1.1); box-shadow:0 6px 28px rgba(37,211,102,0.6); }
+  #wa-float .wa-tooltip {
+    position:absolute; right:calc(100% + .75rem); top:50%; transform:translateY(-50%);
+    background:rgba(4,8,16,0.95); border:1px solid rgba(37,211,102,0.3);
+    color:#fff; font-size:.75rem; font-weight:700; white-space:nowrap;
+    padding:.4rem .75rem; border-radius:4px; opacity:0;
+    transition:opacity .2s; pointer-events:none;
+  }
+  #wa-float:hover .wa-tooltip { opacity:1; }
+</style>
 </body>
 </html>
