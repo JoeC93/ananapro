@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ananá Producciones EC | Joseph Calvopiña</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  body {
+    background-color: #040810;
+    color: #E8F4FF;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(0,85,204,0.08) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 20%, rgba(0,200,255,0.05) 0%, transparent 50%);
+  }
+  .cinematic-grain {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9999;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+  .glass-card {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .marquee-container { overflow: hidden; white-space: nowrap; }
+  .marquee-content {
+    display: inline-block;
+    animation: marquee 30s linear infinite;
+  }
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .glow-blue  { box-shadow: 0 0 28px rgba(0,200,255,0.45), 0 0 60px rgba(0,85,204,0.2); }
+  .glow-blue  { box-shadow: 0 0 28px rgba(0,200,255,0.35), 0 0 50px rgba(0,85,204,0.15); }
+  .watermark  { opacity: 0.18; mix-blend-mode: screen; pointer-events: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* photo placeholder */
+  .ph {
+    background: linear-gradient(135deg, #040d1e 0%, #071428 50%, #040d1e 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(0,200,255,0.3);
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+  }
+
+  /* reveal */
+  .reveal { opacity:0; transform:translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.on { opacity:1; transform:translateY(0); }
+</style>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary":   "#00C8FF",
+          "secondary": "#0055CC",
+          "background":"#040810",
+          "on-surface":"#E8F4FF",
+          "surface-container":       "#070d1e",
+          "outline":                 "#1e4060",
+          "surface-container-lowest":"#050a14"
+        },
+        spacing: {
+          "margin-desktop": "80px",
+        },
+        fontFamily: {
+          "display-xl":  ["Montserrat","sans-serif"],
+          "headline-lg": ["Montserrat","sans-serif"],
+          "headline-md": ["Montserrat","sans-serif"],
+          "body-lg":     ["Inter","sans-serif"],
+          "body-md":     ["Inter","sans-serif"],
+          "label-sm":    ["Inter","sans-serif"],
+        },
+        fontSize: {
+          "display-xl":  ["80px",{"lineHeight":"1.1","letterSpacing":"-0.04em","fontWeight":"900"}],
+          "headline-lg": ["48px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],
+          "headline-md": ["32px",{"lineHeight":"1.3","fontWeight":"600"}],
+          "body-lg":     ["18px",{"lineHeight":"1.6","fontWeight":"400"}],
+          "body-md":     ["16px",{"lineHeight":"1.6","fontWeight":"400"}],
+          "label-sm":    ["12px",{"lineHeight":"1.0","letterSpacing":"0.1em","fontWeight":"600"}],
+        }
+      }
+    }
+  }
+</script>
+</head>
+
+<body class="max-w-[1440px] mx-auto overflow-x-hidden">
+<div class="cinematic-grain"></div>
+
+<!-- ══════════════════════════ NAV ══════════════════════════ -->
+<header id="navbar" class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-20 bg-background/80 backdrop-blur-xl border-b border-secondary/10 transition-all duration-300">
+  <div class="flex items-center gap-4">
+    <!-- Logo Ananá — usa el sello real -->
+    <div class="w-10 h-10 rounded-sm flex items-center justify-center font-display-xl font-black text-white text-xl" style="background: linear-gradient(135deg, #0055CC, #00C8FF)">A</div>
+    <span class="font-headline-md text-headline-md font-black text-primary">Ananá Producciones EC</span>
+  </div>
+  <nav class="hidden lg:flex gap-8 items-center">
+    <a class="font-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#inicio">Inicio</a>
+    <a class="font-body-md text-on-surface/70 hover:text-secondary transition-colors" href="#portafolio">Portafolio</a>
+    <a class="font-body-md text-on-surface/70 hover:text-secondary transition-colors" href="#acerca">Acerca de</a>
+    <a class="font-body-md text-on-surface/70 hover:text-secondary transition-colors" href="#contacto">Contacto</a>
+  </nav>
+  <a href="#contacto" class="bg-primary text-[#040810] px-6 py-2 font-bold hover:scale-95 transition-transform glow-blue" style="color:#040810">Contáctame</a>
+</header>
+
+<!-- ══════════════════════════ HERO ══════════════════════════ -->
+<section class="relative min-h-screen pt-40 pb-20 px-margin-desktop overflow-hidden" id="inicio">
+  <!-- bg glows -->
+  <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-700/10 rounded-full blur-[100px] pointer-events-none"></div>
+  <div class="absolute top-1/2 left-1/2 w-[800px] h-[400px] -translate-x-1/2 -translate-y-1/2 bg-blue-900/20 rounded-full blur-[140px] pointer-events-none"></div>
+
+  <div class="grid grid-cols-12 gap-6 items-center relative z-10">
+    <!-- Text -->
+    <div class="col-span-7">
+      <span class="inline-block px-4 py-1 border border-secondary/30 text-secondary text-xs font-bold tracking-widest uppercase mb-6 bg-secondary/5">Quito, Ecuador · Producción Independiente</span>
+      <h1 class="font-display-xl text-display-xl mb-6">
+        Producción Visual que <span class="text-secondary">Conecta</span> y <span class="text-primary">Transforma</span>
+      </h1>
+      <p class="font-body-lg text-body-lg text-on-surface/80 mb-10 max-w-xl">
+        Joseph Calvopiña — Comunicador Cultural & Estratega Visual dedicado a elevar marcas a través del storytelling cinematográfico y la estética digital de vanguardia desde Quito, Ecuador.
+      </p>
+      <div class="flex gap-6 mb-16">
+        <a href="#portafolio" class="bg-primary text-[#040810] px-10 py-4 font-bold text-lg glow-blue flex items-center gap-2 hover:scale-105 transition-transform" style="color:#040810">
+          Ver Portafolio
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+        <a href="#contacto" class="border border-secondary text-secondary px-10 py-4 font-bold text-lg flex items-center gap-2 hover:bg-secondary/10 transition-all">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">play_circle</span>
+          Hablemos
+        </a>
+      </div>
+      <!-- Stats reales -->
+      <div class="flex gap-12 border-t border-white/10 pt-10">
+        <div>
+          <div class="text-primary font-black text-4xl">7+</div>
+          <div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface/50 mt-1">Proyectos</div>
+        </div>
+        <div>
+          <div class="text-primary font-black text-4xl">5+</div>
+          <div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface/50 mt-1">Años Exp.</div>
+        </div>
+        <div>
+          <div class="text-primary font-black text-4xl">100%</div>
+          <div class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface/50 mt-1">Independiente</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero visual — foto de perfil real desde Drive -->
+    <div class="col-span-5 relative group">
+      <div class="absolute -inset-4 bg-gradient-to-tr from-secondary/20 via-primary/10 to-secondary/20 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
+      <div class="relative aspect-[3/4] w-full glass-card overflow-hidden glow-blue p-1">
+        <img
+          src="https://drive.google.com/thumbnail?sz=w1200&id=1_QI3DTzyt7G_nd_QtjgFkNmEQ0RjjSCs"
+          alt="Joseph Calvopiña — Ananá Producciones EC"
+          class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+          onerror="this.parentElement.classList.add('ph'); this.style.display='none'; this.parentElement.innerHTML='<span style=\'color:rgba(10,62,170,0.4);font-size:0.7rem;letter-spacing:0.15em\'>Joseph Calvopiña</span>'"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent"></div>
+        <div class="absolute bottom-8 left-8">
+          <div class="text-secondary font-bold text-lg uppercase tracking-tighter">Ananá Producciones EC</div>
+          <div class="text-on-surface text-sm opacity-70">Quito, Ecuador</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ MARQUEE ══════════════════════════ -->
+<div class="py-4 marquee-container" style="background: linear-gradient(90deg, #040810, #0055CC, #00C8FF, #0055CC, #040810);">
+  <div class="marquee-content flex gap-12 items-center text-white font-black text-2xl uppercase italic" style="text-shadow: 0 0 20px rgba(0,200,255,0.8)">
+    <span>Producción Audiovisual</span><span class="text-4xl opacity-30">·</span>
+    <span>Publicidad Digital</span><span class="text-4xl opacity-30">·</span>
+    <span>Diseño Multimedia</span><span class="text-4xl opacity-30">·</span>
+    <span>Arte & Cultura</span><span class="text-4xl opacity-30">·</span>
+    <span>Dirección Creativa</span><span class="text-4xl opacity-30">·</span>
+    <span>Producción Audiovisual</span><span class="text-4xl opacity-30">·</span>
+    <span>Publicidad Digital</span><span class="text-4xl opacity-30">·</span>
+    <span>Diseño Multimedia</span><span class="text-4xl opacity-30">·</span>
+    <span>Arte & Cultura</span><span class="text-4xl opacity-30">·</span>
+    <span>Dirección Creativa</span><span class="text-4xl opacity-30">·</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════ PROYECTOS DESTACADOS ══════════════════════════ -->
+<section class="py-32 bg-surface-container-lowest" id="portafolio">
+  <div class="px-margin-desktop mb-16 flex justify-between items-end reveal">
+    <div>
+      <span class="text-secondary text-xs font-bold tracking-widest uppercase">Portafolio</span>
+      <h2 class="font-headline-lg text-headline-lg mt-2 mb-4 italic">Proyectos Destacados</h2>
+      <div class="w-40 h-1 bg-secondary glow-blue"></div>
+    </div>
+    <div class="flex gap-4">
+      <button id="prev-btn" class="w-12 h-12 border border-outline rounded-full flex items-center justify-center hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button id="next-btn" class="w-12 h-12 border border-outline rounded-full flex items-center justify-center hover:bg-secondary hover:text-white hover:border-secondary transition-all">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Carousel -->
+  <div id="carousel" class="flex gap-8 overflow-x-auto no-scrollbar px-margin-desktop pb-10 reveal">
+
+    <!-- 1. Poder de la Forma -->
+    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 glow-blue flex-shrink-0">
+      <div class="w-full h-full ph"><span>Poder de la Forma</span></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Diseño Visual</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-4">Poder de la Forma</h3>
+        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+      </div>
+    </div>
+
+    <!-- 2. Intensidad Pura -->
+    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
+      <img
+        src="https://drive.google.com/thumbnail?sz=w1200&id=1aLptgRzQZ6U7_Gjdnr-mtMwXbNUJUdgG"
+        alt="Intensidad Pura"
+        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Audiovisual</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-4">Intensidad Pura</h3>
+        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+      </div>
+    </div>
+
+    <!-- 3. Alquimia Moderna -->
+    <div class="min-w-[460px] aspect-[4/5] relative group overflow-hidden border-2 border-secondary/40 glow-blue flex-shrink-0">
+      <img
+        src="https://drive.google.com/thumbnail?sz=w1200&id=1Hu49lH5B3vp1Iu9NLS6dF38m6w6zQknO"
+        alt="Alquimia Moderna"
+        class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8 right-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Destacado</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-3">Alquimia Moderna</h3>
+        <p class="text-sm text-on-surface/70 mb-4">Exploración visual y narrativa experimental.</p>
+        <a class="inline-block px-6 py-2 bg-secondary text-white font-bold text-sm hover:bg-secondary/80 transition-all" href="#">Explorar</a>
+      </div>
+    </div>
+
+    <!-- 4. Susurros & Miradas -->
+    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
+      <img
+        src="https://drive.google.com/thumbnail?sz=w1200&id=1984cyJM6vrlBhdeV9uOpZ5obGSq1Znqq"
+        alt="Susurros & Miradas"
+        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Fotografía</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-4">Susurros & Miradas</h3>
+        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+      </div>
+    </div>
+
+    <!-- 5. Marcas Asociadas -->
+    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
+      <img
+        src="https://drive.google.com/thumbnail?sz=w1200&id=1TqWhwSHz2pYwv0eT7Y4kCi3zQc4_AlZY"
+        alt="Marcas Asociadas"
+        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Branding</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-4">Marcas Asociadas</h3>
+        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+      </div>
+    </div>
+
+    <!-- 6. El Tejido de una Comunidad -->
+    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
+      <img
+        src="https://drive.google.com/thumbnail?sz=w1200&id=1yAydUcziXS_fG-_WLEDGSdogcFN1gOnT"
+        alt="El Tejido de una Comunidad"
+        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Cultural</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-4">El Tejido de una Comunidad</h3>
+        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+      </div>
+    </div>
+
+    <!-- 7. Anónimos Urbanos -->
+    <div class="min-w-[400px] aspect-[4/5] relative group overflow-hidden border border-secondary/20 hover:glow-blue transition-all flex-shrink-0">
+      <img
+        src="https://drive.google.com/thumbnail?sz=w1200&id=1qxqgL_XyrT3GniUHvvcgFCEvaiit1YXV"
+        alt="Anónimos Urbanos"
+        class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+      <div class="absolute top-5 right-5 w-8 h-8 watermark bg-primary rounded-sm flex items-center justify-center font-black text-background text-xs">A</div>
+      <div class="absolute bottom-8 left-8">
+        <p class="font-label-sm text-label-sm text-primary mb-2 uppercase tracking-widest">Documental</p>
+        <h3 class="font-headline-md text-headline-md leading-none mb-4">Anónimos Urbanos</h3>
+        <a class="flex items-center gap-2 text-secondary font-bold hover:underline" href="#">Ver Proyecto <span class="material-symbols-outlined text-base">arrow_outward</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════ ACERCA DE ══════════════════════════ -->
+<section class="py-32 bg-surface-container" id="acerca">
+  <div class="px-margin-desktop grid grid-cols-12 gap-6 items-center">
+    <!-- Foto perfil -->
+    <div class="col-span-5 reveal">
+      <div class="relative">
+        <div class="absolute -top-8 -left-8 text-[160px] font-black opacity-5 select-none italic pointer-events-none">JOSEPH</div>
+        <div class="aspect-square w-full border-4 border-primary p-3 glow-blue relative z-10">
+          <img
+            src="https://drive.google.com/thumbnail?sz=w1200&id=1_QI3DTzyt7G_nd_QtjgFkNmEQ0RjjSCs"
+            alt="Joseph Calvopiña"
+            class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="col-span-7 pl-10 reveal">
+      <span class="text-secondary text-xs font-bold tracking-widest uppercase">Acerca de mí</span>
+      <h2 class="font-headline-lg text-headline-lg mt-3 mb-8 italic">
+        El Estratega detrás del <span class="text-primary">Lente</span>
+      </h2>
+      <div class="font-body-lg text-body-lg text-on-surface/80 space-y-5 mb-10">
+        <p>Soy Joseph Calvopiña, comunicador especializado en arte y cultura. Con años de experiencia diseñando creativas para niños y adolescentes, fusiono el mundo artístico con estrategias de comunicación moderna.</p>
+        <p>En Ananá Producciones EC, mi misión es convertir la esencia del arte y la cultura en narrativas digitales impactantes. Mi dominio abarca la publicidad en redes sociales, la producción audiovisual y el diseño multimedia.</p>
+      </div>
+      <div class="flex flex-wrap gap-3 mb-10">
+        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Dirección Creativa</span>
+        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Producción Audiovisual</span>
+        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Publicidad Digital</span>
+        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Gestión Cultural</span>
+        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Diseño Multimedia</span>
+        <span class="px-5 py-2 border border-secondary text-secondary rounded-full font-label-sm uppercase tracking-widest text-xs">Storytelling</span>
+      </div>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="p-6 glass-card">
+          <p class="text-primary font-bold mb-2 italic">Misión</p>
+          <p class="text-sm text-on-surface/70">Digitalizar la esencia de cada historia con calidad cinematográfica auténtica desde Quito.</p>
+        </div>
+        <div class="p-6 glass-card">
+          <p class="text-secondary font-bold mb-2 italic">Estilo</p>
+          <p class="text-sm text-on-surface/70">Minimalista, vibrante y centrado en el impacto emocional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ CONTACTO ══════════════════════════ -->
+<section class="py-32 px-margin-desktop" id="contacto">
+
+  <!-- CTA banner -->
+  <div class="relative glass-card p-16 text-center border border-primary/20 overflow-hidden mb-20 reveal glow-blue" style="background:linear-gradient(135deg,rgba(0,85,204,0.12),rgba(0,200,255,0.04))">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50"></div>
+    <h2 class="font-headline-lg text-headline-lg mb-6 italic">¿Tienes un proyecto en <span class="text-primary">mente?</span></h2>
+    <p class="text-on-surface/60 text-lg mb-10 max-w-2xl mx-auto">Hagamos que tus ideas cobren vida con una producción audiovisual de alto impacto desde Quito.</p>
+    <a href="mailto:ananaproducciones.ec@gmail.com" class="inline-block bg-primary text-[#040810] px-14 py-4 font-black text-xl glow-blue hover:scale-105 transition-transform">
+      Iniciar Proyecto →
+    </a>
+  </div>
+
+  <!-- Contacto + formulario -->
+  <div class="grid grid-cols-2 gap-16">
+
+    <!-- Datos reales -->
+    <div class="reveal">
+      <span class="text-secondary text-xs font-bold tracking-widest uppercase">Contacto Directo</span>
+      <h3 class="font-headline-md text-headline-md mt-3 mb-8 italic">Hablemos de tu<br/><span class="text-primary">próximo proyecto</span></h3>
+      <div class="space-y-5 mb-10">
+        <div class="flex items-center gap-5 p-5 glass-card">
+          <div class="w-12 h-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary flex-shrink-0">
+            <span class="material-symbols-outlined">mail</span>
+          </div>
+          <div>
+            <p class="text-xs text-secondary font-bold uppercase tracking-widest mb-1">Email</p>
+            <a href="mailto:ananaproducciones.ec@gmail.com" class="text-on-surface/70 hover:text-white transition-colors text-sm">ananaproducciones.ec@gmail.com</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-5 p-5 glass-card">
+          <div class="w-12 h-12 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+            <span class="material-symbols-outlined">call</span>
+          </div>
+          <div>
+            <p class="text-xs text-primary font-bold uppercase tracking-widest mb-1">WhatsApp / Teléfono</p>
+            <a href="tel:+593984082216" class="text-on-surface/70 hover:text-white transition-colors text-sm">+593 98 408 2216</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-5 p-5 glass-card">
+          <div class="w-12 h-12 bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary flex-shrink-0">
+            <span class="material-symbols-outlined">location_on</span>
+          </div>
+          <div>
+            <p class="text-xs text-secondary font-bold uppercase tracking-widest mb-1">Ubicación</p>
+            <p class="text-on-surface/70 text-sm">Quito, Ecuador · Disponible remotamente</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <a href="https://www.facebook.com" target="_blank" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-primary hover:border-primary transition-all font-bold text-xs">FB</a>
+        <a href="https://www.instagram.com" target="_blank" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-primary hover:border-primary transition-all font-bold text-xs">IG</a>
+        <a href="#" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-secondary hover:border-secondary transition-all font-bold text-xs">TK</a>
+        <a href="#" class="w-12 h-12 border border-outline/40 flex items-center justify-center text-on-surface/50 hover:text-red-500 hover:border-red-500 transition-all font-bold text-xs">YT</a>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="reveal">
+      <form onsubmit="enviarForm(event)" class="glass-card p-10 glow-blue space-y-8">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <input class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 placeholder:text-on-surface/30 transition-all" placeholder="Nombre" type="text" required/>
+          </div>
+          <div>
+            <input class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 placeholder:text-on-surface/30 transition-all" placeholder="Email" type="email" required/>
+          </div>
+        </div>
+        <div>
+          <select class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 text-on-surface/50">
+            <option value="">¿En qué puedo ayudarte?</option>
+            <option>Producción Audiovisual</option>
+            <option>Publicidad Digital</option>
+            <option>Diseño Multimedia</option>
+            <option>Gestión Cultural</option>
+            <option>Fotografía</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div>
+          <textarea class="w-full bg-transparent border-0 border-b border-outline focus:border-primary focus:ring-0 text-body-md py-3 placeholder:text-on-surface/30 transition-all resize-none" placeholder="Cuéntame sobre tu proyecto..." rows="4"></textarea>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="bg-primary text-[#040810] px-16 py-4 font-black text-lg uppercase tracking-tighter glow-blue hover:scale-105 transition-all">
+            Enviar Mensaje
+          </button>
+          <div id="form-ok" class="hidden mt-4 text-secondary font-bold text-sm">✓ ¡Mensaje enviado! Te responderé a la brevedad.</div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+<footer class="w-full py-20 px-margin-desktop grid grid-cols-3 gap-10 bg-surface-container-lowest border-t border-secondary/10">
+  <div class="space-y-6">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-tr from-secondary to-primary rounded-sm flex items-center justify-center font-black text-background text-xl">A</div>
+      <span class="font-headline-md font-bold text-primary">Ananá <span class="text-on-surface">EC</span></span>
+    </div>
+    <p class="text-on-surface/50 text-sm leading-relaxed max-w-xs">Producción independiente de alta fidelidad desde el corazón de Quito. Capturando momentos, creando legados.</p>
+    <div class="flex gap-4 text-sm">
+      <a href="https://www.instagram.com" target="_blank" class="text-on-surface/50 hover:text-primary transition-colors">Instagram</a>
+      <a href="https://www.facebook.com" target="_blank" class="text-on-surface/50 hover:text-primary transition-colors">Facebook</a>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 gap-8">
+    <div>
+      <h5 class="text-primary font-bold mb-5 uppercase tracking-widest text-xs">Portafolio</h5>
+      <ul class="space-y-3 text-sm text-on-surface/60">
+        <li><a class="hover:text-white transition-colors" href="#portafolio">Intensidad Pura</a></li>
+        <li><a class="hover:text-white transition-colors" href="#portafolio">Alquimia Moderna</a></li>
+        <li><a class="hover:text-white transition-colors" href="#portafolio">Susurros & Miradas</a></li>
+        <li><a class="hover:text-white transition-colors" href="#portafolio">Anónimos Urbanos</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5 class="text-secondary font-bold mb-5 uppercase tracking-widest text-xs">Servicios</h5>
+      <ul class="space-y-3 text-sm text-on-surface/60">
+        <li><a class="hover:text-white transition-colors" href="#">Producción Audiovisual</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Publicidad Digital</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Diseño Multimedia</a></li>
+        <li><a class="hover:text-white transition-colors" href="#">Gestión Cultural</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="space-y-8">
+    <div>
+      <h5 class="text-primary font-bold mb-5 uppercase tracking-widest text-xs">Newsletter</h5>
+      <div class="flex">
+        <input class="bg-surface-container border-0 px-4 py-3 w-full focus:ring-1 focus:ring-secondary text-sm placeholder:text-on-surface/30" placeholder="Tu email" type="email"/>
+        <button class="bg-secondary px-5 py-3 text-white hover:bg-secondary/80 transition-colors">
+          <span class="material-symbols-outlined text-sm">send</span>
+        </button>
+      </div>
+    </div>
+    <div class="pt-4 border-t border-white/5">
+      <p class="text-on-surface/30 text-xs mb-1">© 2025 Ananá Producciones EC</p>
+      <p class="text-on-surface/20 text-xs">Joseph Calvopiña · Quito, Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // NAV scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.background =
+      scrollY > 60 ? 'rgba(9,9,15,0.97)' : 'rgba(9,9,15,0.8)';
+  });
+
+  // Reveal
+  const obs = new IntersectionObserver(e =>
+    e.forEach(el => { if (el.isIntersecting) el.target.classList.add('on'); }),
+    { threshold: 0.08 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Carousel buttons
+  const carousel = document.getElementById('carousel');
+  document.getElementById('next-btn').addEventListener('click', () => {
+    carousel.scrollBy({ left: 440, behavior: 'smooth' });
+  });
+  document.getElementById('prev-btn').addEventListener('click', () => {
+    carousel.scrollBy({ left: -440, behavior: 'smooth' });
+  });
+
+  // Form
+  function enviarForm(e) {
+    e.preventDefault();
+    document.getElementById('form-ok').classList.remove('hidden');
+    e.target.reset();
+  }
+</script>
+
+</body>
+</html>
