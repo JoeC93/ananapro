@@ -1,529 +1,1760 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ananá Producciones EC | Joseph Calvopiña</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  body {
-    background-color: #040810;
-    color: #E8F4FF;
-    font-family: "Inter", sans-serif;
-    overflow-x: hidden;
-    background-image: radial-gradient(ellipse at 20% 50%, rgba(0,85,204,0.08) 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 20%, rgba(0,200,255,0.05) 0%, transparent 50%);
+/* ══════════════════════════════════════
+   TOKENS
+══════════════════════════════════════ */
+:root {
+  --black:   #040810;
+  --surface: #070d1e;
+  --blue:    #00C8FF;
+  --gold:    #C9A227;
+  --white:   #E8F4FF;
+}
+
+/* ══════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-snap-type: y proximity;
+  overflow-x: hidden;
+  background: #000;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ══════════════════════════════════════
+   CUSTOM CURSOR — CAMERA VIEWFINDER
+══════════════════════════════════════ */
+#cursor-svg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 60px; height: 60px;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: visible;
+  /* JS sets transform: translate(x,y) via GSAP — start offscreen */
+  transform: translate(-200px, -200px);
+}
+
+/* Touch / stylus devices: restore default cursor, hide SVG */
+.touch-device #cursor-svg { display: none !important; }
+.touch-device             { cursor: auto !important; }
+
+/* Crosshair lines */
+#cur-h, #cur-v {
+  stroke: var(--blue);
+  stroke-width: 1;
+  transition: stroke .2s, opacity .2s;
+}
+/* Outer circle */
+#cur-circle {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 1;
+  transition: r .22s cubic-bezier(.25,.46,.45,.94),
+              stroke .2s, opacity .2s;
+}
+/* Small center dot */
+#cur-center {
+  fill: var(--blue);
+  transition: fill .2s, r .18s;
+}
+
+/* GROUP rotation for the whole viewfinder */
+#cur-group {
+  transform-origin: 0px 0px; /* center at SVG origin */
+  transition: transform .25s cubic-bezier(.25,.46,.45,.94);
+}
+
+/* States driven by GSAP in JS — these are just fallback hints */
+body.c-link #cur-circle { opacity: .7; }
+body.c-card #cur-circle { opacity: 1; }
+
+/* Card focus brackets */
+.pc .fb {
+  position: absolute; pointer-events: none;
+  width: 18px; height: 18px;
+  border-color: var(--gold); border-style: solid;
+  opacity: 0;
+  transition: opacity .25s, transform .3s cubic-bezier(.25,.46,.45,.94);
+  z-index: 10;
+}
+.pc .fb-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; transform: translate(-4px,-4px); }
+.pc .fb-tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; transform: translate(4px,-4px); }
+.pc .fb-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; transform: translate(-4px,4px); }
+.pc .fb-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; transform: translate(4px,4px); }
+.pc:hover .fb { opacity: 1; transform: translate(0,0); }
+
+/* Shutter click animation */
+@keyframes shutterPulse {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(.55); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+#cur-circle.shutter { animation: shutterPulse .18s ease forwards; }
+
+/* ══════════════════════════════════════
+   FILM GRAIN
+══════════════════════════════════════ */
+.grain {
+  position: fixed; inset: 0; z-index: 9997;
+  pointer-events: none; opacity: .032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* ══════════════════════════════════════
+   SCROLL PROGRESS
+══════════════════════════════════════ */
+#progress {
+  position: fixed; top: 0; left: 0;
+  height: 2px; z-index: 9996;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  transform-origin: left; transform: scaleX(0);
+  box-shadow: 0 0 10px rgba(0,200,255,.5);
+  transition: none;
+}
+
+/* ══════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0; z-index: 99990;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+#loader .film-scanlines {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(255,255,255,.006) 3px, rgba(255,255,255,.006) 4px
+  );
+}
+.ld-count {
+  position: absolute;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(140px,28vw,320px);
+  color: #fff; opacity: 0;
+  letter-spacing: -.02em; line-height: 1;
+  text-shadow: 0 0 60px rgba(0,200,255,.2);
+}
+#ld-logo {
+  text-align: center; position: relative; z-index: 2;
+}
+#ld-logo .main {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px,10vw,128px);
+  letter-spacing: .12em; color: #fff;
+  clip-path: inset(0 100% 0 0);
+  display: block;
+}
+#ld-logo .sub {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(9px,1.2vw,13px);
+  font-weight: 700; letter-spacing: .45em;
+  text-transform: uppercase; color: var(--gold);
+  display: block; margin-top: 10px; opacity: 0;
+}
+#ld-line {
+  height: 1px; width: 0%; background: var(--gold);
+  margin-top: 18px; box-shadow: 0 0 8px var(--gold);
+}
+/* Shutter panels */
+#shutter {
+  position: fixed; inset: 0; z-index: 99991;
+  display: grid; grid-template-columns: 1fr 1fr;
+  pointer-events: none;
+}
+.sh-panel { background: #000; }
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(20px,5vw,80px);
+  transition: background .4s, border-color .4s;
+}
+#nav.scrolled {
+  background: rgba(4,8,16,.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,200,255,.08);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 21px; letter-spacing: .14em; color: #fff;
+  text-decoration: none;
+}
+.nav-logo em { color: var(--blue); font-style: normal; }
+#nav-links { display: flex; align-items: center; gap: 36px; }
+#nav-links a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(232,244,255,.55);
+  text-decoration: none; transition: color .25s;
+}
+#nav-links a:hover { color: var(--blue); }
+.nav-cta {
+  background: var(--blue); color: #040810;
+  padding: 10px 24px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 900; letter-spacing: .22em;
+  text-transform: uppercase; text-decoration: none;
+  transition: box-shadow .25s, transform .2s;
+  box-shadow: 0 0 20px rgba(0,200,255,.25);
+}
+.nav-cta:hover { box-shadow: 0 4px 28px rgba(0,200,255,.5); transform: translateY(-1px); }
+
+/* Hamburger */
+#hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; padding: 4px;
+  cursor: none;
+}
+#hamburger span {
+  width: 22px; height: 1.5px; background: var(--blue); display: block;
+  transition: transform .3s, opacity .3s;
+}
+#hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+#hamburger.open span:nth-child(2) { opacity: 0; }
+#hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* Mobile fullscreen menu */
+#mob-menu {
+  position: fixed; inset: 0; z-index: 990;
+  background: rgba(4,8,16,.98);
+  backdrop-filter: blur(24px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 28px;
+  transform: translateX(100%);
+  transition: transform .55s cubic-bezier(.25,.46,.45,.94);
+}
+#mob-menu.open { transform: translateX(0); }
+#mob-menu a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px,10vw,60px); letter-spacing: .1em;
+  color: #fff; text-decoration: none; transition: color .25s;
+}
+#mob-menu a:hover { color: var(--blue); }
+#mob-menu .mob-contact {
+  margin-top: 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: .18em;
+  color: var(--gold); text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════
+   SNAP SECTIONS
+══════════════════════════════════════ */
+.snap { scroll-snap-align: start; }
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+#hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; overflow: hidden;
+}
+
+/* ── Ken Burns Slideshow ── */
+#hero-slides {
+  position: absolute; inset: 0;
+  z-index: 0;
+}
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+/* Each slide gets a unique KB animation origin */
+.hero-slide:nth-child(1) { background-image: url('img/alquimia.jpg'); }
+.hero-slide:nth-child(2) { background-image: url('img/susurros.jpg'); }
+.hero-slide:nth-child(3) { background-image: url('img/poder.jpg');    }
+.hero-slide:nth-child(4) { background-image: url('img/intensidad.jpg'); }
+
+@keyframes kb1 { 0%{transform:scale(1.08) translate(0%,0%)}   100%{transform:scale(1.18) translate(-1.5%,-1%)} }
+@keyframes kb2 { 0%{transform:scale(1.10) translate(1%,0%)}   100%{transform:scale(1.20) translate(-1%, 1.5%)} }
+@keyframes kb3 { 0%{transform:scale(1.12) translate(0%,1%)}   100%{transform:scale(1.22) translate(1.5%,-1%)} }
+@keyframes kb4 { 0%{transform:scale(1.08) translate(-1%,-1%)} 100%{transform:scale(1.18) translate(1%,1.5%)}  }
+
+.hero-slide.active { opacity: 1; }
+.hero-slide.kb-1.active { animation: kb1 7s ease-out forwards; }
+.hero-slide.kb-2.active { animation: kb2 7s ease-out forwards; }
+.hero-slide.kb-3.active { animation: kb3 7s ease-out forwards; }
+.hero-slide.kb-4.active { animation: kb4 7s ease-out forwards; }
+
+/* Darkroom / overexposure fade-in */
+@keyframes darkroomReveal {
+  0%   { filter: brightness(4); opacity: 0; }
+  15%  { filter: brightness(2.5); opacity: .6; }
+  50%  { filter: brightness(1.3); opacity: .9; }
+  100% { filter: brightness(1); opacity: 1; }
+}
+.hero-slide.reveal-in { animation: darkroomReveal .9s ease-out forwards !important; }
+
+/* Shutter flash overlay */
+#shutter-flash {
+  position: absolute; inset: 0; z-index: 5;
+  background: #fff; opacity: 0; pointer-events: none;
+}
+
+/* Slide parallax wrapper — moved by GSAP on scroll */
+#hero-parallax {
+  position: absolute; inset: -15% 0;
+  z-index: 0;
+}
+
+.hero-ov {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(135deg,
+    rgba(4,8,16,.92) 0%, rgba(4,8,16,.60) 55%, rgba(4,8,16,.86) 100%);
+}
+.hero-scanlines {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,200,255,.005) 3px, rgba(0,200,255,.005) 4px
+  );
+}
+#hero-inner {
+  position: relative; z-index: 10;
+  width: 100%; padding: 0 clamp(20px,7vw,100px);
+  padding-top: 72px;
+}
+.hero-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .4em;
+  text-transform: uppercase; color: var(--gold);
+  display: block; margin-bottom: 22px;
+  opacity: 0; transform: translateY(10px);
+}
+.hero-line { overflow: hidden; display: block; line-height: .92; }
+.hero-word {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(68px,10.5vw,156px);
+  letter-spacing: .03em; color: #fff;
+  display: inline-block;
+  transform: translateY(105%);
+}
+.hw-blue { color: var(--blue); }
+.hw-gold { color: var(--gold); }
+.hero-sub {
+  font-size: clamp(14px,1.4vw,17px);
+  color: rgba(232,244,255,.6);
+  max-width: 460px; line-height: 1.75;
+  margin-top: 26px;
+  opacity: 0; transform: translateY(12px);
+}
+.hero-ctas {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  margin-top: 36px;
+  opacity: 0; transform: translateY(12px);
+}
+.btn-fill {
+  background: var(--blue); color: #040810;
+  padding: 14px 36px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 900; letter-spacing: .2em;
+  text-transform: uppercase; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: transform .2s, box-shadow .2s;
+  box-shadow: 0 0 24px rgba(0,200,255,.3);
+}
+.btn-fill:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(0,200,255,.5); }
+.btn-ghost {
+  border: 1px solid rgba(0,200,255,.38);
+  color: var(--blue); padding: 14px 36px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; text-decoration: none;
+  transition: background .3s, border-color .3s;
+}
+.btn-ghost:hover { background: rgba(0,200,255,.07); border-color: var(--blue); }
+
+/* scroll cue */
+#scroll-cue {
+  position: absolute; bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0;
+}
+#scroll-cue span {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8px; letter-spacing: .35em; text-transform: uppercase;
+  color: rgba(232,244,255,.3);
+}
+.scroll-line {
+  width: 1px; height: 44px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  30%      { opacity: 1; }
+  70%      { transform: scaleY(1); transform-origin: top; opacity: 1; }
+}
+
+/* ══════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════ */
+#marquee {
+  overflow: hidden; white-space: nowrap;
+  background: var(--gold); padding: 13px 0;
+}
+.mq-track {
+  display: inline-flex; gap: 44px;
+  animation: mq 28s linear infinite;
+}
+.mq-track span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px; letter-spacing: .12em; color: #040810;
+}
+.mq-track .mq-dot { color: rgba(4,8,16,.35); font-size: 12px; }
+@keyframes mq { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* ══════════════════════════════════════
+   PORTFOLIO — CINEMATIC FULL-SCREEN SLIDER
+══════════════════════════════════════ */
+
+/* shared eyebrow / section title used elsewhere — keep */
+.eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .4em;
+  text-transform: uppercase; color: var(--gold);
+  display: block; margin-bottom: 12px;
+}
+.sec-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(44px,6.5vw,88px);
+  letter-spacing: .04em; line-height: .95; color: #fff;
+}
+
+/* Slider wrapper */
+#portfolio {
+  position: relative;
+  width: 100%; height: 100vh;
+  overflow: hidden;
+  background: #000;
+  cursor: none;
+}
+
+/* Individual slides — stack on top of each other */
+.sl {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  /* clip-path wipe: each slide clips to reveal the next */
+  clip-path: inset(0 100% 0 0);  /* start: fully hidden right */
+}
+.sl.active {
+  clip-path: inset(0 0% 0 0);    /* fully visible */
+  z-index: 2;
+}
+.sl.prev {
+  clip-path: inset(0 0 0 0);     /* stays visible below active */
+  z-index: 1;
+}
+/* Base slide (always visible at z:0) */
+.sl:first-child { clip-path: inset(0 0 0 0); z-index: 0; }
+
+/* Background photo */
+.sl-bg {
+  position: absolute; inset: -10% 0;  /* extra height for parallax room */
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.04);
+  transition: transform 8s ease-out;
+}
+.sl.active .sl-bg { transform: scale(1); } /* subtle zoom-out on active */
+
+/* Dark cinematic overlay */
+.sl-ov {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(4,8,16,.88) 0%,
+    rgba(4,8,16,.45) 50%,
+    rgba(4,8,16,.72) 100%
+  );
+}
+
+/* Slide content — bottom-left */
+.sl-body {
+  position: absolute;
+  bottom: clamp(80px,12vh,130px);
+  left: clamp(24px,6vw,88px);
+  right: clamp(24px,6vw,88px);
+  z-index: 10;
+}
+.sl-cat {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .38em;
+  text-transform: uppercase; color: var(--gold);
+  display: block; margin-bottom: 10px;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .5s .1s, transform .5s .1s;
+}
+.sl-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 7vw, 100px);
+  letter-spacing: .04em; line-height: .92; color: #fff;
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .55s .2s, transform .55s .2s;
+}
+.sl-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--blue);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,200,255,.3);
+  padding-bottom: 3px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .45s .35s, transform .45s .35s, border-color .25s;
+}
+.sl-link:hover { border-color: var(--blue); }
+
+/* Animate in when slide is active */
+.sl.active .sl-cat,
+.sl.active .sl-title,
+.sl.active .sl-link {
+  opacity: 1; transform: translateY(0);
+}
+
+/* Film counter — top right */
+#sl-counter {
+  position: absolute;
+  top: clamp(84px,10vh,108px); right: clamp(24px,5vw,72px);
+  z-index: 20;
+  display: flex; align-items: baseline; gap: 6px;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: .1em; color: rgba(232,244,255,.55);
+  pointer-events: none;
+}
+#sl-cur  { font-size: clamp(32px,4vw,52px); color: #fff; line-height: 1; }
+#sl-sep  { font-size: 14px; opacity: .4; }
+#sl-tot  { font-size: 18px; }
+
+/* Progress bar at the very bottom */
+#sl-progress-wrap {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 20;
+  height: 2px; background: rgba(255,255,255,.08);
+}
+#sl-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  width: 0%;
+  box-shadow: 0 0 8px rgba(0,200,255,.4);
+  transition: width linear; /* duration set by JS */
+}
+
+/* Nav arrows — viewfinder aesthetic */
+.sl-arrow {
+  position: absolute; top: 50%; z-index: 20;
+  width: 48px; height: 48px;
+  transform: translateY(-50%);
+  border: 1px solid rgba(0,200,255,.3);
+  background: rgba(4,8,16,.5);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: none;
+  transition: border-color .25s, background .25s;
+}
+.sl-arrow:hover { border-color: var(--blue); background: rgba(0,200,255,.1); }
+.sl-arrow svg { stroke: var(--blue); transition: stroke .25s; }
+#sl-prev { left: clamp(16px,3vw,48px); }
+#sl-next { right: clamp(16px,3vw,48px); }
+
+/* Corner viewfinder brackets on arrows */
+.sl-arrow::before, .sl-arrow::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  border-color: rgba(0,200,255,.5);
+  border-style: solid;
+  transition: border-color .25s;
+}
+.sl-arrow:hover::before, .sl-arrow:hover::after { border-color: var(--blue); }
+.sl-arrow::before { top: -3px; left: -3px; border-width: 1px 0 0 1px; }
+.sl-arrow::after  { bottom: -3px; right: -3px; border-width: 0 1px 1px 0; }
+
+/* "Ver todos" footer bar */
+#sl-footer {
+  position: absolute; bottom: 2px; left: 0; right: 0; z-index: 20;
+  display: flex; justify-content: center;
+  padding-bottom: clamp(16px,3vh,28px);
+  padding-top: 20px;
+  background: linear-gradient(to top, rgba(4,8,16,.7) 0%, transparent 100%);
+  pointer-events: none;
+}
+#sl-footer a {
+  pointer-events: all;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .28em;
+  text-transform: uppercase; color: rgba(232,244,255,.45);
+  text-decoration: none; cursor: none;
+  border-bottom: 1px solid rgba(232,244,255,.15);
+  padding-bottom: 3px;
+  transition: color .25s, border-color .25s;
+}
+#sl-footer a:hover { color: var(--gold); border-color: var(--gold); }
+
+/* Mobile: hide arrows, show swipe only */
+@media (max-width: 768px) {
+  .sl-arrow { display: none; }
+  #sl-counter { top: 76px; right: 18px; }
+  #sl-cur  { font-size: 28px; }
+  #sl-tot  { font-size: 14px; }
+  .sl-title { font-size: clamp(36px, 10vw, 58px); }
+  .sl-cat   { font-size: 9px; letter-spacing: .28em; }
+  .sl-body  { bottom: 72px; }
+}
+@media (max-width: 480px) {
+  .sl-title { font-size: clamp(32px, 11vw, 48px); }
+}
+
+/* ══════════════════════════════════════
+   ABOUT
+══════════════════════════════════════ */
+#about {
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 100vh; background: var(--black);
+}
+@media(max-width:860px) { #about { grid-template-columns: 1fr; } }
+
+.about-visual {
+  position: relative; overflow: hidden; min-height: 50vh;
+}
+.about-visual img {
+  width: 100%; height: 100%; object-fit: cover; object-position: top;
+  filter: grayscale(15%);
+}
+.about-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 25%, rgba(4,8,16,.65) 70%, rgba(4,8,16,.97) 100%);
+}
+.about-spotlight {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 38%, rgba(201,162,39,.09) 0%, transparent 55%);
+}
+/* Letterbox bars */
+.about-visual::before,
+.about-visual::after {
+  content: ''; position: absolute; left: 0; right: 0;
+  height: clamp(18px,3vh,40px); background: #000; z-index: 2;
+}
+.about-visual::before { top: 0; }
+.about-visual::after  { bottom: 0; }
+
+.about-copy {
+  padding: clamp(56px,7vh,100px) clamp(32px,5vw,72px);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.stats-row { display: flex; gap: 36px; margin: 36px 0; }
+.stat .num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px,4.5vw,60px); color: var(--gold); line-height: 1; display: block;
+}
+.stat .lbl {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(232,244,255,.38);
+  display: block; margin-top: 5px;
+}
+.skill-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.skill-tag {
+  border: 1px solid rgba(0,200,255,.22);
+  color: rgba(0,200,255,.65); padding: 6px 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  transition: border-color .25s, color .25s;
+}
+.skill-tag:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ══════════════════════════════════════
+   CONTACT
+══════════════════════════════════════ */
+#contact {
+  background: var(--surface);
+  padding: clamp(56px,7vh,100px) clamp(20px,7vw,110px);
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+}
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(40px,6vw,96px); margin-top: 52px;
+}
+@media(max-width:768px) { .contact-grid { grid-template-columns: 1fr; } }
+
+.cinfo-item {
+  display: flex; align-items: flex-start; gap: 18px;
+  padding-bottom: 24px; margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.cinfo-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border: 1px solid rgba(0,200,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--blue);
+}
+.cinfo-lbl {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .28em;
+  text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 5px;
+}
+.cinfo-val {
+  font-size: 13px; color: rgba(232,244,255,.6); text-decoration: none; transition: color .25s;
+}
+.cinfo-val:hover { color: #fff; }
+
+/* Animated form fields */
+.ff { position: relative; margin-bottom: 30px; }
+.ff input, .ff textarea, .ff select {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+  padding: 12px 0 10px; color: var(--white);
+  font-family: 'Inter', sans-serif; font-size: 14px;
+  outline: none; transition: border-color .3s;
+  caret-color: var(--blue);
+}
+.ff select { background: var(--surface); appearance: none; }
+.ff input:focus, .ff textarea:focus, .ff select:focus {
+  border-color: rgba(0,200,255,.4);
+}
+.ff label {
+  position: absolute; top: 12px; left: 0; pointer-events: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(232,244,255,.3);
+  transition: top .22s, font-size .22s, color .22s;
+}
+.ff input:focus ~ label,
+.ff input:not(:placeholder-shown) ~ label,
+.ff textarea:focus ~ label,
+.ff textarea:not(:placeholder-shown) ~ label {
+  top: -17px; font-size: 9px; color: var(--blue);
+}
+.ff-line {
+  position: absolute; bottom: 0; left: 0;
+  height: 1px; width: 0;
+  background: var(--blue); box-shadow: 0 0 8px rgba(0,200,255,.55);
+  transition: width .38s cubic-bezier(.25,.46,.45,.94);
+}
+.ff input:focus ~ .ff-line,
+.ff textarea:focus ~ .ff-line { width: 100%; }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer {
+  background: #000;
+  padding: 44px clamp(20px,5vw,80px);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 18px; border-top: 1px solid rgba(255,255,255,.04);
+}
+.foot-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.foot-logo .mark {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg,#0055CC,#00C8FF);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: #040810;
+}
+.foot-logo span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 15px; letter-spacing: .15em; color: rgba(232,244,255,.4);
+}
+footer .copy {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; letter-spacing: .18em; color: rgba(232,244,255,.22);
+  text-transform: uppercase;
+}
+footer .socials { display: flex; gap: 18px; }
+footer .socials a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(232,244,255,.28); text-decoration: none; transition: color .25s;
+}
+footer .socials a:hover { color: var(--blue); }
+
+/* ══════════════════════════════════════
+   SOUND BUTTON
+══════════════════════════════════════ */
+#snd-btn {
+  position: fixed; bottom: 26px; right: 26px; z-index: 500;
+  width: 42px; height: 42px;
+  border: 1px solid rgba(0,200,255,.25);
+  background: rgba(4,8,16,.82);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: none; transition: border-color .25s;
+}
+#snd-btn:hover, #snd-btn.on { border-color: var(--blue); }
+#snd-btn svg { color: rgba(232,244,255,.4); transition: color .25s; }
+#snd-btn:hover svg, #snd-btn.on svg { color: var(--blue); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE NAV
+══════════════════════════════════════ */
+@media(max-width:768px) {
+  #nav-links { display: none; }
+  .nav-cta    { display: none; }
+  #hamburger  { display: flex; }
+}
+
+/* ══════════════════════════════════════
+   WIPE TRANSITION OVERLAY
+══════════════════════════════════════ */
+#wipe {
+  position: fixed; inset: 0; background: #000; z-index: 99980;
+  clip-path: inset(50% 0 50% 0); pointer-events: none;
+}
+
+/* ══════════════════════════════════════
+   MOBILE RESPONSIVE
+══════════════════════════════════════ */
+
+/* Tablet — 768px */
+@media (max-width: 768px) {
+  /* Restore system cursor on small screens (JS also handles this) */
+  body { cursor: auto !important; }
+
+  /* Loader */
+  #ld-logo .main { font-size: clamp(44px, 14vw, 80px); }
+  #ld-logo .sub  { font-size: 9px; letter-spacing: .28em; }
+  .ld-count      { font-size: clamp(100px, 30vw, 180px); }
+
+  /* Nav */
+  #nav { height: 60px; }
+  .nav-cta    { display: none !important; }
+  #nav-links  { display: none !important; }
+
+  /* Hero */
+  #hero-inner { padding: 0 24px; padding-top: 60px; }
+  .hero-word   { font-size: clamp(52px, 12vw, 96px); }
+  .hero-sub    { font-size: 14px; margin-top: 18px; max-width: 100%; }
+  .hero-ctas   { margin-top: 24px; gap: 10px; }
+  .btn-fill, .btn-ghost { padding: 12px 24px; font-size: 9px; }
+  #scroll-cue  { bottom: 24px; }
+
+  /* Portfolio */
+  #portfolio { padding: 40px 20px; }
+  .port-head  { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+  .port-head .btn-ghost { display: none; }
+  .sec-title  { font-size: clamp(36px, 8vw, 56px); }
+
+  /* About */
+  #about { grid-template-columns: 1fr; }
+  .about-visual { min-height: 45vh; }
+  .about-copy   { padding: 40px 24px; }
+  .stats-row    { gap: 24px; }
+
+  /* Contact */
+  #contact { padding: 48px 20px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 36px; margin-top: 32px; }
+  #ct-title { font-size: clamp(36px, 9vw, 64px); }
+
+  /* Footer */
+  footer { flex-direction: column; text-align: center; padding: 32px 20px; gap: 12px; }
+  footer .socials { justify-content: center; }
+
+  /* Form two-column → one */
+  #cform > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
   }
-  .cinematic-grain {
-    pointer-events: none; position: fixed; top:0; left:0;
-    width:100%; height:100%; z-index:9999; opacity:0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-  }
-  .glass-card {
-    background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  .marquee-container { overflow:hidden; white-space:nowrap; }
-  .marquee-content { display:inline-block; animation: marquee 30s linear infinite; }
-  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-  .glow-blue { box-shadow: 0 0 28px rgba(0,200,255,0.35), 0 0 50px rgba(0,85,204,0.15); }
-  .watermark { opacity:0.18; mix-blend-mode:screen; pointer-events:none; }
-  .no-scrollbar::-webkit-scrollbar { display:none; }
-  .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
-  .reveal { opacity:0; transform:translateY(24px); transition:opacity .8s ease,transform .8s ease; }
-  .reveal.on { opacity:1; transform:translateY(0); }
-  #mobile-menu { display:none; }
-  #mobile-menu.open { display:flex; }
-  /* LIGHTBOX */
-  #lightbox {
-    display:none; position:fixed; inset:0; z-index:99999;
-    background:rgba(4,8,16,0.96); backdrop-filter:blur(12px);
-    align-items:center; justify-content:center;
-  }
-  #lightbox.open { display:flex; }
-  #lightbox img { max-width:88vw; max-height:82vh; object-fit:contain; border:1px solid rgba(0,200,255,0.2); box-shadow:0 0 60px rgba(0,200,255,0.15); }
-  .lb-btn {
-    position:absolute; top:50%; transform:translateY(-50%);
-    background:rgba(0,85,204,0.4); border:1px solid rgba(0,200,255,0.3);
-    color:#00C8FF; width:48px; height:48px;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:1.5rem; transition:background .2s;
-  }
-  .lb-btn:hover { background:rgba(0,85,204,0.8); }
-  #lb-prev { left:8px; }
-  #lb-next { right:8px; }
-  #lb-close {
-    position:absolute; top:16px; right:16px;
-    background:rgba(0,85,204,0.4); border:1px solid rgba(0,200,255,0.3);
-    color:#00C8FF; width:44px; height:44px;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:1.2rem; transition:background .2s;
-  }
-  #lb-close:hover { background:rgba(0,85,204,0.8); }
-  #lb-counter { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); color:rgba(232,244,255,0.5); font-size:0.75rem; letter-spacing:0.15em; }
-  #lb-title { position:absolute; top:20px; left:50%; transform:translateX(-50%); color:#00C8FF; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; font-weight:700; white-space:nowrap; }
+
+  /* Sound btn */
+  #snd-btn { bottom: 18px; right: 18px; width: 38px; height: 38px; }
+}
+
+/* Phone — 480px */
+@media (max-width: 480px) {
+  .hero-word   { font-size: clamp(44px, 13vw, 68px); }
+  .hero-eyebrow { font-size: 9px; letter-spacing: .28em; }
+  .eyebrow     { font-size: 9px; letter-spacing: .28em; }
+  .stats-row   { gap: 16px; }
+  .stat .num   { font-size: 40px; }
+  .skill-wrap  { gap: 6px; }
+  .skill-tag   { padding: 5px 11px; font-size: 8px; }
+  #contact { padding: 40px 16px; }
+  #portfolio { padding: 36px 16px; }
+  .about-copy { padding: 32px 16px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide.active { animation: none !important; }
+  .mq-track { animation: none; }
+  .scroll-line { animation: none; }
+}
 </style>
-<script>
-  tailwind.config = {
-    darkMode:"class",
-    theme:{extend:{
-      colors:{
-        "primary":"#00C8FF","secondary":"#0055CC","background":"#040810",
-        "on-surface":"#E8F4FF","surface-container":"#070d1e",
-        "outline":"#1e4060","surface-container-lowest":"#050a14"
-      }
-    }}
-  }
-</script>
 </head>
 
-<body class="max-w-[1440px] mx-auto overflow-x-hidden">
-<div class="cinematic-grain"></div>
+<body>
 
-<!-- LIGHTBOX -->
-<div id="lightbox">
-  <div id="lb-title"></div>
-  <button class="lb-btn" id="lb-prev">&#8249;</button>
-  <img id="lb-img" src="" alt=""/>
-  <button class="lb-btn" id="lb-next">&#8250;</button>
-  <div id="lb-counter"></div>
-  <button id="lb-close">&#10005;</button>
+<!-- ──────── UTILS ──────── -->
+<div id="progress"></div>
+<div class="grain"></div>
+
+<!-- ──────── CAMERA VIEWFINDER CURSOR ──────── -->
+<svg id="cursor-svg" width="60" height="60" viewBox="-30 -30 60 60" xmlns="http://www.w3.org/2000/svg">
+  <g id="cur-group">
+    <!-- Outer circle -->
+    <circle id="cur-circle" cx="0" cy="0" r="16" fill="none" stroke="#00C8FF" stroke-width="1"/>
+    <!-- Crosshair horizontal -->
+    <line id="cur-h" x1="-26" y1="0" x2="-19" y2="0" stroke="#00C8FF" stroke-width="1"/>
+    <line id="cur-h2" x1="19"  y1="0" x2="26"  y2="0" stroke="#00C8FF" stroke-width="1"/>
+    <!-- Crosshair vertical -->
+    <line id="cur-v"  x1="0" y1="-26" x2="0" y2="-19" stroke="#00C8FF" stroke-width="1"/>
+    <line id="cur-v2" x1="0" y1="19"  x2="0" y2="26"  stroke="#00C8FF" stroke-width="1"/>
+    <!-- Center dot -->
+    <circle id="cur-center" cx="0" cy="0" r="2" fill="#00C8FF"/>
+  </g>
+</svg>
+
+<!-- ──────── LOADING SCREEN ──────── -->
+<div id="loader">
+  <div class="film-scanlines"></div>
+  <div class="ld-count" id="lc3">3</div>
+  <div class="ld-count" id="lc2">2</div>
+  <div class="ld-count" id="lc1">1</div>
+  <div id="ld-logo">
+    <span class="main">ANANÁ</span>
+    <span class="sub">Producciones EC &nbsp;·&nbsp; Quito, Ecuador</span>
+    <div id="ld-line"></div>
+  </div>
+</div>
+<div id="shutter">
+  <div class="sh-panel" id="sh-l"></div>
+  <div class="sh-panel" id="sh-r"></div>
 </div>
 
-<!-- ══ NAV ══ -->
-<header id="navbar" class="fixed top-0 w-full z-50 flex justify-between items-center px-6 lg:px-20 h-20 bg-[#040810]/80 backdrop-blur-xl border-b border-[#0055CC]/10 transition-all duration-300">
-  <div class="flex items-center gap-3">
-    <div class="w-9 h-9 rounded-sm flex items-center justify-center font-black text-white text-lg" style="background:linear-gradient(135deg,#0055CC,#00C8FF)">A</div>
-    <span class="font-black text-[#00C8FF] text-base lg:text-xl">Ananá Producciones EC</span>
+<!-- ──────── WIPE OVERLAY ──────── -->
+<div id="wipe"></div>
+
+<!-- ──────── MOBILE MENU ──────── -->
+<div id="mob-menu">
+  <a href="#hero"      onclick="closeMob()">INICIO</a>
+  <a href="#portfolio" onclick="closeMob()">PORTAFOLIO</a>
+  <a href="#about"     onclick="closeMob()">ACERCA</a>
+  <a href="#contact"   onclick="closeMob()">CONTACTO</a>
+  <span class="mob-contact">ananaproducciones.ec@gmail.com</span>
+</div>
+
+<!-- ──────── NAV ──────── -->
+<header id="nav">
+  <a href="#hero" class="nav-logo">ANANÁ <em>PRODUCCIONES</em></a>
+  <div id="nav-links">
+    <a href="#portfolio">Portafolio</a>
+    <a href="#about">Acerca</a>
+    <a href="#contact">Contacto</a>
   </div>
-  <nav class="hidden lg:flex gap-8 items-center">
-    <a class="text-[#00C8FF] font-bold border-b-2 border-[#00C8FF] pb-1 text-sm" href="#inicio">Inicio</a>
-    <a class="text-[#E8F4FF]/70 hover:text-[#0055CC] transition-colors text-sm" href="#portafolio">Portafolio</a>
-    <a class="text-[#E8F4FF]/70 hover:text-[#0055CC] transition-colors text-sm" href="#acerca">Acerca de</a>
-    <a class="text-[#E8F4FF]/70 hover:text-[#0055CC] transition-colors text-sm" href="#contacto">Contacto</a>
-  </nav>
-  <a href="#contacto" class="hidden lg:block bg-[#00C8FF] text-[#040810] px-6 py-2 font-bold hover:scale-95 transition-transform glow-blue text-sm">Contáctame</a>
-  <button id="hamburger" class="lg:hidden flex flex-col gap-1.5 p-2" aria-label="Menú">
-    <span class="w-6 h-0.5 bg-[#00C8FF] block"></span>
-    <span class="w-6 h-0.5 bg-[#00C8FF] block"></span>
-    <span class="w-6 h-0.5 bg-[#00C8FF] block"></span>
+  <a href="mailto:ananaproducciones.ec@gmail.com" class="nav-cta">Iniciar Proyecto</a>
+  <button id="hamburger" onclick="toggleMob()" aria-label="Menú">
+    <span></span><span></span><span></span>
   </button>
 </header>
 
-<!-- Mobile menu -->
-<div id="mobile-menu" class="fixed top-20 left-0 w-full z-40 flex-col bg-[#040810] backdrop-blur-xl border-b border-[#0055CC]/20 px-6 py-6 gap-5">
-  <a class="text-[#00C8FF] font-bold text-lg border-b border-[#0055CC]/10 pb-4" href="#inicio" onclick="closeMobileMenu()">Inicio</a>
-  <a class="text-[#E8F4FF]/70 text-lg border-b border-[#0055CC]/10 pb-4" href="#portafolio" onclick="closeMobileMenu()">Portafolio</a>
-  <a class="text-[#E8F4FF]/70 text-lg border-b border-[#0055CC]/10 pb-4" href="#acerca" onclick="closeMobileMenu()">Acerca de</a>
-  <a class="text-[#E8F4FF]/70 text-lg pb-2" href="#contacto" onclick="closeMobileMenu()">Contacto</a>
-  <a href="#contacto" onclick="closeMobileMenu()" class="bg-[#00C8FF] text-[#040810] px-6 py-3 font-bold text-center mt-2 glow-blue block">Contáctame</a>
-</div>
-
-<!-- ══ HERO ══ -->
-<section class="relative min-h-screen pt-28 lg:pt-40 pb-20 px-6 lg:px-20 overflow-hidden" id="inicio">
-  <div class="absolute top-0 right-0 w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-  <div class="absolute bottom-0 left-0 w-[200px] lg:w-[400px] h-[200px] lg:h-[400px] bg-blue-700/10 rounded-full blur-[100px] pointer-events-none"></div>
-
-  <div class="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-10 lg:gap-6 items-center relative z-10">
-    <div class="lg:col-span-7">
-      <span class="inline-block px-3 py-1 border border-[#0055CC]/30 text-[#0055CC] text-xs font-bold tracking-widest uppercase mb-5 bg-[#0055CC]/5">Quito, Ecuador · Producción Independiente</span>
-      <h1 class="font-black text-4xl sm:text-5xl lg:text-[80px] leading-[1.1] tracking-tight mb-6" style="font-family:'Montserrat',sans-serif">
-        Producción Visual que <span class="text-[#0055CC]">Conecta</span> y <span class="text-[#00C8FF]">Transforma</span>
-      </h1>
-      <p class="text-base lg:text-lg text-[#E8F4FF]/80 mb-8 max-w-xl leading-relaxed">
-        Joseph Calvopiña — Comunicador Cultural & Estratega Visual dedicado a elevar marcas a través del storytelling cinematográfico desde Quito, Ecuador.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 mb-10">
-        <a href="#portafolio" class="bg-[#00C8FF] text-[#040810] px-8 py-4 font-bold text-base glow-blue flex items-center justify-center gap-2 hover:scale-105 transition-transform">
-          Ver Portafolio <span class="material-symbols-outlined text-base">arrow_forward</span>
-        </a>
-        <a href="#contacto" class="border border-[#0055CC] text-[#0055CC] px-8 py-4 font-bold text-base flex items-center justify-center gap-2 hover:bg-[#0055CC]/10 transition-all">
-          <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1">play_circle</span>
-          Hablemos
-        </a>
-      </div>
-      <div class="flex gap-8 border-t border-white/10 pt-8">
-        <div><div class="text-[#00C8FF] font-black text-3xl lg:text-4xl">7+</div><div class="text-xs uppercase tracking-widest text-[#E8F4FF]/50 mt-1">Proyectos</div></div>
-        <div><div class="text-[#00C8FF] font-black text-3xl lg:text-4xl">5+</div><div class="text-xs uppercase tracking-widest text-[#E8F4FF]/50 mt-1">Años Exp.</div></div>
-        <div><div class="text-[#00C8FF] font-black text-3xl lg:text-4xl">100%</div><div class="text-xs uppercase tracking-widest text-[#E8F4FF]/50 mt-1">Independiente</div></div>
-      </div>
+<!-- ════════════════════════════════════════
+     §1  HERO
+════════════════════════════════════════ -->
+<section id="hero" class="snap">
+  <!-- Ken Burns slideshow inside parallax wrapper -->
+  <div id="hero-parallax">
+    <div id="hero-slides">
+      <div class="hero-slide kb-1"></div>
+      <div class="hero-slide kb-2"></div>
+      <div class="hero-slide kb-3"></div>
+      <div class="hero-slide kb-4"></div>
     </div>
-    <div class="lg:col-span-5 relative group w-full max-w-xs mx-auto lg:max-w-none">
-      <div class="absolute -inset-4 bg-gradient-to-tr from-[#0055CC]/20 via-[#00C8FF]/10 to-[#0055CC]/20 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
-      <div class="relative aspect-[3/4] w-full glass-card overflow-hidden glow-blue p-1">
-        <img src="img/perfil.jpg" alt="Joseph Calvopiña" class="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"/>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#040810] via-[#040810]/10 to-transparent"></div>
-        <div class="absolute bottom-6 left-6">
-          <div class="text-[#0055CC] font-bold text-sm lg:text-base uppercase tracking-tighter">Ananá Producciones EC</div>
-          <div class="text-[#E8F4FF] text-xs opacity-70">Quito, Ecuador</div>
-        </div>
-      </div>
-    </div>
+    <div id="shutter-flash"></div>
   </div>
-</section>
+  <div class="hero-ov"></div>
+  <div class="hero-scanlines"></div>
 
-<!-- ══ MARQUEE ══ -->
-<div class="py-4 marquee-container" style="background:linear-gradient(90deg,#040810,#0055CC,#00C8FF,#0055CC,#040810)">
-  <div class="marquee-content flex gap-8 lg:gap-12 items-center text-white font-black text-lg lg:text-2xl uppercase italic" style="text-shadow:0 0 20px rgba(0,200,255,0.8)">
-    <span>Producción Audiovisual</span><span class="opacity-30">·</span>
-    <span>Publicidad Digital</span><span class="opacity-30">·</span>
-    <span>Diseño Multimedia</span><span class="opacity-30">·</span>
-    <span>Arte & Cultura</span><span class="opacity-30">·</span>
-    <span>Dirección Creativa</span><span class="opacity-30">·</span>
-    <span>Producción Audiovisual</span><span class="opacity-30">·</span>
-    <span>Publicidad Digital</span><span class="opacity-30">·</span>
-    <span>Diseño Multimedia</span><span class="opacity-30">·</span>
-    <span>Arte & Cultura</span><span class="opacity-30">·</span>
-    <span>Dirección Creativa</span><span class="opacity-30">·</span>
-  </div>
-</div>
+  <div id="hero-inner">
+    <span class="hero-eyebrow" id="h-eyebrow">Quito, Ecuador · Producción Independiente</span>
 
-<!-- ══ PORTAFOLIO ══ -->
-<section class="py-16 lg:py-32 bg-[#050a14]" id="portafolio">
-  <div class="px-6 lg:px-20 mb-10 lg:mb-16 flex justify-between items-end reveal">
     <div>
-      <span class="text-[#0055CC] text-xs font-bold tracking-widest uppercase">Portafolio</span>
-      <h2 class="font-black text-3xl lg:text-[48px] mt-2 mb-4 italic leading-tight" style="font-family:'Montserrat',sans-serif">Proyectos Destacados</h2>
-      <div class="w-32 lg:w-40 h-1 bg-[#0055CC] glow-blue"></div>
+      <div class="hero-line"><span class="hero-word" id="hw0">PRODUCCIÓN</span></div>
+      <div class="hero-line"><span class="hero-word hw-blue" id="hw1">VISUAL</span></div>
+      <div class="hero-line"><span class="hero-word" id="hw2">QUE <span class="hw-gold">CONECTA</span></span></div>
     </div>
-    <div class="flex gap-3">
-      <button id="prev-btn" class="w-10 h-10 lg:w-12 lg:h-12 border border-[#1e4060] rounded-full flex items-center justify-center hover:bg-[#0055CC] hover:text-white hover:border-[#0055CC] transition-all">
-        <span class="material-symbols-outlined text-base">chevron_left</span>
-      </button>
-      <button id="next-btn" class="w-10 h-10 lg:w-12 lg:h-12 border border-[#1e4060] rounded-full flex items-center justify-center hover:bg-[#0055CC] hover:text-white hover:border-[#0055CC] transition-all">
-        <span class="material-symbols-outlined text-base">chevron_right</span>
-      </button>
+
+    <p class="hero-sub" id="h-sub">
+      Joseph Calvopiña — Comunicador Cultural &amp; Estratega Visual.
+      Storytelling cinematográfico que eleva marcas desde Quito.
+    </p>
+
+    <div class="hero-ctas" id="h-ctas">
+      <a href="#portfolio" class="btn-fill">Ver Portafolio <span>→</span></a>
+      <a href="#contact"   class="btn-ghost">Hablemos</a>
     </div>
   </div>
 
-  <div id="carousel" class="flex gap-5 lg:gap-8 overflow-x-auto no-scrollbar px-6 lg:px-20 pb-8 reveal" style="height: auto;">
-
-    <div style="min-width:280px; width:280px; height:380px;" class="relative group overflow-hidden border border-[#0055CC]/20 hover:glow-blue transition-all flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=poder&n=Poder%20de%20la%20Forma&c=Dise%C3%B1o%20Visual&t=7'">
-      <img src="img/poder.jpg" alt="Poder de la Forma" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Diseño Visual</p>
-        <h3 class="font-bold text-lg leading-none mb-3">Poder de la Forma</h3>
-        <span class="flex items-center gap-2 text-[#0055CC] font-bold text-sm">Ver Galería <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
-      </div>
-    </div>
-
-    <div style="min-width:280px; width:280px; height:380px;" class="relative group overflow-hidden border border-[#0055CC]/20 hover:glow-blue transition-all flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=intensidad&n=Intensidad%20Pura&c=Audiovisual&t=5'">
-      <img src="img/intensidad.jpg" alt="Intensidad Pura" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Audiovisual</p>
-        <h3 class="font-bold text-lg leading-none mb-3">Intensidad Pura</h3>
-        <span class="flex items-center gap-2 text-[#0055CC] font-bold text-sm">Ver Galería <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
-      </div>
-    </div>
-
-    <div style="min-width:320px; width:320px; height:380px;" class="relative group overflow-hidden border-2 border-[#0055CC]/40 glow-blue flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=alquimia&n=Alquimia%20Moderna&c=Destacado&t=7'">
-      <img src="img/alquimia.jpg" alt="Alquimia Moderna" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6 right-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Destacado</p>
-        <h3 class="font-bold text-lg leading-none mb-2">Alquimia Moderna</h3>
-        <p class="text-xs text-[#E8F4FF]/70 mb-3">Exploración visual y narrativa experimental.</p>
-        <span class="inline-block px-5 py-2 bg-[#0055CC] text-white font-bold text-sm">Ver Galería</span>
-      </div>
-    </div>
-
-    <div style="min-width:280px; width:280px; height:380px;" class="relative group overflow-hidden border border-[#0055CC]/20 hover:glow-blue transition-all flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=susurros&n=Susurros%20%26%20Miradas&c=Fotograf%C3%ADa&t=8'">
-      <img src="img/susurros.jpg" alt="Susurros & Miradas" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Fotografía</p>
-        <h3 class="font-bold text-lg leading-none mb-3">Susurros & Miradas</h3>
-        <span class="flex items-center gap-2 text-[#0055CC] font-bold text-sm">Ver Galería <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
-      </div>
-    </div>
-
-    <div style="min-width:280px; width:280px; height:380px;" class="relative group overflow-hidden border border-[#0055CC]/20 hover:glow-blue transition-all flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=marcas&n=Marcas%20Asociadas&c=Branding&t=9'">
-      <img src="img/marcas.jpg" alt="Marcas Asociadas" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Branding</p>
-        <h3 class="font-bold text-lg leading-none mb-3">Marcas Asociadas</h3>
-        <span class="flex items-center gap-2 text-[#0055CC] font-bold text-sm">Ver Galería <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
-      </div>
-    </div>
-
-    <div style="min-width:280px; width:280px; height:380px;" class="relative group overflow-hidden border border-[#0055CC]/20 hover:glow-blue transition-all flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=tejido&n=El%20Tejido%20de%20una%20Comunidad&c=Cultural&t=10'">
-      <img src="img/tejido.jpg" alt="El Tejido de una Comunidad" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Cultural</p>
-        <h3 class="font-bold text-lg leading-none mb-3">El Tejido de una Comunidad</h3>
-        <span class="flex items-center gap-2 text-[#0055CC] font-bold text-sm">Ver Galería <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
-      </div>
-    </div>
-
-    <div style="min-width:280px; width:280px; height:380px;" class="relative group overflow-hidden border border-[#0055CC]/20 hover:glow-blue transition-all flex-shrink-0 cursor-pointer" onclick="location.href='galeria.html?p=anonimos&n=An%C3%B3nimos%20Urbanos&c=Documental&t=11'">
-      <img src="img/anonimos.jpg" alt="Anónimos Urbanos" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-      <div class="absolute top-4 right-4 w-7 h-7 watermark bg-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-xs">A</div>
-      <div class="absolute bottom-6 left-6">
-        <p class="text-[#00C8FF] text-xs mb-2 uppercase tracking-widest font-bold">Documental</p>
-        <h3 class="font-bold text-lg leading-none mb-3">Anónimos Urbanos</h3>
-        <span class="flex items-center gap-2 text-[#0055CC] font-bold text-sm">Ver Galería <span class="material-symbols-outlined text-sm">arrow_outward</span></span>
-      </div>
-    </div>
-
+  <div id="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
   </div>
 </section>
 
-<!-- ══ ACERCA DE ══ -->
-<section class="py-16 lg:py-32 bg-[#070d1e]" id="acerca">
-  <div class="px-6 lg:px-20">
-    <div class="flex flex-col lg:grid lg:grid-cols-12 gap-10 lg:gap-6 items-center">
-      <div class="lg:col-span-5 reveal w-full max-w-sm mx-auto lg:max-w-none">
-        <div class="relative">
-          <div class="aspect-square lg:aspect-square w-full border-4 border-[#00C8FF] p-3 glow-blue">
-            <img src="img/perfil.jpg" alt="Joseph Calvopiña" class="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-700"/>
-          </div>
-        </div>
-      </div>
-      <div class="lg:col-span-7 lg:pl-10 reveal">
-        <span class="text-[#0055CC] text-xs font-bold tracking-widest uppercase">Acerca de mí</span>
-        <h2 class="font-black text-3xl lg:text-[48px] mt-3 mb-6 italic leading-tight" style="font-family:'Montserrat',sans-serif">
-          El Estratega detrás del <span class="text-[#00C8FF]">Lente</span>
-        </h2>
-        <div class="text-base lg:text-lg text-[#E8F4FF]/80 space-y-4 mb-8 leading-relaxed">
-          <p>Soy Joseph Calvopiña, comunicador especializado en arte y cultura. Con años de experiencia diseñando creativas para niños y adolescentes, fusiono el mundo artístico con estrategias de comunicación moderna.</p>
-          <p>En Ananá Producciones EC, mi misión es convertir la esencia del arte y la cultura en narrativas digitales impactantes. Mi dominio abarca la publicidad en redes sociales, la producción audiovisual y el diseño multimedia.</p>
-        </div>
-        <div class="flex flex-wrap gap-2 mb-8">
-          <span class="px-4 py-2 border border-[#0055CC] text-[#0055CC] rounded-full text-xs font-bold uppercase tracking-widest">Dirección Creativa</span>
-          <span class="px-4 py-2 border border-[#0055CC] text-[#0055CC] rounded-full text-xs font-bold uppercase tracking-widest">Producción Audiovisual</span>
-          <span class="px-4 py-2 border border-[#0055CC] text-[#0055CC] rounded-full text-xs font-bold uppercase tracking-widest">Publicidad Digital</span>
-          <span class="px-4 py-2 border border-[#0055CC] text-[#0055CC] rounded-full text-xs font-bold uppercase tracking-widest">Gestión Cultural</span>
-          <span class="px-4 py-2 border border-[#0055CC] text-[#0055CC] rounded-full text-xs font-bold uppercase tracking-widest">Diseño Multimedia</span>
-          <span class="px-4 py-2 border border-[#0055CC] text-[#0055CC] rounded-full text-xs font-bold uppercase tracking-widest">Storytelling</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="p-5 glass-card">
-            <p class="text-[#00C8FF] font-bold mb-2 italic text-sm">Misión</p>
-            <p class="text-sm text-[#E8F4FF]/70">Digitalizar la esencia de cada historia con calidad cinematográfica auténtica desde Quito.</p>
-          </div>
-          <div class="p-5 glass-card">
-            <p class="text-[#0055CC] font-bold mb-2 italic text-sm">Estilo</p>
-            <p class="text-sm text-[#E8F4FF]/70">Minimalista, vibrante y centrado en el impacto emocional.</p>
-          </div>
-        </div>
-      </div>
+<!-- ════════════════════════════════════════
+     MARQUEE STRIP
+════════════════════════════════════════ -->
+<div id="marquee">
+  <div class="mq-track">
+    <span>Producción Audiovisual</span><span class="mq-dot">·</span>
+    <span>Publicidad Digital</span><span class="mq-dot">·</span>
+    <span>Diseño Multimedia</span><span class="mq-dot">·</span>
+    <span>Arte &amp; Cultura</span><span class="mq-dot">·</span>
+    <span>Dirección Creativa</span><span class="mq-dot">·</span>
+    <span>Fotografía</span><span class="mq-dot">·</span>
+    <span>Producción Audiovisual</span><span class="mq-dot">·</span>
+    <span>Publicidad Digital</span><span class="mq-dot">·</span>
+    <span>Diseño Multimedia</span><span class="mq-dot">·</span>
+    <span>Arte &amp; Cultura</span><span class="mq-dot">·</span>
+    <span>Dirección Creativa</span><span class="mq-dot">·</span>
+    <span>Fotografía</span><span class="mq-dot">·</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     §2  PORTFOLIO — CINEMATIC SLIDER
+════════════════════════════════════════ -->
+<section id="portfolio" class="snap">
+
+  <!-- SLIDE 1 -->
+  <div class="sl active" data-p="alquimia" data-n="Alquimia Moderna" data-c="Destacado" data-t="7">
+    <div class="sl-bg" style="background-image:url('img/alquimia.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Destacado</span>
+      <h2 class="sl-title">Alquimia<br/>Moderna</h2>
+      <a class="sl-link" href="galeria.html?p=alquimia&n=Alquimia%20Moderna&c=Destacado&t=7">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div class="sl" data-p="poder" data-n="Poder de la Forma" data-c="Diseño Visual" data-t="7">
+    <div class="sl-bg" style="background-image:url('img/poder.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Diseño Visual</span>
+      <h2 class="sl-title">Poder de<br/>la Forma</h2>
+      <a class="sl-link" href="galeria.html?p=poder&n=Poder%20de%20la%20Forma&c=Dise%C3%B1o%20Visual&t=7">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div class="sl" data-p="intensidad" data-n="Intensidad Pura" data-c="Audiovisual" data-t="5">
+    <div class="sl-bg" style="background-image:url('img/intensidad.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Audiovisual</span>
+      <h2 class="sl-title">Intensidad<br/>Pura</h2>
+      <a class="sl-link" href="galeria.html?p=intensidad&n=Intensidad%20Pura&c=Audiovisual&t=5">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div class="sl" data-p="susurros" data-n="Susurros y Miradas" data-c="Fotografía" data-t="8">
+    <div class="sl-bg" style="background-image:url('img/susurros.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Fotografía</span>
+      <h2 class="sl-title">Susurros<br/>y Miradas</h2>
+      <a class="sl-link" href="galeria.html?p=susurros&n=Susurros%20y%20Miradas&c=Fotograf%C3%ADa&t=8">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div class="sl" data-p="anonimos" data-n="Anónimos Urbanos" data-c="Documental" data-t="11">
+    <div class="sl-bg" style="background-image:url('img/anonimos.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Documental</span>
+      <h2 class="sl-title">Anónimos<br/>Urbanos</h2>
+      <a class="sl-link" href="galeria.html?p=anonimos&n=An%C3%B3nimos%20Urbanos&c=Documental&t=11">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 -->
+  <div class="sl" data-p="marcas" data-n="Marcas Asociadas" data-c="Branding" data-t="9">
+    <div class="sl-bg" style="background-image:url('img/marcas.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Branding</span>
+      <h2 class="sl-title">Marcas<br/>Asociadas</h2>
+      <a class="sl-link" href="galeria.html?p=marcas&n=Marcas%20Asociadas&c=Branding&t=9">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 -->
+  <div class="sl" data-p="tejido" data-n="El Tejido de una Comunidad" data-c="Cultural" data-t="10">
+    <div class="sl-bg" style="background-image:url('img/tejido.jpg')"></div>
+    <div class="sl-ov"></div>
+    <div class="sl-body">
+      <span class="sl-cat">Cultural</span>
+      <h2 class="sl-title">El Tejido de<br/>una Comunidad</h2>
+      <a class="sl-link" href="galeria.html?p=tejido&n=El%20Tejido%20de%20una%20Comunidad&c=Cultural&t=10">Ver Galería ↗</a>
+    </div>
+  </div>
+
+  <!-- Film counter -->
+  <div id="sl-counter">
+    <span id="sl-cur">01</span>
+    <span id="sl-sep">/</span>
+    <span id="sl-tot">07</span>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="sl-progress-wrap"><div id="sl-progress-bar"></div></div>
+
+  <!-- Nav arrows -->
+  <button class="sl-arrow" id="sl-prev" aria-label="Anterior">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+  </button>
+  <button class="sl-arrow" id="sl-next" aria-label="Siguiente">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </button>
+
+  <!-- Ver todos -->
+  <div id="sl-footer">
+    <a href="galeria.html">Ver todos los proyectos →</a>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════
+     §3  ABOUT
+════════════════════════════════════════ -->
+<section id="about" class="snap">
+  <div class="about-visual">
+    <img src="img/perfil.jpg" alt="Joseph Calvopiña" id="about-img"/>
+    <div class="about-vignette"></div>
+    <div class="about-spotlight"></div>
+  </div>
+
+  <div class="about-copy" id="about-copy">
+    <span class="eyebrow">Acerca de mí</span>
+    <h2 class="sec-title" style="font-size:clamp(38px,5vw,68px)">EL ESTRATEGA<br/>DETRÁS DEL <span style="color:var(--gold)">LENTE</span></h2>
+    <p style="font-size:15px; color:rgba(232,244,255,.6); line-height:1.82; margin-top:18px; max-width:460px">
+      Comunicador especializado en arte y cultura desde Quito. En Ananá Producciones EC
+      transformo esencias artísticas en narrativas digitales de alto impacto que trascienden pantallas.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat"><span class="num" data-target="7">0</span><span class="lbl">Proyectos</span></div>
+      <div class="stat"><span class="num" data-target="5">0</span><span class="lbl">Años Exp.</span></div>
+      <div class="stat"><span class="num" data-target="100" data-suffix="%">0</span><span class="lbl">Independiente</span></div>
+    </div>
+
+    <div class="skill-wrap">
+      <span class="skill-tag">Dirección Creativa</span>
+      <span class="skill-tag">Prod. Audiovisual</span>
+      <span class="skill-tag">Publicidad Digital</span>
+      <span class="skill-tag">Gestión Cultural</span>
+      <span class="skill-tag">Diseño Multimedia</span>
+      <span class="skill-tag">Storytelling</span>
     </div>
   </div>
 </section>
 
-<!-- ══ CONTACTO ══ -->
-<section class="py-16 lg:py-32 px-6 lg:px-20" id="contacto">
-  <div class="relative glass-card p-8 lg:p-16 text-center border border-[#00C8FF]/20 overflow-hidden mb-12 lg:mb-20 reveal glow-blue" style="background:linear-gradient(135deg,rgba(0,85,204,0.12),rgba(0,200,255,0.04))">
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#0055CC] to-transparent opacity-50"></div>
-    <h2 class="font-black text-3xl lg:text-[48px] mb-4 italic leading-tight" style="font-family:'Montserrat',sans-serif">¿Tienes un proyecto en <span class="text-[#00C8FF]">mente?</span></h2>
-    <p class="text-[#E8F4FF]/60 text-base lg:text-lg mb-8 max-w-2xl mx-auto">Hagamos que tus ideas cobren vida con una producción audiovisual de alto impacto desde Quito.</p>
-    <a href="mailto:ananaproducciones.ec@gmail.com" class="inline-block bg-[#00C8FF] text-[#040810] px-10 lg:px-14 py-4 font-black text-lg glow-blue hover:scale-105 transition-transform">
-      Iniciar Proyecto →
-    </a>
-  </div>
+<!-- ════════════════════════════════════════
+     §4  CONTACT
+════════════════════════════════════════ -->
+<section id="contact" class="snap">
+  <span class="eyebrow">Contacto</span>
+  <h2 class="sec-title" id="ct-title">¿TIENES UN<br/><span style="color:var(--blue)">PROYECTO</span>?</h2>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-    <div class="reveal">
-      <span class="text-[#0055CC] text-xs font-bold tracking-widest uppercase">Contacto Directo</span>
-      <h3 class="font-bold text-2xl lg:text-3xl mt-3 mb-6 italic" style="font-family:'Montserrat',sans-serif">Hablemos de tu<br/><span class="text-[#00C8FF]">próximo proyecto</span></h3>
-      <div class="space-y-4 mb-8">
-        <div class="flex items-center gap-4 p-4 glass-card">
-          <div class="w-11 h-11 bg-[#0055CC]/10 border border-[#0055CC]/20 flex items-center justify-center text-[#0055CC] flex-shrink-0">
-            <span class="material-symbols-outlined text-lg">mail</span>
-          </div>
-          <div>
-            <p class="text-xs text-[#0055CC] font-bold uppercase tracking-widest mb-1">Email</p>
-            <a href="mailto:ananaproducciones.ec@gmail.com" class="text-[#E8F4FF]/70 hover:text-white transition-colors text-sm break-all">ananaproducciones.ec@gmail.com</a>
-          </div>
-        </div>
-        <div class="flex items-center gap-4 p-4 glass-card">
-          <div class="w-11 h-11 bg-[#00C8FF]/10 border border-[#00C8FF]/20 flex items-center justify-center text-[#00C8FF] flex-shrink-0">
-            <span class="material-symbols-outlined text-lg">call</span>
-          </div>
-          <div>
-            <p class="text-xs text-[#00C8FF] font-bold uppercase tracking-widest mb-1">WhatsApp / Teléfono</p>
-            <a href="tel:+593984082216" class="text-[#E8F4FF]/70 hover:text-white transition-colors text-sm">+593 98 408 2216</a>
-          </div>
-        </div>
-        <div class="flex items-center gap-4 p-4 glass-card">
-          <div class="w-11 h-11 bg-[#0055CC]/10 border border-[#0055CC]/20 flex items-center justify-center text-[#0055CC] flex-shrink-0">
-            <span class="material-symbols-outlined text-lg">location_on</span>
-          </div>
-          <div>
-            <p class="text-xs text-[#0055CC] font-bold uppercase tracking-widest mb-1">Ubicación</p>
-            <p class="text-[#E8F4FF]/70 text-sm">Quito, Ecuador · Disponible remotamente</p>
-          </div>
+  <div class="contact-grid">
+    <!-- Info -->
+    <div>
+      <p style="font-size:15px; color:rgba(232,244,255,.5); line-height:1.82; margin-bottom:36px; max-width:380px">
+        Hagamos que tus ideas cobren vida con una producción audiovisual de alto impacto.
+        Disponible remotamente desde Quito.
+      </p>
+      <div class="cinfo-item">
+        <div class="cinfo-icon">✉</div>
+        <div>
+          <span class="cinfo-lbl">Email</span>
+          <a href="mailto:ananaproducciones.ec@gmail.com" class="cinfo-val">ananaproducciones.ec@gmail.com</a>
         </div>
       </div>
-      <div class="flex gap-3">
-        <a href="https://www.facebook.com/ananaprodec" target="_blank" class="w-11 h-11 border border-[#1e4060]/40 flex items-center justify-center text-[#E8F4FF]/50 hover:text-[#00C8FF] hover:border-[#00C8FF] transition-all font-bold text-xs">FB</a>
-        <a href="https://www.instagram.com/anana_producciones.ec" target="_blank" class="w-11 h-11 border border-[#1e4060]/40 flex items-center justify-center text-[#E8F4FF]/50 hover:text-[#00C8FF] hover:border-[#00C8FF] transition-all font-bold text-xs">IG</a>
-        <a href="#" class="w-11 h-11 border border-[#1e4060]/40 flex items-center justify-center text-[#E8F4FF]/50 hover:text-[#0055CC] hover:border-[#0055CC] transition-all font-bold text-xs">TK</a>
-        <a href="#" class="w-11 h-11 border border-[#1e4060]/40 flex items-center justify-center text-[#E8F4FF]/50 hover:text-red-500 hover:border-red-500 transition-all font-bold text-xs">YT</a>
+      <div class="cinfo-item">
+        <div class="cinfo-icon">☎</div>
+        <div>
+          <span class="cinfo-lbl">WhatsApp</span>
+          <a href="tel:+593984082216" class="cinfo-val">+593 98 408 2216</a>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:28px">
+        <a href="https://www.facebook.com/ananaprodec" target="_blank"
+           style="width:38px;height:38px;border:1px solid rgba(232,244,255,.12);
+                  display:flex;align-items:center;justify-content:center;
+                  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+                  color:rgba(232,244,255,.35);text-decoration:none;transition:border-color .25s,color .25s"
+           onmouseover="this.style.color='var(--blue)';this.style.borderColor='var(--blue)'"
+           onmouseout="this.style.color='rgba(232,244,255,.35)';this.style.borderColor='rgba(232,244,255,.12)'">FB</a>
+        <a href="https://www.instagram.com/anana_producciones.ec" target="_blank"
+           style="width:38px;height:38px;border:1px solid rgba(232,244,255,.12);
+                  display:flex;align-items:center;justify-content:center;
+                  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+                  color:rgba(232,244,255,.35);text-decoration:none;transition:border-color .25s,color .25s"
+           onmouseover="this.style.color='var(--blue)';this.style.borderColor='var(--blue)'"
+           onmouseout="this.style.color='rgba(232,244,255,.35)';this.style.borderColor='rgba(232,244,255,.12)'">IG</a>
+        <a href="#"
+           style="width:38px;height:38px;border:1px solid rgba(232,244,255,.12);
+                  display:flex;align-items:center;justify-content:center;
+                  font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+                  color:rgba(232,244,255,.35);text-decoration:none;transition:border-color .25s,color .25s"
+           onmouseover="this.style.color='#FF0000';this.style.borderColor='#FF0000'"
+           onmouseout="this.style.color='rgba(232,244,255,.35)';this.style.borderColor='rgba(232,244,255,.12)'">YT</a>
       </div>
     </div>
 
-    <div class="reveal">
-      <form onsubmit="enviarForm(event)" class="glass-card p-6 lg:p-10 glow-blue space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <input class="w-full bg-transparent border-0 border-b border-[#1e4060] focus:border-[#00C8FF] focus:ring-0 text-sm py-3 placeholder:text-[#E8F4FF]/30 transition-all" placeholder="Nombre" type="text" required/>
-          <input class="w-full bg-transparent border-0 border-b border-[#1e4060] focus:border-[#00C8FF] focus:ring-0 text-sm py-3 placeholder:text-[#E8F4FF]/30 transition-all" placeholder="Email" type="email" required/>
+    <!-- Form -->
+    <form id="cform" onsubmit="sendForm(event)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 22px">
+        <div class="ff">
+          <input type="text" id="fn" placeholder=" " required/>
+          <label for="fn">Nombre</label>
+          <div class="ff-line"></div>
         </div>
-        <select class="w-full bg-[#040810] border-0 border-b border-[#1e4060] focus:border-[#00C8FF] focus:ring-0 text-sm py-3 text-[#E8F4FF]/50">
-          <option value="">¿En qué puedo ayudarte?</option>
+        <div class="ff">
+          <input type="email" id="fe" placeholder=" " required/>
+          <label for="fe">Email</label>
+          <div class="ff-line"></div>
+        </div>
+      </div>
+      <div class="ff">
+        <select id="fs" style="color:rgba(232,244,255,.5)">
+          <option value="" disabled selected hidden></option>
           <option>Producción Audiovisual</option>
           <option>Publicidad Digital</option>
           <option>Diseño Multimedia</option>
-          <option>Gestión Cultural</option>
           <option>Fotografía</option>
+          <option>Gestión Cultural</option>
           <option>Otro</option>
         </select>
-        <textarea class="w-full bg-transparent border-0 border-b border-[#1e4060] focus:border-[#00C8FF] focus:ring-0 text-sm py-3 placeholder:text-[#E8F4FF]/30 transition-all resize-none" placeholder="Cuéntame sobre tu proyecto..." rows="4"></textarea>
-        <div class="text-center">
-          <button type="submit" class="bg-[#00C8FF] text-[#040810] px-12 py-4 font-black text-base uppercase tracking-tighter glow-blue hover:scale-105 transition-all w-full sm:w-auto">
-            Enviar Mensaje
-          </button>
-          <div id="form-ok" class="hidden mt-4 text-[#0055CC] font-bold text-sm">✓ ¡Mensaje enviado! Te responderé a la brevedad.</div>
-        </div>
-      </form>
-    </div>
+        <label for="fs" style="top:-17px;font-size:9px;color:rgba(232,244,255,.3)">Servicio</label>
+        <div class="ff-line"></div>
+      </div>
+      <div class="ff">
+        <textarea id="fm" placeholder=" " rows="4" required style="resize:none"></textarea>
+        <label for="fm">Tu proyecto</label>
+        <div class="ff-line"></div>
+      </div>
+      <button type="submit" class="btn-fill" style="width:100%;justify-content:center">
+        Enviar Mensaje <span>→</span>
+      </button>
+      <p id="f-ok" style="display:none;margin-top:14px;text-align:center;
+         font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;
+         letter-spacing:.2em;text-transform:uppercase;color:var(--gold)">
+        ✓ ¡Mensaje enviado! Te responderé pronto.
+      </p>
+    </form>
   </div>
 </section>
 
-<!-- ══ FOOTER ══ -->
-<footer class="w-full py-12 lg:py-20 px-6 lg:px-20 bg-[#050a14] border-t border-[#0055CC]/10">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-    <div class="space-y-5">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-gradient-to-tr from-[#0055CC] to-[#00C8FF] rounded-sm flex items-center justify-center font-black text-[#040810] text-lg">A</div>
-        <span class="font-bold text-lg text-[#00C8FF]">Ananá <span class="text-[#E8F4FF]">EC</span></span>
-      </div>
-      <p class="text-[#E8F4FF]/50 text-sm leading-relaxed max-w-xs">Producción independiente de alta fidelidad desde el corazón de Quito. Capturando momentos, creando legados.</p>
-      <div class="flex gap-4 text-sm">
-        <a href="https://www.instagram.com/anana_producciones.ec" target="_blank" class="text-[#E8F4FF]/50 hover:text-[#00C8FF] transition-colors">Instagram</a>
-        <a href="https://www.facebook.com/ananaprodec" target="_blank" class="text-[#E8F4FF]/50 hover:text-[#00C8FF] transition-colors">Facebook</a>
-      </div>
-    </div>
-    <div class="grid grid-cols-2 gap-8">
-      <div>
-        <h5 class="text-[#00C8FF] font-bold mb-4 uppercase tracking-widest text-xs">Portafolio</h5>
-        <ul class="space-y-3 text-sm text-[#E8F4FF]/60">
-          <li><a class="hover:text-white transition-colors" href="#portafolio">Intensidad Pura</a></li>
-          <li><a class="hover:text-white transition-colors" href="#portafolio">Alquimia Moderna</a></li>
-          <li><a class="hover:text-white transition-colors" href="#portafolio">Susurros & Miradas</a></li>
-          <li><a class="hover:text-white transition-colors" href="#portafolio">Anónimos Urbanos</a></li>
-        </ul>
-      </div>
-      <div>
-        <h5 class="text-[#0055CC] font-bold mb-4 uppercase tracking-widest text-xs">Servicios</h5>
-        <ul class="space-y-3 text-sm text-[#E8F4FF]/60">
-          <li><a class="hover:text-white transition-colors" href="#">Prod. Audiovisual</a></li>
-          <li><a class="hover:text-white transition-colors" href="#">Publicidad Digital</a></li>
-          <li><a class="hover:text-white transition-colors" href="#">Diseño Multimedia</a></li>
-          <li><a class="hover:text-white transition-colors" href="#">Gestión Cultural</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="space-y-6">
-      <div>
-        <h5 class="text-[#00C8FF] font-bold mb-4 uppercase tracking-widest text-xs">Newsletter</h5>
-        <div class="flex">
-          <input class="bg-[#070d1e] border-0 px-4 py-3 w-full focus:ring-1 focus:ring-[#0055CC] text-sm placeholder:text-[#E8F4FF]/30" placeholder="Tu email" type="email"/>
-          <button class="bg-[#0055CC] px-4 py-3 text-white hover:bg-[#0055CC]/80 transition-colors flex-shrink-0">
-            <span class="material-symbols-outlined text-sm">send</span>
-          </button>
-        </div>
-      </div>
-      <div class="pt-4 border-t border-white/5">
-        <p class="text-[#E8F4FF]/30 text-xs mb-1">© 2025 Ananá Producciones EC</p>
-        <p class="text-[#E8F4FF]/20 text-xs">Joseph Calvopiña · Quito, Ecuador</p>
-      </div>
-    </div>
+<!-- ──────── FOOTER ──────── -->
+<footer>
+  <div class="foot-logo">
+    <div class="mark">A</div>
+    <span>ANANÁ PRODUCCIONES EC</span>
+  </div>
+  <p class="copy">© 2025 · Joseph Calvopiña · Quito, Ecuador</p>
+  <div class="socials">
+    <a href="https://www.instagram.com/anana_producciones.ec" target="_blank">Instagram</a>
+    <a href="https://www.facebook.com/ananaprodec" target="_blank">Facebook</a>
   </div>
 </footer>
 
+<!-- ──────── SOUND BUTTON ──────── -->
+<button id="snd-btn" onclick="toggleSound()" title="Sonido ambiental">
+  <svg id="snd-icon" width="17" height="17" viewBox="0 0 24 24"
+       fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path id="snd-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+  </svg>
+</button>
+
+<!-- ════════════════════════════════════════
+     GSAP
+════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
 <script>
-  // NAV scroll
-  window.addEventListener('scroll', () => {
-    document.getElementById('navbar').style.background =
-      scrollY > 60 ? 'rgba(9,9,15,0.97)' : 'rgba(9,9,15,0.8)';
+/* ═══════════════════════════════════════
+   GSAP REGISTER
+═══════════════════════════════════════ */
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+/* ═══════════════════════════════════════
+   DEVICE DETECTION
+   maxTouchPoints is unreliable on desktop (returns >0 on many Macs).
+   Use matchMedia pointer:coarse as ground truth for touch-only devices.
+═══════════════════════════════════════ */
+var isTouchOnly = window.matchMedia('(pointer: coarse)').matches;
+var isMobile    = window.innerWidth <= 768;
+
+if (isTouchOnly) {
+  document.body.classList.add('touch-device');
+  document.getElementById('cursor-svg').style.display = 'none';
+}
+
+/* ═══════════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════════ */
+(function() {
+  const tl = gsap.timeline({
+    onComplete: function() {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('shutter').style.display = 'none';
+      runHero();
+    }
   });
 
-  // Reveal
-  const obs = new IntersectionObserver(e =>
-    e.forEach(el => { if(el.isIntersecting) el.target.classList.add('on'); }),
-    { threshold:0.08 }
-  );
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  // Film countdown flicker
+  tl.to('#lc3', { opacity: 1, duration: .07 })
+    .to('#lc3', { opacity: 0, duration: .07, delay: .16 })
+    .to('#lc2', { opacity: 1, duration: .07 })
+    .to('#lc2', { opacity: 0, duration: .07, delay: .16 })
+    .to('#lc1', { opacity: 1, duration: .07 })
+    .to('#lc1', { opacity: 0, duration: .07, delay: .16 })
+    // Logo clip-path reveal
+    .to('#ld-logo .main', { clipPath: 'inset(0 0% 0 0)', duration: .72, ease: 'power3.out' })
+    .to('#ld-logo .sub',  { opacity: 1, duration: .5,  ease: 'power2.out' }, '-=.25')
+    .to('#ld-line',       { width: '100%', duration: .55, ease: 'power2.inOut' }, '-=.3')
+    // Hold
+    .to({}, { duration: .55 })
+    // Shutter wipe open
+    .to('#sh-l', { x: '-100%', duration: .6, ease: 'power3.inOut' })
+    .to('#sh-r', { x:  '100%', duration: .6, ease: 'power3.inOut' }, '<')
+    .to('#loader', { opacity: 0, duration: .3 }, '-=.35');
+})();
 
-  // Carousel
-  const carousel = document.getElementById('carousel');
-  document.getElementById('next-btn').addEventListener('click', () => carousel.scrollBy({left:320,behavior:'smooth'}));
-  document.getElementById('prev-btn').addEventListener('click', () => carousel.scrollBy({left:-320,behavior:'smooth'}));
+/* ═══════════════════════════════════════
+   HERO ENTRANCE (fires after loader)
+═══════════════════════════════════════ */
+function runHero() {
+  const tl = gsap.timeline();
+  tl.to('#h-eyebrow', { opacity: 1, y: 0, duration: .55, ease: 'power2.out' })
+    .to(['#hw0','#hw1','#hw2'], { y: '0%', duration: .75, stagger: .1, ease: 'power3.out' }, '-=.25')
+    .to('#h-sub',  { opacity: 1, y: 0, duration: .55, ease: 'power2.out' }, '-=.3')
+    .to('#h-ctas', { opacity: 1, y: 0, duration: .45, ease: 'power2.out' }, '-=.25')
+    .to('#scroll-cue', { opacity: 1, duration: .5 }, '-=.15');
+}
 
-  // Mobile menu
-  document.getElementById('hamburger').addEventListener('click', () => {
-    document.getElementById('mobile-menu').classList.toggle('open');
+/* ═══════════════════════════════════════
+   SCROLL PROGRESS BAR
+═══════════════════════════════════════ */
+ScrollTrigger.create({
+  start: 'top top', end: 'bottom bottom',
+  onUpdate: function(self) {
+    document.getElementById('progress').style.transform = 'scaleX(' + self.progress + ')';
+  }
+});
+
+/* ═══════════════════════════════════════
+   NAV SCROLL STATE
+═══════════════════════════════════════ */
+ScrollTrigger.create({
+  start: 'top -60',
+  onUpdate: function(self) {
+    document.getElementById('nav').classList.toggle('scrolled', self.progress > 0);
+  }
+});
+
+/* ═══════════════════════════════════════
+   HERO PARALLAX (parallax wrapper, not the slides themselves)
+═══════════════════════════════════════ */
+if (!isMobile) {
+  gsap.to('#hero-parallax', {
+    yPercent: 18, ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
   });
-  function closeMobileMenu() {
-    document.getElementById('mobile-menu').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════
+   PORTFOLIO — CINEMATIC SLIDER
+═══════════════════════════════════════ */
+(function() {
+  var slides   = Array.from(document.querySelectorAll('#portfolio .sl'));
+  var total    = slides.length;
+  var current  = 0;
+  var DURATION = 5000; // ms auto-advance
+  var timer    = null;
+  var paused   = false;
+  var bar      = document.getElementById('sl-progress-bar');
+  var curEl    = document.getElementById('sl-cur');
+
+  /* pad number 01..07 */
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  /* clip-path wipe transition */
+  function goTo(idx, dir) {
+    if (idx === current) return;
+    var incoming = slides[idx];
+    var outgoing = slides[current];
+
+    /* outgoing stays visible (prev), incoming wipes in */
+    outgoing.classList.remove('active');
+    outgoing.classList.add('prev');
+    incoming.classList.remove('prev');
+
+    /* determine wipe direction: left→right or right→left */
+    var startClip = dir >= 0 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)';
+    gsap.fromTo(incoming,
+      { clipPath: startClip, zIndex: 2 },
+      {
+        clipPath: 'inset(0 0% 0 0)',
+        duration: .75,
+        ease: 'power3.inOut',
+        onStart: function() { incoming.classList.add('active'); },
+        onComplete: function() {
+          outgoing.classList.remove('prev');
+          outgoing.style.zIndex = '';
+        }
+      }
+    );
+
+    current = idx;
+    curEl.textContent = pad(current + 1);
+    restartBar();
   }
 
-  // Form
-  function enviarForm(e) {
+  function next() { goTo((current + 1) % total, 1); }
+  function prev() { goTo((current - 1 + total) % total, -1); }
+
+  /* progress bar */
+  function restartBar() {
+    gsap.killTweensOf(bar);
+    gsap.fromTo(bar,
+      { width: '0%' },
+      { width: '100%', duration: DURATION / 1000, ease: 'none',
+        onComplete: function() { if (!paused) next(); }
+      }
+    );
+  }
+
+  /* auto-advance */
+  function startAuto() { restartBar(); }
+  function pauseAuto() { paused = true;  gsap.killTweensOf(bar); }
+  function resumeAuto(){ paused = false; restartBar(); }
+
+  /* arrows */
+  document.getElementById('sl-next').addEventListener('click', function() {
+    next(); pauseAuto(); setTimeout(resumeAuto, 8000);
+  });
+  document.getElementById('sl-prev').addEventListener('click', function() {
+    prev(); pauseAuto(); setTimeout(resumeAuto, 8000);
+  });
+
+  /* hover pause */
+  document.getElementById('portfolio').addEventListener('mouseenter', pauseAuto);
+  document.getElementById('portfolio').addEventListener('mouseleave', resumeAuto);
+
+  /* touch swipe */
+  var txStart = 0, tyStart = 0;
+  document.getElementById('portfolio').addEventListener('touchstart', function(e) {
+    txStart = e.touches[0].clientX;
+    tyStart = e.touches[0].clientY;
+  }, { passive: true });
+  document.getElementById('portfolio').addEventListener('touchend', function(e) {
+    var dx = txStart - e.changedTouches[0].clientX;
+    var dy = tyStart - e.changedTouches[0].clientY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) {
+      if (dx > 0) next(); else prev();
+      pauseAuto(); setTimeout(resumeAuto, 8000);
+    }
+  }, { passive: true });
+
+  /* boot */
+  startAuto();
+})();
+
+/* ═══════════════════════════════════════
+   ABOUT — photo + copy
+═══════════════════════════════════════ */
+gsap.from('#about-img', {
+  scale: isMobile ? 1.05 : 1.12, opacity: 0,
+  duration: isMobile ? .7 : 1.1, ease: 'power2.out',
+  scrollTrigger: { trigger: '#about', start: 'top 80%' }
+});
+
+gsap.from('#about-copy > *', {
+  opacity: 0, x: isMobile ? 0 : 36, y: isMobile ? 20 : 0,
+  duration: .65, stagger: .1, ease: 'power2.out',
+  scrollTrigger: { trigger: '#about', start: 'top 78%' }
+});
+
+/* Stats counter */
+ScrollTrigger.create({
+  trigger: '#about',
+  start: 'top 72%',
+  once: true,
+  onEnter: function() {
+    document.querySelectorAll('.stat .num').forEach(function(el) {
+      var target  = parseInt(el.dataset.target, 10);
+      var suffix  = el.dataset.suffix || '+';
+      gsap.to({ v: 0 }, {
+        v: target, duration: 1.6, ease: 'power2.out',
+        onUpdate: function() {
+          el.textContent = Math.round(this.targets()[0].v) + suffix;
+        }
+      });
+    });
+  }
+});
+
+/* ═══════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════ */
+gsap.from('#ct-title', {
+  clipPath: 'inset(0 100% 0 0)', duration: .85, ease: 'power3.out',
+  scrollTrigger: { trigger: '#contact', start: 'top 82%' }
+});
+
+gsap.from('#contact .contact-grid > *', {
+  opacity: 0, y: 28, duration: .65, stagger: .15, ease: 'power2.out',
+  scrollTrigger: { trigger: '#contact .contact-grid', start: 'top 88%' }
+});
+
+/* ═══════════════════════════════════════
+   CAMERA VIEWFINDER CURSOR
+═══════════════════════════════════════ */
+(function() {
+  if (isTouchOnly) return; // physical touch screens: skip, restore system cursor
+
+  var svg    = document.getElementById('cursor-svg');
+  var circle = document.getElementById('cur-circle');
+  var group  = document.getElementById('cur-group');
+  var lines  = [
+    document.getElementById('cur-h'),  document.getElementById('cur-h2'),
+    document.getElementById('cur-v'),  document.getElementById('cur-v2')
+  ];
+  var center = document.getElementById('cur-center');
+
+  // Hide native cursor for the whole page on desktop
+  document.body.style.cursor = 'none';
+  document.documentElement.style.cursor = 'none';
+
+  var curR = 16; // track current circle radius for shutter bounce
+
+  // ── Position: offset by half SVG size (30px) so center aligns with pointer
+  var firstMove = true;
+  document.addEventListener('mousemove', function(e) {
+    gsap.to(svg, {
+      x: e.clientX - 30,
+      y: e.clientY - 30,
+      duration: firstMove ? 0 : 0.1,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+    firstMove = false;
+  });
+
+  // ── Click shutter: squeeze circle then spring back
+  document.addEventListener('mousedown', function() {
+    var savedR = curR;
+    gsap.timeline()
+      .to(circle, { attr: { r: 7 },      duration: .08, ease: 'power2.in'    })
+      .to(circle, { attr: { r: savedR }, duration: .18, ease: 'back.out(2.5)' });
+  });
+
+  // ── State transitions via GSAP attr tweens (reliable cross-browser for SVG)
+  function applyState(s) {
+    curR = s.r;
+    gsap.to(circle, { attr: { r: s.r, 'stroke-width': s.sw }, stroke: s.col, duration: .2, ease: 'power2.out' });
+    gsap.to(group,  { rotation: s.rot, duration: .22, ease: 'power2.out', svgOrigin: '0 0' });
+    lines.forEach(function(l) { gsap.to(l, { opacity: s.lo, stroke: s.col, duration: .2 }); });
+    gsap.to(center, { attr: { r: s.cr }, fill: s.col, duration: .18 });
+  }
+
+  var DEF  = { r: 16, sw: 1,   col: '#00C8FF', rot: 0,  lo: 1,   cr: 2   };
+  var LINK = { r: 9,  sw: 1,   col: '#00C8FF', rot: 45, lo: .4,  cr: 1.5 };
+  var CARD = { r: 22, sw: 1.5, col: '#C9A227', rot: 0,  lo: 1,   cr: 2.5 };
+
+  document.querySelectorAll('a, button').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { applyState(LINK); });
+    el.addEventListener('mouseleave', function() { applyState(DEF);  });
+  });
+
+  document.querySelectorAll('.pc').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { applyState(CARD); });
+    el.addEventListener('mouseleave', function() { applyState(DEF);  });
+    el.addEventListener('click',      function() { goGallery(this);  });
+  });
+})();
+
+/* ═══════════════════════════════════════
+   KEN BURNS SLIDESHOW
+═══════════════════════════════════════ */
+(function() {
+  var slides   = document.querySelectorAll('.hero-slide');
+  var flash    = document.getElementById('shutter-flash');
+  var current  = 0;
+  var DURATION = 6200; // ms per slide
+
+  function showSlide(idx) {
+    var incoming = slides[idx];
+
+    // 1. Shutter flash — quick white flicker
+    gsap.timeline()
+      .to(flash, { opacity: .85, duration: .07, ease: 'none' })
+      .to(flash, { opacity: 0,   duration: .12, ease: 'power2.out' });
+
+    // 2. Hide all, remove active
+    slides.forEach(function(s) {
+      s.classList.remove('active', 'reveal-in',
+        'kb-1', 'kb-2', 'kb-3', 'kb-4');
+      s.style.opacity = '0';
+    });
+
+    // 3. Re-assign KB class so animation restarts
+    var kbClass = 'kb-' + (idx + 1);
+    incoming.classList.add(kbClass);
+
+    // 4. Darkroom reveal then KB motion
+    incoming.style.opacity = '1';
+    incoming.classList.add('active', 'reveal-in');
+
+    // Remove reveal-in after it plays so next cycle is clean
+    setTimeout(function() {
+      incoming.classList.remove('reveal-in');
+    }, 950);
+  }
+
+  // Boot — show first slide immediately (no flash on first load)
+  slides[0].classList.add('kb-1', 'active');
+  slides[0].style.opacity = '1';
+
+  // Cycle
+  setInterval(function() {
+    current = (current + 1) % slides.length;
+    showSlide(current);
+  }, DURATION);
+})();
+
+/* ═══════════════════════════════════════
+   GALLERY WIPE NAVIGATION
+═══════════════════════════════════════ */
+function goGallery(card) {
+  var p = card.dataset.p;
+  var n = card.dataset.n;
+  var c = encodeURIComponent(card.dataset.c);
+  var t = card.dataset.t;
+  var wipe = document.getElementById('wipe');
+  gsap.to(wipe, {
+    clipPath: 'inset(0% 0 0% 0)', duration: .5, ease: 'power3.inOut',
+    onComplete: function() {
+      window.location.href = 'galeria.html?p=' + p + '&n=' + encodeURIComponent(n) + '&c=' + c + '&t=' + t;
+    }
+  });
+}
+
+/* ═══════════════════════════════════════
+   AMBIENT SOUND (Web Audio API — drone)
+═══════════════════════════════════════ */
+var audioCtx = null, playing = false;
+var gainMain = null, osc1 = null, osc2 = null, osc3 = null;
+
+function toggleSound() {
+  var btn = document.getElementById('snd-btn');
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  if (!playing) {
+    gainMain = audioCtx.createGain();
+    gainMain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gainMain.gain.linearRampToValueAtTime(.045, audioCtx.currentTime + 2.5);
+    gainMain.connect(audioCtx.destination);
+
+    function mkOsc(freq, type, gain) {
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = type || 'sine';
+      o.frequency.value = freq;
+      g.gain.value = gain;
+      o.connect(g); g.connect(gainMain);
+      o.start(); return o;
+    }
+    osc1 = mkOsc(55,   'sine',     .7);   // A1 root
+    osc2 = mkOsc(110.4,'sine',     .35);  // octave + tiny detune
+    osc3 = mkOsc(164.8,'triangle', .12);  // E3 fifth — adds warmth
+
+    playing = true;
+    btn.classList.add('on');
+  } else {
+    gainMain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
+    setTimeout(function() {
+      [osc1, osc2, osc3].forEach(function(o) { if (o) { try { o.stop(); } catch(e){} } });
+      playing = false;
+      document.getElementById('snd-btn').classList.remove('on');
+    }, 1300);
+  }
+}
+
+/* ═══════════════════════════════════════
+   MOBILE NAV
+═══════════════════════════════════════ */
+function toggleMob() {
+  var m = document.getElementById('mob-menu');
+  var h = document.getElementById('hamburger');
+  m.classList.toggle('open');
+  h.classList.toggle('open');
+}
+function closeMob() {
+  document.getElementById('mob-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════
+   FORM
+═══════════════════════════════════════ */
+function sendForm(e) {
+  e.preventDefault();
+  document.getElementById('f-ok').style.display = 'block';
+  e.target.reset();
+}
+
+/* ═══════════════════════════════════════
+   NAV smooth scroll with wipe-in on internal links
+═══════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    var target = document.querySelector(this.getAttribute('href'));
+    if (!target) return;
     e.preventDefault();
-    document.getElementById('form-ok').classList.remove('hidden');
-    e.target.reset();
-  }
-
-  // LIGHTBOX
-  let lbFolder='', lbTotal=0, lbIndex=1;
-  function openLightbox(folder, total, title) {
-    lbFolder=folder; lbTotal=total; lbIndex=1;
-    document.getElementById('lb-title').textContent=title;
-    updateLightbox();
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow='hidden';
-  }
-  function updateLightbox() {
-    const idx=String(lbIndex).padStart(2,'0');
-    document.getElementById('lb-img').src=`img/${lbFolder}/${idx}.jpg`;
-    document.getElementById('lb-counter').textContent=`${lbIndex} / ${lbTotal}`;
-  }
-  document.getElementById('lb-next').addEventListener('click', () => {
-    lbIndex = lbIndex < lbTotal ? lbIndex+1 : 1; updateLightbox();
+    gsap.to(window, { scrollTo: target, duration: .9, ease: 'power2.inOut' });
   });
-  document.getElementById('lb-prev').addEventListener('click', () => {
-    lbIndex = lbIndex > 1 ? lbIndex-1 : lbTotal; updateLightbox();
-  });
-  document.getElementById('lb-close').addEventListener('click', closeLightbox);
-  document.getElementById('lightbox').addEventListener('click', e => {
-    if(e.target===document.getElementById('lightbox')) closeLightbox();
-  });
-  document.addEventListener('keydown', e => {
-    if(!document.getElementById('lightbox').classList.contains('open')) return;
-    if(e.key==='ArrowRight') document.getElementById('lb-next').click();
-    if(e.key==='ArrowLeft')  document.getElementById('lb-prev').click();
-    if(e.key==='Escape')     closeLightbox();
-  });
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow='';
-  }
+});
 </script>
 </body>
 </html>

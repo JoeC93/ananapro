@@ -1,231 +1,537 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Galería | Ananá Producciones EC</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Inter:wght@400;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;700;900&family=Inter:wght@300;400&display=swap" rel="stylesheet"/>
 <style>
-  body {
-    background-color: #040810;
-    color: #E8F4FF;
-    font-family: "Inter", sans-serif;
-    overflow-x: hidden;
-    background-image: radial-gradient(ellipse at 20% 50%, rgba(0,85,204,0.08) 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 20%, rgba(0,200,255,0.05) 0%, transparent 50%);
-  }
-  .cinematic-grain {
-    pointer-events: none; position: fixed; top:0; left:0;
-    width:100%; height:100%; z-index:9999; opacity:0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-  }
-  .glow-blue { box-shadow: 0 0 28px rgba(0,200,255,0.35), 0 0 50px rgba(0,85,204,0.15); }
+:root {
+  --black:   #040810;
+  --surface: #070d1e;
+  --blue:    #00C8FF;
+  --gold:    #C9A227;
+  --white:   #E8F4FF;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: hidden; background: #000; }
+body {
+  background: var(--black); color: var(--white);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden; cursor: none; min-height: 100vh;
+}
 
-  /* Grid foto hover */
-  .foto-item { cursor: pointer; overflow: hidden; position: relative; }
-  .foto-item img { transition: transform 0.5s ease, filter 0.5s ease; filter: grayscale(30%); }
-  .foto-item:hover img { transform: scale(1.05); filter: grayscale(0%); }
-  .foto-item .overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(4,8,16,0.7) 0%, transparent 60%);
-    opacity: 0; transition: opacity 0.3s ease;
-    display: flex; align-items: flex-end; justify-content: flex-start;
-    padding: 16px;
-  }
-  .foto-item:hover .overlay { opacity: 1; }
+/* ── Cursor ── */
+#cur {
+  position: fixed; top: 0; left: 0; width: 48px; height: 48px;
+  pointer-events: none; z-index: 99999; overflow: visible;
+  transform: translate(-200px,-200px);
+}
+@media (pointer: coarse) { #cur { display: none; } body { cursor: auto; } }
 
-  /* LIGHTBOX */
-  #lightbox {
-    display: none; position: fixed; inset: 0; z-index: 99999;
-    background: rgba(4,8,16,0.97); backdrop-filter: blur(16px);
-    align-items: center; justify-content: center;
-  }
-  #lightbox.open { display: flex; }
-  #lightbox img {
-    max-width: 90vw; max-height: 85vh;
-    object-fit: contain;
-    border: 1px solid rgba(0,200,255,0.15);
-    box-shadow: 0 0 80px rgba(0,200,255,0.1);
-  }
-  .lb-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(0,85,204,0.5); border: 1px solid rgba(0,200,255,0.3);
-    color: #00C8FF; width: 52px; height: 52px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 1.6rem; transition: background .2s;
-    border-radius: 2px;
-  }
-  .lb-btn:hover { background: rgba(0,85,204,0.9); }
-  #lb-prev { left: 12px; }
-  #lb-next { right: 12px; }
-  #lb-close {
-    position: absolute; top: 16px; right: 16px;
-    background: rgba(0,85,204,0.5); border: 1px solid rgba(0,200,255,0.3);
-    color: #00C8FF; width: 44px; height: 44px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 1.2rem; transition: background .2s;
-  }
-  #lb-close:hover { background: rgba(0,85,204,0.9); }
-  #lb-counter {
-    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-    color: rgba(232,244,255,0.4); font-size: 0.75rem; letter-spacing: 0.2em;
-  }
+/* ── Grain ── */
+.grain {
+  position: fixed; inset: 0; z-index: 9997; pointer-events: none; opacity: .032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
 
-  /* Skeleton loader */
-  .skeleton {
-    background: linear-gradient(90deg, #070d1e 25%, #0d1a30 50%, #070d1e 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-  }
-  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+/* ── Nav ── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 68px; display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(18px,5vw,72px);
+  background: rgba(4,8,16,.96); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,200,255,.07);
+}
+.nav-back {
+  display: flex; align-items: center; gap: 10px; text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(232,244,255,.5); transition: color .25s;
+}
+.nav-back:hover { color: var(--blue); }
+.nav-back .arr {
+  width: 28px; height: 28px; border: 1px solid rgba(0,200,255,.22);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--blue); transition: background .25s;
+}
+.nav-back:hover .arr { background: rgba(0,200,255,.1); }
+.nav-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: .14em; color: #fff; text-decoration: none;
+}
+.nav-brand em { color: var(--blue); font-style: normal; }
+.nav-cta {
+  background: var(--blue); color: #040810;
+  padding: 9px 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
+  text-decoration: none; transition: box-shadow .25s;
+  box-shadow: 0 0 18px rgba(0,200,255,.25);
+}
+.nav-cta:hover { box-shadow: 0 4px 28px rgba(0,200,255,.45); }
+@media(max-width:600px) { .nav-cta { display: none; } }
 
-  .fade-in { animation: fadeIn 0.4s ease forwards; }
-  @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+/* ── Page header ── */
+#page-hero {
+  padding: clamp(88px,12vh,116px) clamp(18px,5vw,72px) clamp(28px,4vh,48px);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.gal-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--gold); display: block; margin-bottom: 10px;
+}
+#page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px,7vw,88px); letter-spacing: .04em; color: #fff; line-height: .95;
+}
+.gal-meta {
+  display: flex; align-items: center; gap: 18px; margin-top: 20px;
+}
+.gal-meta .bar { height: 1px; width: 56px; background: var(--gold); }
+#page-sub {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase;
+  color: rgba(232,244,255,.32);
+}
+
+/* ════════════════════════════════
+   ALL-PROJECTS grid (default view)
+════════════════════════════════ */
+#all-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 32px clamp(18px,5vw,72px) 72px;
+}
+@media(max-width:900px)  { #all-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:500px)  { #all-grid { grid-template-columns: 1fr; } }
+
+.proj-card {
+  position: relative; overflow: hidden;
+  aspect-ratio: 4/3; background: #0a0e1a;
+  cursor: none;
+}
+.proj-card img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: grayscale(60%) brightness(.8);
+  transition: transform .65s cubic-bezier(.25,.46,.45,.94), filter .5s ease;
+}
+.proj-card:hover img { transform: scale(1.06); filter: grayscale(0%) brightness(1); }
+.proj-card .pov {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(4,8,16,.92) 0%, rgba(4,8,16,.15) 55%, transparent 100%);
+  transition: background .3s;
+}
+.proj-card:hover .pov {
+  background: linear-gradient(to top, rgba(4,8,16,.96) 0%, rgba(4,8,16,.4) 60%, rgba(201,162,39,.07) 100%);
+}
+/* focus brackets */
+.proj-card .fb {
+  position: absolute; pointer-events: none;
+  width: 16px; height: 16px;
+  border-color: var(--gold); border-style: solid;
+  opacity: 0; z-index: 3;
+  transition: opacity .25s, transform .3s cubic-bezier(.25,.46,.45,.94);
+}
+.proj-card .fb-tl { top:10px; left:10px; border-width:2px 0 0 2px; transform:translate(-4px,-4px); }
+.proj-card .fb-tr { top:10px; right:10px; border-width:2px 2px 0 0; transform:translate(4px,-4px); }
+.proj-card .fb-bl { bottom:10px; left:10px; border-width:0 0 2px 2px; transform:translate(-4px,4px); }
+.proj-card .fb-br { bottom:10px; right:10px; border-width:0 2px 2px 0; transform:translate(4px,4px); }
+.proj-card:hover .fb { opacity:1; transform:translate(0,0); }
+
+.proj-card .pb {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 18px;
+  transform: translateY(12px);
+  transition: transform .35s cubic-bezier(.25,.46,.45,.94);
+  z-index: 4;
+}
+.proj-card:hover .pb { transform: translateY(0); }
+.pb .pc-cat {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--gold); display: block; margin-bottom: 6px;
+}
+.pb h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(18px,2vw,26px); letter-spacing: .06em; color: #fff; line-height: 1;
+}
+.pb .pc-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--blue); opacity: 0;
+  transition: opacity .25s .08s;
+}
+.proj-card:hover .pc-cta { opacity: 1; }
+.proj-card .wm {
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  width: 24px; height: 24px;
+  background: linear-gradient(135deg,#0055CC,#00C8FF);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 12px; color: #040810; opacity: .55;
+}
+
+/* ════════════════════════════════
+   SINGLE-PROJECT photo grid
+════════════════════════════════ */
+#single-wrap { display: none; }
+#photo-grid {
+  padding: 0 clamp(18px,5vw,72px) 72px;
+  columns: 4 180px; column-gap: 8px;
+}
+@media(max-width:600px) { #photo-grid { columns: 2 140px; } }
+
+.foto {
+  break-inside: avoid; margin-bottom: 8px;
+  position: relative; overflow: hidden; cursor: none;
+  background: #0a0e1a;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp .5s ease forwards;
+}
+.foto img {
+  display: block; width: 100%;
+  filter: grayscale(20%) brightness(.88);
+  transition: transform .55s cubic-bezier(.25,.46,.45,.94), filter .45s ease;
+}
+.foto:hover img { transform: scale(1.05); filter: grayscale(0%) brightness(1); }
+.foto .fov {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(4,8,16,.55) 0%, transparent 55%);
+  opacity: 0; transition: opacity .28s;
+  display: flex; align-items: flex-end; padding: 12px;
+}
+.foto:hover .fov { opacity: 1; }
+.foto .fov svg { color: var(--gold); }
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+/* ── Lightbox ── */
+#lb {
+  display: none; position: fixed; inset: 0; z-index: 99999;
+  background: rgba(0,0,0,.97); backdrop-filter: blur(18px);
+  align-items: center; justify-content: center;
+}
+#lb.open { display: flex; }
+#lb img {
+  max-width: 88vw; max-height: 84vh; object-fit: contain;
+  border: 1px solid rgba(0,200,255,.12);
+  box-shadow: 0 0 80px rgba(0,200,255,.08);
+}
+.lb-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(4,8,16,.6); border: 1px solid rgba(0,200,255,.25);
+  color: var(--blue); width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: none; font-size: 22px; transition: background .2s;
+}
+.lb-btn:hover { background: rgba(0,200,255,.15); }
+#lb-prev { left: 14px; }
+#lb-next { right: 14px; }
+#lb-close {
+  position: absolute; top: 18px; right: 18px;
+  background: rgba(4,8,16,.6); border: 1px solid rgba(0,200,255,.25);
+  color: var(--blue); width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: none; font-size: 16px; transition: background .2s;
+}
+#lb-close:hover { background: rgba(0,200,255,.15); }
+#lb-counter {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+  letter-spacing: .25em; color: rgba(232,244,255,.3);
+}
+#lb::before, #lb::after {
+  content: ''; position: absolute; left: 0; right: 0;
+  height: clamp(14px,2.5vh,28px); background: #000; z-index: 1; pointer-events: none;
+}
+#lb::before { top: 0; }
+#lb::after  { bottom: 0; }
+
+/* ── Footer ── */
+footer {
+  background: #000; padding: 36px clamp(18px,5vw,72px);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px; border-top: 1px solid rgba(255,255,255,.04);
+}
+footer a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  text-decoration: none; transition: color .25s;
+}
+.f-back  { color: var(--blue); display:flex; align-items:center; gap:8px; }
+.f-back:hover  { color: var(--gold); }
+.f-copy  { font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:.18em; color:rgba(232,244,255,.2); text-transform:uppercase; }
+.f-start { color: rgba(232,244,255,.35); }
+.f-start:hover { color: #fff; }
 </style>
 </head>
+<body>
 
-<body class="min-h-screen">
-<div class="cinematic-grain"></div>
+<!-- Cursor -->
+<svg id="cur" viewBox="-24 -24 48 48" xmlns="http://www.w3.org/2000/svg">
+  <g id="cg">
+    <circle id="cc" cx="0" cy="0" r="14" fill="none" stroke="#00C8FF" stroke-width="1"/>
+    <line x1="-22" y1="0" x2="-16" y2="0" stroke="#00C8FF" stroke-width="1"/>
+    <line x1="16"  y1="0" x2="22"  y2="0" stroke="#00C8FF" stroke-width="1"/>
+    <line x1="0" y1="-22" x2="0" y2="-16" stroke="#00C8FF" stroke-width="1"/>
+    <line x1="0" y1="16"  x2="0" y2="22"  stroke="#00C8FF" stroke-width="1"/>
+    <circle cx="0" cy="0" r="1.8" fill="#00C8FF"/>
+  </g>
+</svg>
+<div class="grain"></div>
 
-<!-- LIGHTBOX -->
-<div id="lightbox">
+<!-- Lightbox -->
+<div id="lb">
   <button class="lb-btn" id="lb-prev">&#8249;</button>
   <img id="lb-img" src="" alt=""/>
   <button class="lb-btn" id="lb-next">&#8250;</button>
   <div id="lb-counter"></div>
-  <button id="lb-close">&#10005;</button>
+  <button id="lb-close">✕</button>
 </div>
 
-<!-- NAV -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 lg:px-20 h-20 bg-[#040810]/90 backdrop-blur-xl border-b border-[#0055CC]/10">
-  <a href="index.html#portafolio" class="flex items-center gap-3 group">
-    <span class="material-symbols-outlined text-[#0055CC] group-hover:text-[#00C8FF] transition-colors">arrow_back</span>
-    <span class="text-[#E8F4FF]/60 text-sm group-hover:text-[#E8F4FF] transition-colors">Volver al Portafolio</span>
+<!-- Nav -->
+<header id="nav">
+  <a id="nav-back" href="index.html#portfolio" class="nav-back">
+    <span class="arr">←</span><span id="nav-back-label">Inicio</span>
   </a>
-  <a href="index.html" class="flex items-center gap-3">
-    <div class="w-8 h-8 rounded-sm flex items-center justify-center font-black text-white text-sm" style="background:linear-gradient(135deg,#0055CC,#00C8FF)">A</div>
-    <span class="font-black text-[#00C8FF] text-sm hidden sm:block">Ananá Producciones EC</span>
-  </a>
-  <a href="index.html#contacto" class="bg-[#00C8FF] text-[#040810] px-5 py-2 font-bold text-sm hover:scale-95 transition-transform glow-blue">Contacto</a>
+  <a href="index.html" class="nav-brand">ANANÁ <em>PRODUCCIONES</em></a>
+  <a href="index.html#contact" class="nav-cta">Iniciar Proyecto</a>
 </header>
 
-<!-- HERO del proyecto -->
-<section class="pt-32 pb-12 px-6 lg:px-20">
-  <div class="max-w-4xl">
-    <span id="categoria" class="text-[#0055CC] text-xs font-bold tracking-widest uppercase"></span>
-    <h1 id="titulo" class="font-black text-4xl lg:text-6xl mt-3 mb-4 italic leading-tight" style="font-family:'Montserrat',sans-serif"></h1>
-    <div class="flex items-center gap-6 mt-6">
-      <div class="w-24 h-1 bg-[#0055CC] glow-blue"></div>
-      <span id="contador-fotos" class="text-[#E8F4FF]/40 text-sm"></span>
+<!-- Page header -->
+<section id="page-hero">
+  <span class="gal-eyebrow" id="gal-eyebrow">Portafolio</span>
+  <h1 id="page-title">TODOS LOS<br/>PROYECTOS</h1>
+  <div class="gal-meta">
+    <div class="bar"></div>
+    <span id="page-sub">7 Proyectos · Ananá Producciones EC</span>
+  </div>
+</section>
+
+<!-- ALL PROJECTS grid (default) -->
+<div id="all-grid">
+  <div class="proj-card" data-p="alquimia" data-n="Alquimia Moderna"         data-c="Destacado"    data-t="7">
+    <img src="img/alquimia.jpg" alt="Alquimia Moderna"/>
+    <div class="pov"></div>
+    <div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Destacado</span>
+      <h3>Alquimia Moderna</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
     </div>
   </div>
-</section>
-
-<!-- GRID DE FOTOS -->
-<section class="px-6 lg:px-20 pb-20">
-  <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
-    <!-- Las fotos se generan con JS -->
+  <div class="proj-card" data-p="poder" data-n="Poder de la Forma"           data-c="Diseño Visual" data-t="7">
+    <img src="img/poder.jpg" alt="Poder de la Forma"/>
+    <div class="pov"></div><div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Diseño Visual</span>
+      <h3>Poder de la Forma</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
+    </div>
   </div>
-</section>
+  <div class="proj-card" data-p="intensidad" data-n="Intensidad Pura"        data-c="Audiovisual"   data-t="5">
+    <img src="img/intensidad.jpg" alt="Intensidad Pura"/>
+    <div class="pov"></div><div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Audiovisual</span>
+      <h3>Intensidad Pura</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
+    </div>
+  </div>
+  <div class="proj-card" data-p="susurros" data-n="Susurros y Miradas"       data-c="Fotografía"    data-t="8">
+    <img src="img/susurros.jpg" alt="Susurros y Miradas"/>
+    <div class="pov"></div><div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Fotografía</span>
+      <h3>Susurros y Miradas</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
+    </div>
+  </div>
+  <div class="proj-card" data-p="anonimos" data-n="Anónimos Urbanos"         data-c="Documental"    data-t="11">
+    <img src="img/anonimos.jpg" alt="Anónimos Urbanos"/>
+    <div class="pov"></div><div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Documental</span>
+      <h3>Anónimos Urbanos</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
+    </div>
+  </div>
+  <div class="proj-card" data-p="marcas" data-n="Marcas Asociadas"           data-c="Branding"      data-t="9">
+    <img src="img/marcas.jpg" alt="Marcas Asociadas"/>
+    <div class="pov"></div><div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Branding</span>
+      <h3>Marcas Asociadas</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
+    </div>
+  </div>
+  <div class="proj-card" data-p="tejido" data-n="El Tejido de una Comunidad" data-c="Cultural"      data-t="10">
+    <img src="img/tejido.jpg" alt="El Tejido de una Comunidad"/>
+    <div class="pov"></div><div class="wm">A</div>
+    <div class="fb fb-tl"></div><div class="fb fb-tr"></div>
+    <div class="fb fb-bl"></div><div class="fb fb-br"></div>
+    <div class="pb">
+      <span class="pc-cat">Cultural</span>
+      <h3>El Tejido de una Comunidad</h3>
+      <span class="pc-cta">Ver Galería ↗</span>
+    </div>
+  </div>
+</div>
 
-<!-- FOOTER mínimo -->
-<footer class="px-6 lg:px-20 py-10 border-t border-[#0055CC]/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-  <a href="index.html#portafolio" class="flex items-center gap-2 text-[#0055CC] font-bold hover:text-[#00C8FF] transition-colors">
-    <span class="material-symbols-outlined text-sm">arrow_back</span>
-    Ver todos los proyectos
-  </a>
-  <p class="text-[#E8F4FF]/30 text-xs">© 2025 Ananá Producciones EC · Joseph Calvopiña</p>
-  <a href="index.html#contacto" class="text-[#E8F4FF]/50 text-sm hover:text-[#00C8FF] transition-colors">Iniciar proyecto →</a>
+<!-- SINGLE PROJECT view (shown when ?p= param present) -->
+<div id="single-wrap">
+  <div id="photo-grid"></div>
+</div>
+
+<footer>
+  <a id="f-back" href="index.html#portfolio" class="f-back">← Volver al inicio</a>
+  <p class="f-copy">© 2025 Ananá Producciones EC · Joseph Calvopiña</p>
+  <a href="index.html#contact" class="f-start">Iniciar proyecto →</a>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-  // Leer parámetros de URL
-  const params = new URLSearchParams(window.location.search);
-  const proyecto = params.get('p') || 'alquimia';
-  const nombre   = params.get('n') || 'Galería';
-  const categoria = params.get('c') || 'Portafolio';
-  const total    = parseInt(params.get('t')) || 9;
+/* ── URL params → decide which view to show ── */
+var params   = new URLSearchParams(window.location.search);
+var proyecto = params.get('p');
+var nombre   = params.get('n') || 'Galería';
+var cat      = params.get('c') || '';
+var total    = parseInt(params.get('t')) || 0;
+var isSingle = !!proyecto;
 
-  // Actualizar header
+/* ── Switch view ── */
+if (isSingle) {
+  document.getElementById('all-grid').style.display   = 'none';
+  document.getElementById('single-wrap').style.display = 'block';
+
   document.title = nombre + ' | Ananá Producciones EC';
-  document.getElementById('titulo').textContent = nombre;
-  document.getElementById('categoria').textContent = categoria;
-  document.getElementById('contador-fotos').textContent = total + ' fotografías';
+  document.getElementById('gal-eyebrow').textContent = cat || 'Portafolio';
+  document.getElementById('page-title').textContent  = nombre;
+  document.getElementById('page-sub').textContent    = total + ' fotografías';
 
-  // Generar grid
-  const grid = document.getElementById('grid');
-  let lbIndex = 0;
+  var navBack = document.getElementById('nav-back');
+  navBack.href = 'galeria.html';
+  document.getElementById('nav-back-label').textContent = 'Todos los proyectos';
+  document.getElementById('f-back').href = 'galeria.html';
+  document.getElementById('f-back').textContent = '← Todos los proyectos';
 
-  for (let i = 1; i <= total; i++) {
-    const idx = String(i).padStart(2, '0');
-    const src = `img/${proyecto}/${idx}.jpg`;
-
-    const div = document.createElement('div');
-    div.className = 'foto-item aspect-square fade-in';
-    div.style.animationDelay = `${(i - 1) * 0.05}s`;
+  /* Build masonry photo grid */
+  var grid = document.getElementById('photo-grid');
+  var lbIdx = 0;
+  for (var i = 1; i <= total; i++) {
+    var idx = String(i).padStart(2,'0');
+    var src = 'img/' + proyecto + '/' + idx + '.jpg';
+    var div = document.createElement('div');
+    div.className = 'foto';
+    div.style.animationDelay = ((i-1) * .04) + 's';
     div.style.opacity = '0';
-    div.innerHTML = `
-      <img src="${src}" alt="${nombre} - Foto ${i}" class="w-full h-full object-cover"
-           onerror="this.parentElement.style.display='none'"/>
-      <div class="overlay">
-        <span class="material-symbols-outlined text-[#00C8FF] text-lg">zoom_in</span>
-      </div>
-    `;
-    div.addEventListener('click', () => openLightbox(i - 1));
+    div.innerHTML =
+      '<img src="' + src + '" alt="' + nombre + ' ' + i + '"' +
+      ' onerror="this.parentElement.style.display=\'none\'"/>' +
+      '<div class="fov"><svg width="20" height="20" viewBox="0 0 24 24"' +
+      ' fill="none" stroke="currentColor" stroke-width="1.5">' +
+      '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>';
+    div.addEventListener('click', (function(n){ return function(){ openLB(n); }; })(i-1));
     grid.appendChild(div);
   }
+} else {
+  /* All-projects view: clicking a card goes to that project */
+  document.querySelectorAll('.proj-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var p = this.dataset.p, n = this.dataset.n,
+          c = this.dataset.c, t = this.dataset.t;
+      window.location.href = 'galeria.html?p='+p
+        +'&n='+encodeURIComponent(n)
+        +'&c='+encodeURIComponent(c)
+        +'&t='+t;
+    });
+  });
+}
 
-  // LIGHTBOX
-  function openLightbox(index) {
-    lbIndex = index;
-    updateLightbox();
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
+/* ── Cursor (desktop only) ── */
+(function() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  var svg = document.getElementById('cur');
+  var cc  = document.getElementById('cc');
+  document.body.style.cursor = 'none';
+  var first = true;
+  document.addEventListener('mousemove', function(e) {
+    gsap.to(svg, { x: e.clientX-24, y: e.clientY-24,
+      duration: first ? 0 : .1, ease: 'power2.out', overwrite:'auto' });
+    first = false;
+  });
+  document.addEventListener('mousedown', function() {
+    gsap.timeline()
+      .to(cc, { attr:{r:6},  duration:.07, ease:'power2.in' })
+      .to(cc, { attr:{r:14}, duration:.16, ease:'back.out(2.5)' });
+  });
+  function cursorLink(el, on) {
+    el.addEventListener('mouseenter', function() {
+      gsap.to(cc, { attr:{r: on ? 9 : 14}, stroke: on ? '#00C8FF' : '#00C8FF',
+        duration:.2 });
+    });
+    el.addEventListener('mouseleave', function() {
+      gsap.to(cc, { attr:{r:14}, duration:.2 });
+    });
   }
+  document.querySelectorAll('a,button,.proj-card,.foto').forEach(function(el) {
+    cursorLink(el, el.tagName==='A'||el.tagName==='BUTTON');
+  });
+})();
 
-  function updateLightbox() {
-    const idx = String(lbIndex + 1).padStart(2, '0');
-    document.getElementById('lb-img').src = `img/${proyecto}/${idx}.jpg`;
-    document.getElementById('lb-counter').textContent = `${lbIndex + 1} / ${total}`;
-  }
-
-  document.getElementById('lb-next').addEventListener('click', () => {
-    lbIndex = lbIndex < total - 1 ? lbIndex + 1 : 0;
-    updateLightbox();
-  });
-  document.getElementById('lb-prev').addEventListener('click', () => {
-    lbIndex = lbIndex > 0 ? lbIndex - 1 : total - 1;
-    updateLightbox();
-  });
-  document.getElementById('lb-close').addEventListener('click', closeLightbox);
-  document.getElementById('lightbox').addEventListener('click', e => {
-    if (e.target === document.getElementById('lightbox')) closeLightbox();
-  });
-  document.addEventListener('keydown', e => {
-    if (!document.getElementById('lightbox').classList.contains('open')) return;
-    if (e.key === 'ArrowRight') document.getElementById('lb-next').click();
-    if (e.key === 'ArrowLeft')  document.getElementById('lb-prev').click();
-    if (e.key === 'Escape')     closeLightbox();
-  });
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  // Touch swipe en lightbox
-  let touchStartX = 0;
-  document.getElementById('lightbox').addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-  });
-  document.getElementById('lightbox').addEventListener('touchend', e => {
-    const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) document.getElementById('lb-next').click();
-      else document.getElementById('lb-prev').click();
-    }
-  });
+/* ── Lightbox (single project view only) ── */
+function openLB(index) {
+  lbIdx = index; updateLB();
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function updateLB() {
+  var idx = String(lbIdx+1).padStart(2,'0');
+  document.getElementById('lb-img').src = 'img/'+proyecto+'/'+idx+'.jpg';
+  document.getElementById('lb-counter').textContent = (lbIdx+1)+' / '+total;
+}
+document.getElementById('lb-next').addEventListener('click', function() {
+  lbIdx = lbIdx < total-1 ? lbIdx+1 : 0; updateLB();
+});
+document.getElementById('lb-prev').addEventListener('click', function() {
+  lbIdx = lbIdx > 0 ? lbIdx-1 : total-1; updateLB();
+});
+document.getElementById('lb-close').addEventListener('click', closeLB);
+document.getElementById('lb').addEventListener('click', function(e) {
+  if (e.target === this) closeLB();
+});
+function closeLB() {
+  document.getElementById('lb').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('lb').classList.contains('open')) return;
+  if (e.key==='ArrowRight') document.getElementById('lb-next').click();
+  if (e.key==='ArrowLeft')  document.getElementById('lb-prev').click();
+  if (e.key==='Escape')     closeLB();
+});
+var tStart=0;
+document.getElementById('lb').addEventListener('touchstart', function(e) { tStart=e.touches[0].clientX; },{passive:true});
+document.getElementById('lb').addEventListener('touchend', function(e) {
+  var dx = tStart - e.changedTouches[0].clientX;
+  if (Math.abs(dx)>44) { if(dx>0) document.getElementById('lb-next').click(); else document.getElementById('lb-prev').click(); }
+},{passive:true});
 </script>
 </body>
 </html>
