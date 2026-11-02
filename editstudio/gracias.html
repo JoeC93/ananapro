@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gracias · Ananá Edit Studio</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#040810;--card:#0B1324;--line:#1d2a44;--ink:#E8F4FF;--mut:#9fb6d6;--cyan:#00C8FF;--ok:#14c38e;--err:#ff8a8a;--gold:#F2C230}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 600px at 50% -10%,rgba(0,200,255,.22),transparent 60%),var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;min-height:100vh}
+.w{max-width:620px;margin:0 auto;padding:36px 16px 60px;text-align:center}
+img{height:46px}
+.card{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px 24px;text-align:left}
+.ic{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font:900 36px Montserrat,sans-serif}
+h1{font:900 30px/1.15 Montserrat,sans-serif;margin:0;text-align:center}
+.mut{color:var(--mut)}
+.code{font:700 15px ui-monospace,monospace;color:var(--gold)}
+ol{padding-left:20px}li{margin:6px 0}
+.btn{display:block;text-align:center;margin-top:18px;padding:15px;border-radius:999px;background:#14c38e;color:#04130d;font-weight:800;text-decoration:none}
+.btn.sec{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.spin{width:44px;height:44px;margin:0 auto 14px;border-radius:50%;border:4px solid #1a2540;border-top-color:var(--cyan);animation:g 1s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="w">
+<img src="assets/logo.png" alt="Ananá Producciones">
+<div class="card">
+  <div id="cargando"><div class="spin"></div><h1>Confirmando tu pago…</h1><p class="mut" style="text-align:center">Tarda unos segundos. No cierres esta página.</p></div>
+
+  <div id="listo" hidden>
+    <div class="ic" style="background:rgba(20,195,142,.15);color:var(--ok)">✓</div>
+    <h1>¡Listo! Tu editor ya es tuyo.</h1>
+    <p class="mut" style="text-align:center">Pedido <span class="code" id="cod"></span> · <span id="prod"></span> · pago único</p>
+    <p>Te enviamos el kit a <b id="correo"></b>. Si no lo ves en unos minutos, revisa <b>Spam</b> o <b>Promociones</b>.</p>
+    <ol>
+      <li>Abre el correo y entra a tu kit con esa misma cuenta de Google.</li>
+      <li>Mira el <b>video tutorial</b> y sigue la <b>guía</b> que viene adentro.</li>
+      <li>En la app de escritorio de Claude escribe: <b>«instala Ananá Edit Studio»</b>.</li>
+    </ol>
+    <a class="btn" id="wa" target="_blank" rel="noopener">¿Necesitas ayuda? WhatsApp</a>
+  </div>
+
+  <div id="pendiente" hidden>
+    <div class="ic" style="background:rgba(242,194,48,.15);color:var(--gold)">…</div>
+    <h1>Tu pedido está en espera</h1>
+    <p class="mut" style="text-align:center">Pedido <span class="code" id="cod3"></span></p>
+    <p>Todavía no vemos el pago confirmado. Si se te cobró, escríbenos por WhatsApp con tu código y lo resolvemos de inmediato.</p>
+    <a class="btn" id="wa3" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+  </div>
+
+  <div id="error" hidden>
+    <div class="ic" style="background:rgba(255,120,120,.15);color:var(--err)">!</div>
+    <h1>El pago no se completó</h1>
+    <p id="msg" class="mut" style="text-align:center"></p>
+    <a class="btn sec" href="comprar.html">Intentar de nuevo</a>
+    <a class="btn" id="wa2" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+  </div>
+</div>
+</div>
+<script>
+/* ===== CONFIGURACIÓN: la misma URL del robot que en comprar.html ===== */
+const API = 'PEGAR_URL_DEL_ROBOT';
+const WHATSAPP = '593984082216';
+/* ===================================================================== */
+const $ = s => document.querySelector(s);
+const api = (accion, d) => fetch(API, { method: 'POST', body: JSON.stringify(Object.assign({ accion }, d)) }).then(r => r.json());
+const P = new URLSearchParams(location.search);
+const ver = id => ['#cargando', '#listo', '#pendiente', '#error'].forEach(s => $(s).hidden = s !== id);
+const wa = (t) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`;
+
+async function iniciar() {
+  let codigo = P.get('codigo');
+  try {
+    // Payphone vuelve con ?id=...&clientTransactionId=...
+    if (P.get('id') && P.get('clientTransactionId')) {
+      const ctx = P.get('clientTransactionId');
+      codigo = ctx.split('-').slice(0, 2).join('-');
+      const r = await api('payphone_confirmar', { id: P.get('id'), clientTransactionId: ctx });
+      if (!r.ok) { $('#msg').textContent = r.error; $('#wa2').href = wa('Hola Ananá, tuve un problema con el pago del pedido ' + codigo); return ver('#error'); }
+    }
+    if (!codigo) { $('#msg').textContent = 'No encontramos el código de tu pedido.'; $('#wa2').href = wa('Hola Ananá, necesito ayuda con mi compra'); return ver('#error'); }
+    for (let i = 0; i < 6; i++) {
+      const e = await api('estado', { codigo });
+      if (e.ok && e.estado === 'entregado') {
+        $('#cod').textContent = e.codigo; $('#prod').textContent = e.producto; $('#correo').textContent = e.correo;
+        $('#wa').href = wa('Hola Ananá, ya compré (' + e.codigo + ') y necesito ayuda con la instalación');
+        return ver('#listo');
+      }
+      await new Promise(r => setTimeout(r, 2500));
+    }
+    $('#cod3').textContent = codigo; $('#wa3').href = wa('Hola Ananá, pagué el pedido ' + codigo + ' y aún no me llega');
+    ver('#pendiente');
+  } catch (x) {
+    $('#msg').textContent = 'No pudimos comprobar el pago. Escríbenos con tu código ' + (codigo || '') + '.';
+    $('#wa2').href = wa('Hola Ananá, necesito ayuda con mi pedido ' + (codigo || ''));
+    ver('#error');
+  }
+}
+iniciar();
+</script>
+</body>
+</html>

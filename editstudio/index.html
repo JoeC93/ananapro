@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ananá Edit Studio · Tú grabas, Claude edita</title>
+<meta name="description" content="Tu editor de video con Claude: corta pausas, pone subtítulos, animaciones y música. Pago único desde $24,99.">
+<meta property="og:title" content="Ananá Edit Studio · Tú grabas, Claude edita">
+<meta property="og:description" content="Editor de video con Claude. Pago único: Básico $24,99 · Pro $49,99.">
+<meta property="og:image" content="https://ananapro.com/editstudio/assets/demo_poster.jpg">
+<meta property="og:url" content="https://ananapro.com/editstudio/">
+<meta name="theme-color" content="#040810">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+body{margin:0;background:#040810}
+a{color:#00C8FF}a:hover{color:#7fe3ff}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px;box-sizing:border-box}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center}
+.cmp{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(2,minmax(0,1fr))}
+@media (max-width:900px){.hero,.g2,.g3{grid-template-columns:minmax(0,1fr)}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.navlinks{display:none}.h1{font-size:44px !important}.h2{font-size:34px !important}}
+@media (max-width:520px){.g4{grid-template-columns:minmax(0,1fr)}.cmp{font-size:14px}}
+
+html{scroll-behavior:smooth}
+.snav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:28px;height:72px;padding:0 clamp(16px,5vw,80px);background:rgba(4,8,16,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,200,255,.08)}
+.slogo{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:.14em;color:#fff;text-decoration:none;white-space:nowrap}
+.slogo em{color:#00C8FF;font-style:normal}.slogo:hover{color:#fff}
+.slinks{display:flex;gap:26px;margin-left:auto}
+.slinks a{font-family:Montserrat,sans-serif;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(232,244,255,.55);text-decoration:none}
+.slinks a:hover,.slinks a.on{color:#00C8FF}
+.scta{background:#00C8FF;color:#040810;padding:10px 22px;font-family:Montserrat,sans-serif;font-size:10px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;box-shadow:0 0 20px rgba(0,200,255,.25)}
+.scta:hover{color:#040810;box-shadow:0 4px 28px rgba(0,200,255,.5)}
+.fq{border-radius:18px;background:#0B1324;border:1px solid #1d2a44}
+.fq summary{list-style:none;cursor:pointer;padding:20px 24px;font:700 18px Inter,sans-serif;display:flex;justify-content:space-between;gap:16px}
+.fq summary::-webkit-details-marker{display:none}.fq summary span{color:#00C8FF}.fq[open] summary span{transform:rotate(45deg)}
+.fq p{margin:0;padding:0 24px 22px;color:#9fb6d6}
+@media (max-width:1000px){.slinks{display:none}.snav{justify-content:space-between}}
+@media (max-width:600px){.hero > div[style*="height: 600px"]{height:520px !important;transform:scale(.86);transform-origin:top center}}
+</style>
+</head>
+<body>
+<div style="background: #040810; color: #E8F4FF; font-family: Inter, system-ui, sans-serif; font-size: 17px; line-height: 1.6; overflow-x: hidden">
+
+<!-- NAV (estilo ananapro.com) -->
+<header class="snav">
+<a href="/" class="slogo">ANANÁ <em>PRODUCCIONES</em></a>
+<nav class="slinks"><a href="/">Inicio</a><a href="/#portfolio">Portafolio</a><a href="/editstudio/" class="on">Edit Studio</a><a href="#demo">Demo</a><a href="#precios">Precios</a><a href="#faq">Preguntas</a><a href="/#contact">Contacto</a></nav>
+<a href="#precios" class="scta">Comprar</a>
+</header>
+<!-- HERO -->
+<section style="position: relative; padding: 88px 0 72px; background: radial-gradient(900px 600px at 80% 10%, rgba(0,91,217,0.35), transparent 60%), radial-gradient(700px 500px at 0% 100%, rgba(29,36,124,0.5), transparent 60%)">
+<div class="wrap hero">
+<div>
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">EDITOR DE VIDEO CON CLAUDE</p>
+<h1 class="h1" style="margin: 18px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 72px; line-height: 1.02">Tú grabas.<br><span style="color: #00C8FF">Claude edita.</span></h1>
+<p style="margin: 24px 0 0; font-size: 21px; color: #b9cbe4; max-width: 540px">Deja tu video en una carpeta. Claude corta las pausas y las tomas repetidas, pone subtítulos que se mueven, animaciones y música, y te entrega el MP4 listo para redes. Tú solo apruebas el plan.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px">
+<a href="#precios" style="padding: 17px 30px; border-radius: 999px; background: #00C8FF; color: #040810; font-weight: 800; text-decoration: none; font-size: 17px">Quiero mi editor · desde $24,99</a>
+<a href="#demo" style="padding: 17px 30px; border-radius: 999px; border: 1.5px solid #2a3a60; color: #E8F4FF; font-weight: 700; text-decoration: none; font-size: 17px">Ver la demo</a>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 22px; margin-top: 30px; font-size: 14px; color: #8aa0c2; font-weight: 600">
+<span>✓ Pago único</span><span>✓ Mac y Windows</span><span>✓ Sin Terminal, sin saber editar</span>
+</div>
+</div>
+<div style="position: relative; height: 600px">
+<div style="position: absolute; left: 0; top: 70px; width: 230px; height: 409px; border-radius: 34px; border: 10px solid #0b0f1a; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.6); transform: rotate(-6deg); opacity: 0.9">
+<img src="assets/bruto.jpg" alt="Video en bruto, sin editar" style="width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.7)">
+<span style="position: absolute; top: 14px; left: 14px; padding: 5px 11px; border-radius: 999px; background: rgba(0,0,0,0.65); font-size: 12px; font-weight: 800; letter-spacing: 0.08em">ANTES</span>
+</div>
+<div style="position: absolute; right: 10px; top: 0; width: 300px; height: 533px; border-radius: 42px; border: 12px solid #0b0f1a; overflow: hidden; box-shadow: 0 0 0 2px #2a3550, 0 50px 110px rgba(0,0,0,0.7)">
+<img src="assets/mapa.jpg" alt="Video editado con mapa animado y subtítulos" style="width: 100%; height: 100%; object-fit: cover; display: block">
+<span style="position: absolute; top: 16px; left: 16px; padding: 5px 11px; border-radius: 999px; background: #F2C230; color: #1a1200; font-size: 12px; font-weight: 900; letter-spacing: 0.08em">DESPUÉS · PRO</span>
+</div>
+<div style="position: absolute; left: 150px; bottom: 30px; padding: 16px 20px; border-radius: 18px; background: #0B1324; border: 1px solid #2a3a60; box-shadow: 0 20px 50px rgba(0,0,0,0.5)">
+<div style="font-size: 13px; color: #8aa0c2; font-weight: 600">Plan de edición</div>
+<div style="font-family: Montserrat, sans-serif; font-weight: 900; font-size: 26px">58 s → <span style="color: #14c38e">45 s</span></div>
+<div style="font-size: 13px; color: #b9cbe4">8 cortes · mapa · línea de tiempo · música</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" style="padding: 80px 0; background: #070d1a">
+<div class="wrap">
+<div style="text-align: center; max-width: 760px; margin: 0 auto">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">DEMO REAL</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 48px; line-height: 1.08">Del video en bruto al reel terminado</h2>
+<p style="margin: 18px 0 0; color: #b9cbe4; font-size: 19px">Mi propio reel, grabado con el celular y editado de principio a fin con Ananá Edit Studio. Lo que ves es lo que entrega.</p>
+</div>
+<div style="margin: 40px auto 0; max-width: 1000px; border-radius: 26px; overflow: hidden; border: 1px solid #1d2a44; box-shadow: 0 40px 100px -30px rgba(0,91,217,0.7); background: #040810">
+<video id="demoVideo" src="assets/demo.mp4" poster="assets/demo_poster.jpg" controls playsinline preload="metadata" style="display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #040810"></video>
+</div>
+</div>
+</section>
+
+<!-- ANTES / DESPUÉS -->
+<section style="padding: 90px 0">
+<div class="wrap">
+<div style="max-width: 720px">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">EL MISMO VIDEO, TRES VECES</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 48px; line-height: 1.08">Mira la diferencia entre Básico y Pro</h2>
+</div>
+<div class="g3" style="margin-top: 44px">
+<figure style="margin: 0">
+<div style="border-radius: 28px; overflow: hidden; border: 1px solid #1d2a44; aspect-ratio: 9 / 16; max-height: 560px"><img src="assets/bruto.jpg" alt="Video en bruto sin editar" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+<figcaption style="margin-top: 16px"><b style="font-family: Montserrat, sans-serif; font-size: 20px">En bruto</b><br><span style="color: #8aa0c2">58 s con pausas y respiraciones entre frases.</span></figcaption>
+</figure>
+<figure style="margin: 0">
+<div style="border-radius: 28px; overflow: hidden; border: 1px solid #2a3a60; aspect-ratio: 9 / 16; max-height: 560px"><img src="assets/basico.jpg" alt="Versión Básico con título gancho y subtítulos" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+<figcaption style="margin-top: 16px"><b style="font-family: Montserrat, sans-serif; font-size: 20px">Básico</b><br><span style="color: #8aa0c2">45 s limpios, título gancho, subtítulos con tu color y barra de progreso.</span></figcaption>
+</figure>
+<figure style="margin: 0">
+<div style="border-radius: 28px; overflow: hidden; border: 2px solid #F2C230; aspect-ratio: 9 / 16; max-height: 560px"><img src="assets/pro.jpg" alt="Versión Pro con sello Editado por Claude" style="width: 100%; height: 100%; object-fit: cover; display: block"></div>
+<figcaption style="margin-top: 16px"><b style="font-family: Montserrat, sans-serif; font-size: 20px; color: #F2C230">Pro</b><br><span style="color: #8aa0c2">Todo lo anterior + mapa, carpeta, línea de tiempo, TIEMPO detrás de mí, música y efectos.</span></figcaption>
+</figure>
+</div>
+</div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section style="padding: 90px 0; background: #070d1a">
+<div class="wrap">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">CÓMO FUNCIONA</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 48px; line-height: 1.08; max-width: 760px">Tres pasos. Nada se renderiza sin tu «sí».</h2>
+<div class="g3" style="margin-top: 44px">
+<div style="padding: 30px; border-radius: 24px; background: #0B1324; border: 1px solid #1d2a44">
+<div style="width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #005BD9, #1D247C); display: flex; align-items: center; justify-content: center; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 22px">1</div>
+<h3 style="margin: 20px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 24px">Dejas tu video</h3>
+<p style="margin: 10px 0 0; color: #9fb6d6">Lo copias a la carpeta <b style="color: #E8F4FF">proyectos</b> y en tu interfaz eliges estilo, formato y las frases que no pueden faltar.</p>
+</div>
+<div style="padding: 30px; border-radius: 24px; background: #0B1324; border: 1px solid #1d2a44">
+<div style="width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #005BD9, #1D247C); display: flex; align-items: center; justify-content: center; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 22px">2</div>
+<h3 style="margin: 20px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 24px">Apruebas el plan</h3>
+<p style="margin: 10px 0 0; color: #9fb6d6">Claude te muestra qué corta y por qué, y qué pasa en cada segundo. Apruebas o pides cambios.</p>
+</div>
+<div style="padding: 30px; border-radius: 24px; background: #0B1324; border: 1px solid #1d2a44">
+<div style="width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #005BD9, #1D247C); display: flex; align-items: center; justify-content: center; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 22px">3</div>
+<h3 style="margin: 20px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 24px">Recibes tu MP4</h3>
+<p style="margin: 10px 0 0; color: #9fb6d6">En alta calidad y en versión liviana para redes, con su archivo de subtítulos. Listo para publicar.</p>
+</div>
+</div>
+<figure style="margin: 28px 0 0; padding: 22px; border-radius: 24px; background: #ffffff; border: 1px solid #1d2a44">
+<img src="assets/corte.jpg" alt="Corte explicado: en rojo lo que Claude quita del video" style="width: 100%; display: block; border-radius: 10px">
+<figcaption style="margin-top: 12px; color: #3b4a63; font-size: 14px; font-weight: 600">El «corte explicado» real del demo: en rojo, las pausas y respiraciones que se van; en azul, lo que se queda. Lo ves antes de aprobar.</figcaption>
+</figure>
+</div>
+</section>
+
+<!-- FUNCIONES -->
+<section id="funciones" style="padding: 90px 0">
+<div class="wrap">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">QUÉ HACE</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 48px; line-height: 1.08; max-width: 760px">Lo que un editor hace en horas, en minutos</h2>
+<div class="g4" style="margin-top: 44px">
+<article style="border-radius: 24px; overflow: hidden; background: #0B1324; border: 1px solid #1d2a44">
+<img src="assets/gancho.jpg" alt="Título gancho y subtítulos con palabra resaltada" style="width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block">
+<div style="padding: 20px"><span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #14c38e">BÁSICO Y PRO</span><h3 style="margin: 6px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 20px">Subtítulos y título gancho</h3><p style="margin: 6px 0 0; color: #9fb6d6; font-size: 15px">La palabra que dices se ilumina con el color de tu marca.</p></div>
+</article>
+<article style="border-radius: 24px; overflow: hidden; background: #0B1324; border: 1px solid #1d2a44">
+<img src="assets/mapa.jpg" alt="Mapa animado de Quito a Cuenca" style="width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block">
+<div style="padding: 20px"><span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #F2C230">PRO</span><h3 style="margin: 6px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 20px">Animaciones con contexto</h3><p style="margin: 6px 0 0; color: #9fb6d6; font-size: 15px">Mapas con ruta, chats que se escriben, contadores y stickers.</p></div>
+</article>
+<article style="border-radius: 24px; overflow: hidden; background: #0B1324; border: 1px solid #1d2a44">
+<img src="assets/detras.jpg" alt="Palabra TIEMPO detrás de Joe" style="width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block">
+<div style="padding: 20px"><span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #F2C230">PRO</span><h3 style="margin: 6px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 20px">Efectos con IA</h3><p style="margin: 6px 0 0; color: #9fb6d6; font-size: 15px">Texto detrás de ti, zoom a tu cara y cambio de fondo.</p></div>
+</article>
+<article style="border-radius: 24px; overflow: hidden; background: #0B1324; border: 1px solid #1d2a44">
+<img src="assets/sello.jpg" alt="Subtítulo dinámico con palabra resaltada" style="width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block">
+<div style="padding: 20px"><span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #F2C230">PRO</span><h3 style="margin: 6px 0 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 20px">Subtítulos dinámicos</h3><p style="margin: 6px 0 0; color: #9fb6d6; font-size: 15px">Colores por emoción, palabras que saltan y frases gigantes.</p></div>
+</article>
+</div>
+<div class="g2" style="margin-top: 24px">
+<div style="padding: 34px; border-radius: 24px; background: linear-gradient(140deg, #13244a, #0B1324 65%); border: 1.5px solid #F2C230">
+<span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #F2C230">PRO · BIBLIOTECA</span>
+<div style="font-family: Montserrat, sans-serif; font-weight: 900; font-size: 64px; line-height: 1; margin-top: 10px">+9.000</div>
+<p style="margin: 10px 0 0; color: #b9cbe4; font-size: 18px">recursos listos y organizados: música, efectos de sonido, transiciones, overlays, dibujos animados y fondos. Claude elige los que van con tu historia y te los muestra antes de usarlos.</p>
+</div>
+<div style="padding: 34px; border-radius: 24px; background: #0B1324; border: 1px solid #1d2a44; display: grid; gap: 16px">
+<div style="display: flex; gap: 14px"><span style="color: #14c38e; font-weight: 900">✓</span><span><b>Corta pausas y tomas repetidas</b> <span style="color: #8aa0c2">— se queda con tu mejor toma.</span></span></div>
+<div style="display: flex; gap: 14px"><span style="color: #14c38e; font-weight: 900">✓</span><span><b>Vertical, horizontal o cuadrado</b> <span style="color: #8aa0c2">— para Reels, TikTok o YouTube.</span></span></div>
+<div style="display: flex; gap: 14px"><span style="color: #14c38e; font-weight: 900">✓</span><span><b>Dos calidades</b> <span style="color: #8aa0c2">— alta y versión liviana para redes, con SRT.</span></span></div>
+<div style="display: flex; gap: 14px"><span style="color: #F2C230; font-weight: 900">★</span><span><b>Clips de apoyo (B-roll)</b> <span style="color: #8aa0c2">— la voz manda y el apoyo ilustra.</span></span></div>
+<div style="display: flex; gap: 14px"><span style="color: #F2C230; font-weight: 900">★</span><span><b>XML para Premiere, DaVinci y Final Cut</b> <span style="color: #8aa0c2">— si quieres terminarlo tú.</span></span></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- INTERFAZ -->
+<section style="padding: 90px 0; background: #070d1a">
+<div class="wrap hero" style="gap: 48px">
+<div>
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">TU SALA DE EDICIÓN</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 44px; line-height: 1.08">Todo en una pantalla, sin perderte</h2>
+<p style="margin: 18px 0 0; color: #b9cbe4; font-size: 18px">Con doble clic abres tu interfaz: te dice cuál es el siguiente paso, eliges tu video con vista previa, armas el pedido y ves el plan y tus entregas. Funciona sin internet.</p>
+<p style="margin: 14px 0 0; color: #b9cbe4; font-size: 18px">En el <b style="color: #F2C230">Pro</b> también tienes un panel en línea para pedir y aprobar desde el celular.</p>
+</div>
+<div style="border-radius: 20px; overflow: hidden; border: 1px solid #2a3a60; box-shadow: 0 40px 90px rgba(0,0,0,0.6)">
+<div style="height: 36px; background: #0e1830; display: flex; align-items: center; gap: 8px; padding: 0 16px"><span style="width: 11px; height: 11px; border-radius: 50%; background: #2a3858"></span><span style="width: 11px; height: 11px; border-radius: 50%; background: #2a3858"></span><span style="width: 11px; height: 11px; border-radius: 50%; background: #2a3858"></span></div>
+<img src="assets/interfaz.jpg" alt="Interfaz de Ananá Edit Studio con el proyecto del demo" style="width: 100%; display: block">
+</div>
+</div>
+</section>
+
+<!-- COMPARATIVA -->
+<section id="planes" style="padding: 90px 0">
+<div class="wrap">
+<div style="text-align: center">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">BÁSICO VS PRO</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 48px; line-height: 1.08">Elige cuánto quieres que haga</h2>
+</div>
+<div style="margin: 44px auto 0; max-width: 940px; border-radius: 24px; border: 1px solid #1d2a44; overflow: hidden">
+<div class="cmp" style="background: #0e1830; font-family: Montserrat, sans-serif; font-weight: 800"><div style="padding: 18px 22px">Función</div><div style="padding: 18px 22px; text-align: center">Básico</div><div style="padding: 18px 22px; text-align: center; color: #F2C230">Pro</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Corta pausas y tomas repetidas</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Plan con corte explicado antes de renderizar</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Subtítulos con el color de tu marca</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Título gancho y barra de progreso</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Vertical, horizontal y cuadrado</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">MP4 alta + versión para redes + SRT</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Interfaz de edición local</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 700">✓</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Biblioteca de +9.000 recursos</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Música con ducking y efectos de sonido</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Subtítulos dinámicos y frases gigantes</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Animaciones estilo papel: mapas, carpetas, línea de tiempo</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Zoom a tu cara, texto detrás, cambio de fondo</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Clips de apoyo (B-roll) y estilo entrevista</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">Panel en línea para el celular</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+<div class="cmp" style="border-top: 1px solid #142039"><div style="padding: 15px 22px">XML para Premiere, DaVinci y Final Cut</div><div style="padding: 15px 22px; text-align: center; color: #4b5d7d; font-weight: 700">—</div><div style="padding: 15px 22px; text-align: center; color: #14c38e; font-weight: 800">✓</div></div>
+
+</div>
+</div>
+</section>
+
+<!-- PRECIOS -->
+<section id="precios" style="padding: 90px 0; background: radial-gradient(800px 500px at 50% 0%, rgba(0,91,217,0.3), transparent 70%), #070d1a">
+<div class="wrap">
+<div style="text-align: center">
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">PRECIOS</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 48px; line-height: 1.08">No pagues por cada herramienta.<br><span style="color: #00C8FF">Llévate el paquete completo.</span></h2>
+<p style="margin: 14px auto 0; max-width: 720px; color: #b9cbe4">Editar, subtitular, poner música y animar suele costar una suscripción por cada cosa. Aquí pagas una sola vez y recibes el kit en tu correo al instante.</p>
+</div>
+<div class="g2" style="margin: 44px auto 0; max-width: 1000px">
+<div style="position: relative; padding: 36px; border-radius: 28px; background: #0B1324; border: 1px solid #1d2a44; display: flex; flex-direction: column; gap: 18px">
+<span style="align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: #1a2540; color: #9fb6d6; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 13px; letter-spacing: 0.12em">BÁSICO</span>
+<p style="margin: 0; color: #b9cbe4">Videos limpios y con subtítulos, listos para redes.</p>
+<div style="padding: 18px 20px; border-radius: 18px; background: rgba(255,90,90,0.06); border: 1px solid rgba(255,120,120,0.25)">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: #ff9d9d">POR SEPARADO PAGARÍAS CADA MES</div>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #22314f; font-size: 15px"><span style="color: #b9cbe4">Editor que corta pausas y tomas (tipo CapCut Pro)</span><span style="color: #ff8a8a; font-weight: 700; white-space: nowrap; text-decoration: line-through">$19,99/mes</span></div><div style="display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #22314f; font-size: 15px"><span style="color: #b9cbe4">Subtítulos animados automáticos (tipo Submagic)</span><span style="color: #ff8a8a; font-weight: 700; white-space: nowrap; text-decoration: line-through">$19/mes</span></div>
+<div style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: 800"><span>Total</span><span style="color: #ff8a8a">$38,99 al mes</span></div>
+<div style="font-size: 13px; color: #8aa0c2; text-align: right">≈ $468 al año · o $20–$100 por reel a un editor freelance</div>
+</div>
+<div style="text-align: center"><div style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em; color: #14c38e">CON ANANÁ EDIT STUDIO</div><div style="font-family: Montserrat, sans-serif; font-weight: 900; font-size: 64px; line-height: 1.1">$24,99</div><div style="display: inline-block; margin-top: 6px; padding: 6px 16px; border-radius: 999px; background: rgba(20,195,142,0.15); color: #6ff0c4; font-weight: 900; font-size: 14px; letter-spacing: 0.08em">PAGO ÚNICO · ES TUYO PARA SIEMPRE</div></div>
+<div style="display: grid; gap: 9px; font-size: 15px"><span>✓ Corta pausas y tomas repetidas</span><span>✓ Subtítulos con el color de tu marca</span><span>✓ Título gancho y barra de progreso</span><span>✓ Vertical, horizontal o cuadrado</span><span>✓ MP4 alta + redes + SRT · tu interfaz</span></div>
+<a href="comprar.html?plan=basico" style="margin-top: auto; text-align: center; padding: 16px; border-radius: 999px; border: 1.5px solid #2a3a60; color: #E8F4FF; font-weight: 900; text-decoration: none">Quiero el Básico · $24,99</a>
+</div>
+<div style="position: relative; padding: 36px; border-radius: 28px; background: linear-gradient(165deg, #13244a, #0B1324 60%); border: 2px solid #F2C230; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 40px 90px -40px rgba(242,194,48,0.5)">
+<span style="position: absolute; top: -14px; right: 28px; padding: 7px 14px; border-radius: 999px; background: #F2C230; color: #1a1200; font-weight: 900; font-size: 12px; letter-spacing: 0.08em">LA MEJOR OFERTA</span>
+<span style="align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: #F2C230; color: #1a1200; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 13px; letter-spacing: 0.12em">PRO</span>
+<p style="margin: 0; color: #b9cbe4">El estudio completo: videos que se ven producidos.</p>
+<div style="padding: 18px 20px; border-radius: 18px; background: rgba(255,90,90,0.06); border: 1px solid rgba(255,120,120,0.25)">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: #ff9d9d">POR SEPARADO PAGARÍAS CADA MES</div>
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #22314f; font-size: 15px"><span style="color: #b9cbe4">Todo lo del Básico</span><span style="color: #ff8a8a; font-weight: 700; white-space: nowrap; text-decoration: line-through">$38,99/mes</span></div><div style="display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #22314f; font-size: 15px"><span style="color: #b9cbe4">Música libre de derechos (tipo Epidemic Sound)</span><span style="color: #ff8a8a; font-weight: 700; white-space: nowrap; text-decoration: line-through">$9,99/mes</span></div><div style="display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed #22314f; font-size: 15px"><span style="color: #b9cbe4">Efectos, transiciones y overlays (tipo Envato Elements)</span><span style="color: #ff8a8a; font-weight: 700; white-space: nowrap; text-decoration: line-through">$39/mes</span></div>
+<div style="display: flex; justify-content: space-between; margin-top: 10px; font-weight: 800"><span>Total</span><span style="color: #ff8a8a">$87,98 al mes</span></div>
+<div style="font-size: 13px; color: #8aa0c2; text-align: right">≈ $1.055 al año</div>
+</div>
+<div style="text-align: center"><div style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em; color: #14c38e">CON ANANÁ EDIT STUDIO</div><div style="font-family: Montserrat, sans-serif; font-weight: 900; font-size: 64px; line-height: 1.1">$49,99</div><div style="display: inline-block; margin-top: 6px; padding: 6px 16px; border-radius: 999px; background: rgba(20,195,142,0.15); color: #6ff0c4; font-weight: 900; font-size: 14px; letter-spacing: 0.08em">PAGO ÚNICO · ES TUYO PARA SIEMPRE</div></div>
+<div style="display: grid; gap: 9px; font-size: 15px"><span>✓ <b>Todo el Básico</b></span><span>★ Biblioteca de +9.000 recursos: música, SFX, transiciones</span><span>★ Animaciones estilo papel: mapas, carpetas, línea de tiempo</span><span>★ Zoom a tu cara, texto detrás de ti y cambio de fondo</span><span>★ Subtítulos dinámicos, B-roll, panel en el celular y XML</span></div>
+<a href="comprar.html?plan=pro" style="margin-top: auto; text-align: center; padding: 16px; border-radius: 999px; background: #F2C230; color: #1a1200; font-weight: 900; text-decoration: none">Quiero el Pro · $49,99</a>
+</div>
+</div>
+<p style="margin: 22px auto 0; max-width: 1000px; text-align: center; color: #6f84a6; font-size: 13px">Precios de referencia de planes mensuales de esos servicios (noviembre de 2026); cada uno funciona distinto y Ananá Edit Studio no es un producto de esas marcas. Ananá Edit Studio se paga una sola vez. Para usarlo necesitas tu propia cuenta de Claude de pago (Pro o superior), que se contrata aparte con Anthropic.</p>
+<p style="margin: 26px auto 0; max-width: 940px; text-align: center; color: #9fb6d6; font-size: 15px">¿Ya tienes el Básico? Pásate al Pro pagando solo la diferencia (<b style="color: #E8F4FF">$25</b>), sin reinstalar nada. <a href="comprar.html?plan=upgrade" style="color: #00C8FF; font-weight: 700">Actualizar a Pro</a></p>
+</div>
+</section>
+
+<!-- INSTALACIÓN -->
+<section id="instalar" style="padding: 90px 0">
+<div class="wrap hero" style="gap: 48px">
+<div style="border-radius: 22px; overflow: hidden; border: 1px solid #1d2a44; box-shadow: 0 40px 90px rgba(0,0,0,0.5); background: #040810">
+<video src="assets/tutorial.mp4" poster="assets/tutorial_poster.jpg" controls playsinline preload="metadata" style="display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #040810"></video>
+</div>
+<div>
+<p style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.2em; color: #00C8FF">INSTALACIÓN</p>
+<h2 class="h2" style="margin: 14px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 44px; line-height: 1.08">8 pasos, 10 minutos, cero Terminal</h2>
+<p style="margin: 18px 0 0; color: #b9cbe4; font-size: 18px">Descargas el kit, subes la skill a Claude y conectas la carpeta. Claude instala todo por ti. Tu kit trae este video y una guía paso a paso con lo que vas a ver en cada momento.</p>
+<div style="display: grid; gap: 8px; margin-top: 18px; color: #9fb6d6; font-size: 15px"><span>💻 Mac (Apple o Intel) o Windows (Intel o AMD)</span><span>✦ Claude de pago y su app de escritorio</span><span>📱 El celular sirve para pedir, aprobar y ver</span></div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding: 90px 0; background: #070d1a">
+<div class="wrap" style="max-width: 860px">
+<h2 class="h2" style="margin: 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 44px; line-height: 1.08; text-align: center">Preguntas frecuentes</h2>
+<div style="margin-top: 36px; display: grid; gap: 12px">
+<details class="fq" open><summary>¿Qué necesito para usarlo?<span>+</span></summary><p>Una computadora Mac (chip Apple o Intel) o Windows (Intel o AMD) con 8 GB de RAM o más, la app de escritorio de Claude y un plan de pago de Claude (Pro, Max, Team o Enterprise). Para el Pro, además, Google Drive para escritorio.</p></details>
+<details class="fq"><summary>¿Es una suscripción?<span>+</span></summary><p>No. Ananá Edit Studio es un pago único y es tuyo para siempre. Lo único mensual es tu plan de Claude, que contratas aparte con Anthropic.</p></details>
+<details class="fq"><summary>¿Qué diferencia hay entre Básico y Pro?<span>+</span></summary><p>El Básico limpia el video y le pone subtítulos con tu color y título gancho. El Pro suma la biblioteca de +9.000 recursos, música y efectos, subtítulos dinámicos, animaciones, efectos con IA, clips de apoyo, panel en el celular y XML para Premiere o DaVinci.</p></details>
+<details class="fq"><summary>¿Cómo lo recibo?<span>+</span></summary><p>Pagas con PayPal o Payphone y en menos de un minuto te llega a tu correo de Google el acceso al kit, con la guía y el video tutorial.</p></details>
+<details class="fq"><summary>¿Por qué me piden un correo de Google?<span>+</span></summary><p>Porque el kit (y en el Pro la biblioteca) se comparte contigo en Google Drive, de forma privada. Ábrelo con esa misma cuenta.</p></details>
+<details class="fq"><summary>¿Puedo pasarme del Básico al Pro después?<span>+</span></summary><p>Sí. Pagas solo la diferencia ($25), te compartimos la biblioteca y Claude agrega lo que falta. No reinstalas nada.</p></details>
+<details class="fq"><summary>¿Puedo editar desde el celular?<span>+</span></summary><p>La edición se hace en tu computadora con la app de escritorio de Claude. Desde el celular pides videos, apruebas planes y ves tus entregas (en el Pro, con tu panel en línea).</p></details>
+<details class="fq"><summary>¿Es difícil de instalar?<span>+</span></summary><p>No. Son 8 pasos y unos 10 minutos. Claude hace la parte técnica y nunca tienes que abrir la Terminal. El kit trae un video tutorial y una guía con lo que vas a ver en cada paso.</p></details>
+
+</div>
+</div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="comprar" style="padding: 100px 0; text-align: center; background: radial-gradient(700px 400px at 50% 100%, rgba(0,200,255,0.18), transparent 70%)">
+<div class="wrap">
+<img src="assets/logo.png" alt="" style="height: 90px; width: auto">
+<h2 class="h2" style="margin: 22px 0 0; font-family: Montserrat, sans-serif; font-weight: 900; font-size: 56px; line-height: 1.05">Tu próximo video,<br><span style="color: #00C8FF">editado por Claude</span></h2>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 34px">
+<a href="comprar.html?plan=pro" style="padding: 18px 32px; border-radius: 999px; background: #F2C230; color: #1a1200; font-weight: 900; text-decoration: none">Comprar Pro · $49,99</a>
+<a href="comprar.html?plan=basico" style="padding: 18px 32px; border-radius: 999px; border: 1.5px solid #2a3a60; color: #E8F4FF; font-weight: 800; text-decoration: none">Comprar Básico · $24,99</a>
+</div>
+<p style="margin: 22px 0 0; color: #8aa0c2; font-size: 15px">¿Dudas? <a href="https://wa.me/593984082216">WhatsApp +593 98 408 2216</a> · <a href="mailto:ananaproducciones.ec@gmail.com">ananaproducciones.ec@gmail.com</a></p>
+</div>
+</section>
+
+<section id="terminos" style="padding: 60px 0 40px">
+<div class="wrap" style="max-width: 860px; color: #8aa0c2; font-size: 14px">
+<h3 style="margin: 0 0 10px; color: #E8F4FF; font-family: Montserrat, sans-serif">Términos y licencia de uso</h3>
+<p style="margin: 0 0 8px"><b style="color:#b9cbe4">Licencia personal:</b> el kit y la biblioteca son para editar tus propios videos (o los de tus clientes) en tus computadoras. No puedes revender, compartir ni redistribuir el kit, la skill ni la biblioteca. Si se detecta reventa, se retira el acceso.</p>
+<p style="margin: 0 0 8px"><b style="color:#b9cbe4">Requisitos:</b> Ananá Edit Studio funciona dentro de la app de escritorio de Claude y necesita un plan de pago de Claude (Pro o superior), que se contrata y se paga aparte con Anthropic.</p>
+<p style="margin: 0 0 8px"><b style="color:#b9cbe4">Entrega:</b> producto digital entregado por Google Drive al correo de Google indicado en la compra. Pago único, sin suscripción.</p>
+<p style="margin: 0"><b style="color:#b9cbe4">Soporte:</b> por WhatsApp (+593 98 408 2216) o ananaproducciones.ec@gmail.com.</p>
+</div>
+</section>
+<footer style="border-top: 1px solid #142039; padding: 28px 0; color: #6f86a8; font-size: 13px">
+<div class="wrap" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between">
+<span>© 2026 Ananá Producciones · Quito, Ecuador</span>
+<span>Ananá Producciones no está afiliada a Anthropic. Claude es una marca de Anthropic.</span>
+</div>
+</footer>
+</div>
+
+</body>
+</html>
