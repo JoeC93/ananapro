@@ -82,7 +82,7 @@ $('#f').addEventListener('submit', async e => {
     $('#prod').textContent = r.producto; $('#cod').textContent = r.codigo; $('#monto').textContent = '$' + r.monto.replace('.', ',');
     $('#f').hidden = true; $('#pago').hidden = false;
     pedido = r; $('#paypal').innerHTML = '';
-    if (r.paypalClientId) await paypal(r);
+    if (r.paypalClientId) await iniciarPayPal(r);
     if (r.cajita) { $('#pp-button').hidden = false; $('#sep').hidden = !r.paypalClientId; await cajita(r.cajita); }
   } catch (x) { err('#e1', x.message || 'No pudimos preparar el pago.'); }
   b.disabled = false; b.textContent = 'Continuar al pago →';
@@ -90,7 +90,7 @@ $('#f').addEventListener('submit', async e => {
 $('#atras').addEventListener('click', () => { $('#pago').hidden = true; $('#f').hidden = false; $('#pp-button').innerHTML = ''; });
 
 function cargar(src) { return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
-async function paypal(r) {
+async function iniciarPayPal(r) {
   try {
     if (!window.paypal) await cargar(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(r.paypalClientId)}&currency=USD&intent=capture&locale=es_EC`);
     window.paypal.Buttons({
