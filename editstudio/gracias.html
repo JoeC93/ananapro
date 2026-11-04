@@ -45,10 +45,11 @@ ol{padding-left:20px}li{margin:6px 0}
   </div>
 
   <div id="pendiente" hidden>
-    <div class="ic" style="background:rgba(242,194,48,.15);color:var(--gold)">…</div>
-    <h1>Tu pedido está en espera</h1>
-    <p class="mut" style="text-align:center">Pedido <span class="code" id="cod3"></span></p>
-    <p>Todavía no vemos el pago confirmado. Si se te cobró, escríbenos por WhatsApp con tu código y lo resolvemos de inmediato.</p>
+    <div class="ic" style="background:rgba(0,200,255,.15);color:var(--cyan)">✓</div>
+    <h1>¡Recibimos tu pedido!</h1>
+    <p class="mut" style="text-align:center">Pedido <span class="code" id="cod3"></span> · <span id="prod3"></span></p>
+    <p>Estamos confirmando tu pago. Apenas se confirme te llega el kit a <b id="correo3"></b>, con la guía y el video tutorial. Normalmente es cuestión de minutos; como máximo, unas horas.</p>
+    <p>Mientras tanto, revisa que tengas la <b>app de escritorio de Claude</b> instalada. Si en unas horas no ves el correo, mira en <b>Spam</b> o <b>Promociones</b>, o escríbenos con tu código.</p>
     <a class="btn" id="wa3" target="_blank" rel="noopener">Escribir por WhatsApp</a>
   </div>
 
@@ -83,8 +84,9 @@ async function iniciar() {
       if (!r.ok) { $('#msg').textContent = r.error; $('#wa2').href = wa('Hola Ananá, tuve un problema con el pago del pedido ' + codigo); return ver('#error'); }
     }
     if (!codigo) { $('#msg').textContent = 'No encontramos el código de tu pedido.'; $('#wa2').href = wa('Hola Ananá, necesito ayuda con mi compra'); return ver('#error'); }
-    for (let i = 0; i < 6; i++) {
-      const e = await api('estado', { codigo });
+    let e = {};
+    for (let i = 0; i < 2; i++) {
+      e = await api('estado', { codigo });
       if (e.ok && e.estado === 'entregado') {
         $('#cod').textContent = e.codigo; $('#prod').textContent = e.producto; $('#correo').textContent = e.correo;
         $('#wa').href = wa('Hola Ananá, ya compré (' + e.codigo + ') y necesito ayuda con la instalación');
@@ -92,7 +94,9 @@ async function iniciar() {
       }
       await new Promise(r => setTimeout(r, 2500));
     }
-    $('#cod3').textContent = codigo; $('#wa3').href = wa('Hola Ananá, pagué el pedido ' + codigo + ' y aún no me llega');
+    if (!e.ok) { $('#msg').textContent = 'No encontramos el pedido ' + codigo + '.'; $('#wa2').href = wa('Hola Ananá, necesito ayuda con mi pedido ' + codigo); return ver('#error'); }
+    $('#cod3').textContent = codigo; $('#prod3').textContent = e.producto || ''; $('#correo3').textContent = e.correo || 'tu correo';
+    $('#wa3').href = wa('Hola Ananá, pagué el pedido ' + codigo + ' y aún no me llega');
     ver('#pendiente');
   } catch (x) {
     $('#msg').textContent = 'No pudimos comprobar el pago. Escríbenos con tu código ' + (codigo || '') + '.';

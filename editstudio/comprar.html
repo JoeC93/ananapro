@@ -55,7 +55,7 @@ input:focus,select:focus{outline:2px solid var(--cyan);border-color:transparent}
 <div class="w">
 <header><a href="./" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none"><img src="assets/logo.png" alt="Ananá Producciones"><b>Edit Studio</b></a><a href="./" style="margin-left:auto;font-size:14px">← Volver</a></header>
 <h1>Tu editor de video, <span style="color:var(--cyan)">pago único</span>.</h1>
-<p class="mut" style="margin:0">Pagas una sola vez y recibes el kit en tu correo apenas se confirma el pago.</p>
+<p class="mut" style="margin:0">Pagas una sola vez y recibes el kit en tu correo apenas confirmamos tu pago.</p>
 <div class="steps" aria-hidden="true"><i id="k1" class="on"></i><i id="k2"></i><i id="k3"></i></div>
 
 <!-- Paso 1 y 2 -->
@@ -97,30 +97,54 @@ input:focus,select:focus{outline:2px solid var(--cyan);border-color:transparent}
 <section class="card" id="pago" hidden>
   <div style="font:800 13px Inter;letter-spacing:.14em;color:var(--cyan)">PAGA TU PEDIDO</div>
   <div class="sum" style="margin-top:12px"><span><span id="prod"></span><br><span class="mut" style="font-size:14px">Pedido <span class="code" id="cod"></span> · pago único</span></span><b id="monto"></b></div>
-  <div id="paypal"></div>
-  <div id="pp-button"></div>
+  <a class="btn" id="pagar" target="_blank" rel="noopener">Pagar →</a>
+  <div class="secure" id="pagar_nota"></div>
+  <div id="sin_link" hidden>
+    <p>Este plan todavía no tiene link de pago con este método. Escríbenos por WhatsApp con tu código y te lo enviamos al momento.</p>
+    <a class="btn" id="wa_link" target="_blank" rel="noopener">Pedir mi link por WhatsApp</a>
+  </div>
+  <ol class="mut" style="margin:18px 0 0;padding-left:20px;font-size:15px">
+    <li>Se abre la página segura de pago. Usa el <b>mismo nombre</b> que pusiste aquí.</li>
+    <li>Cuando termines, vuelve a esta pestaña y toca <b>«Ya pagué»</b>.</li>
+    <li>Apenas confirmamos tu pago te llega el kit a <b id="correo_v"></b> (normalmente en minutos).</li>
+  </ol>
   <p class="err" id="e2" role="alert" hidden></p>
-  <p class="mut" id="espera" hidden>Confirmando tu pago… no cierres esta página.</p>
+  <button class="btn" type="button" id="yapague" style="background:var(--ok)">Ya pagué ✓</button>
   <button class="btn sec" type="button" id="atras">← Cambiar datos</button>
 </section>
 <p class="mut" style="text-align:center;margin-top:24px;font-size:14px">¿Dudas? <a id="wa2" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>
 </div>
 
 <script>
-/* ===== CONFIGURACIÓN: pega aquí la URL de tu robot (Apps Script › Implementar) ===== */
+/* ===== CONFIGURACIÓN ===== */
+// URL de tu robot (Apps Script › Implementar › termina en /exec)
 const API = 'PEGAR_URL_DEL_ROBOT';
 const WHATSAPP = '593984082216';
-/* =================================================================================== */
+// Links de cobro. Si un link está vacío, ese método se oculta (o se pide por WhatsApp).
+const LINKS = {
+  payphone: { basico: 'https://ppls.me/rL43Rb40bOG5l6ZCr9wtA', pro: 'https://ppls.me/KH4se0R6dYvEJaHzxIYmA', upgrade: '' },
+  paypal:   { basico: '', pro: '', upgrade: '' }
+};
+/* ========================== */
 const $ = s => document.querySelector(s);
 const api = (accion, datos) => fetch(API, { method: 'POST', body: JSON.stringify(Object.assign({ accion }, datos)) }).then(r => r.json());
 const err = (id, m) => { const e = $(id); e.textContent = m || ''; e.hidden = !m; };
 const plan = () => (document.querySelector('[name=plan]:checked') || {}).value;
 const metodo = () => (document.querySelector('[name=metodo]:checked') || {}).value;
+const wa = t => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`;
 let pedido = null;
+
+// Oculta PayPal mientras no tenga links
+const hayPaypal = Object.values(LINKS.paypal).some(Boolean);
+if (!hayPaypal) {
+  const l = document.querySelector('[name=metodo][value=paypal]').closest('label'); l.hidden = true;
+  document.querySelector('[name=metodo][value=payphone]').checked = true;
+  document.querySelector('.secure').textContent = '🔒 El pago lo procesa Payphone (tarjeta de crédito o débito). No guardamos datos de tu tarjeta.';
+}
 
 const q = new URLSearchParams(location.search).get('plan');
 if (['basico', 'pro', 'upgrade'].includes(q)) document.querySelector(`[name=plan][value=${q}]`).checked = true;
-$('#wa2').href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hola Ananá, tengo una duda sobre Ananá Edit Studio')}`;
+$('#wa2').href = wa('Hola Ananá, tengo una duda sobre Ananá Edit Studio');
 const paso = n => ['#k1', '#k2', '#k3'].forEach((k, i) => $(k).classList.toggle('on', i < n));
 
 $('#f').addEventListener('submit', async e => {
@@ -143,47 +167,25 @@ $('#atras').addEventListener('click', () => { $('#pago').hidden = true; $('#f').
 
 function mostrarPago() {
   $('#f').hidden = true; $('#pago').hidden = false; paso(3); err('#e2');
-  $('#prod').textContent = pedido.producto; $('#cod').textContent = pedido.codigo; $('#monto').textContent = '$' + Number(pedido.monto).toFixed(2).replace('.', ',');
-  $('#paypal').innerHTML = ''; $('#pp-button').innerHTML = '';
-  if (pedido.metodo === 'paypal') pagarPaypal();
-  if (pedido.metodo === 'payphone') pagarPayphone();
+  const monto = '$' + Number(pedido.monto).toFixed(2).replace('.', ',');
+  $('#prod').textContent = pedido.producto; $('#cod').textContent = pedido.codigo; $('#monto').textContent = monto;
+  $('#correo_v').textContent = pedido.correo;
+  const link = (LINKS[pedido.metodo] || {})[pedido.plan];
+  $('#pagar').hidden = !link; $('#sin_link').hidden = !!link;
+  if (link) {
+    $('#pagar').href = link;
+    $('#pagar').textContent = `Pagar ${monto} con ${pedido.metodo === 'paypal' ? 'PayPal' : 'Payphone'} →`;
+    $('#pagar_nota').textContent = '🔒 Se abre en una pestaña nueva. No cierres esta.';
+  } else { $('#pagar_nota').textContent = ''; }
+  $('#wa_link').href = wa(`Hola Ananá, quiero pagar el pedido ${pedido.codigo} (${pedido.producto}, ${monto}) con ${pedido.metodo}`);
   $('#pago').scrollIntoView({ behavior: 'smooth' });
 }
 
-function cargar(src, tipo) {
-  return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; if (tipo) s.type = tipo; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
-}
-async function pagarPaypal() {
-  try {
-    if (!window.paypal) await cargar(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(pedido.paypalClientId)}&currency=USD&intent=capture&locale=es_EC`);
-    paypal.Buttons({
-      style: { layout: 'vertical', shape: 'pill', color: 'gold', label: 'pay' },
-      createOrder: async () => { const r = await api('paypal_crear', { codigo: pedido.codigo }); if (!r.ok) { err('#e2', r.error); throw new Error(r.error); } return r.id; },
-      onApprove: async data => {
-        $('#espera').hidden = false;
-        const r = await api('paypal_capturar', { codigo: pedido.codigo, orderID: data.orderID });
-        $('#espera').hidden = true;
-        if (r.ok) location.href = 'gracias.html?codigo=' + encodeURIComponent(pedido.codigo);
-        else err('#e2', r.error);
-      },
-      onError: () => err('#e2', 'PayPal tuvo un problema. Intenta de nuevo o elige Payphone.')
-    }).render('#paypal');
-  } catch (x) { err('#e2', 'No se pudo cargar PayPal. Recarga la página o elige otro método.'); }
-}
-async function pagarPayphone() {
-  try {
-    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.css'; document.head.appendChild(css);
-    if (!window.PPaymentButtonBox) await cargar('https://cdn.payphonetodoesposible.com/box/v1.1/payphone-payment-box.js', 'module');
-    for (let i = 0; i < 40 && !window.PPaymentButtonBox; i++) await new Promise(r => setTimeout(r, 100));
-    const pp = pedido.payphone;
-    sessionStorage && (() => { try { sessionStorage.setItem('aes_codigo', pedido.codigo); } catch (e) {} })();
-    new PPaymentButtonBox({
-      token: pp.token, storeId: pp.storeId, clientTransactionId: pp.clientTransactionId,
-      amount: pp.centavos, amountWithoutTax: pp.centavos, amountWithTax: 0, tax: 0, service: 0, tip: 0,
-      currency: 'USD', reference: `${pedido.producto} · ${pedido.codigo}`, email: pedido.correo
-    }).render('pp-button');
-  } catch (x) { err('#e2', 'No se pudo cargar Payphone. Recarga la página o elige PayPal.'); }
-}
+$('#yapague').addEventListener('click', async () => {
+  const b = $('#yapague'); b.disabled = true; b.textContent = 'Avisando…';
+  try { await api('ya_pague', { codigo: pedido.codigo }); } catch (x) {}
+  location.href = 'gracias.html?codigo=' + encodeURIComponent(pedido.codigo);
+});
 </script>
 </body>
 </html>
