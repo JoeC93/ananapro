@@ -62,10 +62,11 @@ ol{padding-left:20px}li{margin:6px 0}
   </div>
 </div>
 </div>
+<script src="../robot.js"></script>
 <script>
 /* ===== CONFIGURACIÓN: la misma URL del robot que en comprar.html ===== */
-const API = 'PEGAR_URL_DEL_ROBOT';
-const WHATSAPP = '593984082216';
+const API = window.ANANA_API; // se define en /robot.js
+const WHATSAPP = '593987237025';
 /* ===================================================================== */
 const $ = s => document.querySelector(s);
 const api = (accion, d) => fetch(API, { method: 'POST', body: JSON.stringify(Object.assign({ accion }, d)) }).then(r => r.json());

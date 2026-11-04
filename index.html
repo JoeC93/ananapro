@@ -1241,6 +1241,7 @@ footer .socials a:hover { color: var(--blue); }
 
     <!-- Form -->
     <form id="cform" onsubmit="sendForm(event)">
+      <input type="text" id="fw" name="web" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 22px">
         <div class="ff">
           <input type="text" id="fn" placeholder=" " required/>
@@ -1312,6 +1313,7 @@ footer .socials a:hover { color: var(--blue); }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 
+<script src="robot.js"></script>
 <script>
 /* ═══════════════════════════════════════
    GSAP REGISTER
@@ -1742,8 +1744,18 @@ function closeMob() {
 ═══════════════════════════════════════ */
 function sendForm(e) {
   e.preventDefault();
-  document.getElementById('f-ok').style.display = 'block';
-  e.target.reset();
+  var f = e.target, b = f.querySelector('button[type=submit]'), ok = document.getElementById('f-ok');
+  var d = { accion: 'contacto', nombre: f.querySelector('#fn').value.trim(), correo: f.querySelector('#fe').value.trim(),
+            servicio: f.querySelector('#fs').value || '', mensaje: f.querySelector('#fm').value.trim(),
+            web: (f.querySelector('#fw') || {}).value || '', origen: 'ananapro.com · Contáctanos' };
+  var txt = b.innerHTML; b.disabled = true; b.innerHTML = 'Enviando…';
+  fetch(window.ANANA_API, { method: 'POST', body: JSON.stringify(d) }).then(function (r) { return r.json(); }).then(function (r) {
+    if (!r.ok) throw new Error(r.error || '');
+    ok.textContent = '✓ ¡Mensaje enviado! Te responderé pronto.'; ok.style.color = ''; ok.style.display = 'block'; f.reset();
+  }).catch(function (x) {
+    ok.textContent = (x && x.message) ? x.message : 'No se pudo enviar. Escríbenos a ananaproducciones.ec@gmail.com';
+    ok.style.color = '#ff8a8a'; ok.style.display = 'block';
+  }).finally(function () { b.disabled = false; b.innerHTML = txt; });
 }
 
 /* ═══════════════════════════════════════

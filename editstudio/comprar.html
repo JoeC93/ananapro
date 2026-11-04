@@ -115,11 +115,12 @@ input:focus,select:focus{outline:2px solid var(--cyan);border-color:transparent}
 <p class="mut" style="text-align:center;margin-top:24px;font-size:14px">¿Dudas? <a id="wa2" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>
 </div>
 
+<script src="../robot.js"></script>
 <script>
 /* ===== CONFIGURACIÓN ===== */
 // URL de tu robot (Apps Script › Implementar › termina en /exec)
-const API = 'PEGAR_URL_DEL_ROBOT';
-const WHATSAPP = '593984082216';
+const API = window.ANANA_API; // se define en /robot.js
+const WHATSAPP = '593987237025';
 // Links de cobro. Si un link está vacío, ese método se oculta (o se pide por WhatsApp).
 const LINKS = {
   payphone: { basico: 'https://ppls.me/rL43Rb40bOG5l6ZCr9wtA', pro: 'https://ppls.me/KH4se0R6dYvEJaHzxIYmA', upgrade: '' },
