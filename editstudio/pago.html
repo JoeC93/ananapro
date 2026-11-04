@@ -51,7 +51,7 @@ input[type=text],input[type=email],input[type=tel],select{width:100%;margin-top:
 
 <section class="card" id="pago" hidden>
   <div class="sum"><span><span id="prod"></span><br><span class="mut" style="font-size:14px">Pedido <span class="code" id="cod"></span> · pago único</span></span><b id="monto"></b></div>
-  <div id="paypal" style="margin-top:16px"></div>
+  <div id="pp-paypal" style="margin-top:16px"></div>
   <p class="mut" id="sep" style="text-align:center;font-size:14px;margin:14px 0 0" hidden>— o con tarjeta en Payphone —</p>
   <div id="pp-button" hidden></div>
   <p class="mut" id="espera" hidden style="text-align:center">Confirmando tu pago con PayPal… no cierres esta página.</p>
@@ -81,7 +81,7 @@ $('#f').addEventListener('submit', async e => {
     if (!r.ok) throw new Error(r.error);
     $('#prod').textContent = r.producto; $('#cod').textContent = r.codigo; $('#monto').textContent = '$' + r.monto.replace('.', ',');
     $('#f').hidden = true; $('#pago').hidden = false;
-    pedido = r; $('#paypal').innerHTML = '';
+    pedido = r; $("#pp-paypal").innerHTML = '';
     if (r.paypalClientId) await iniciarPayPal(r);
     if (r.cajita) { $('#pp-button').hidden = false; $('#sep').hidden = !r.paypalClientId; await cajita(r.cajita); }
   } catch (x) { err('#e1', x.message || 'No pudimos preparar el pago.'); }
@@ -92,7 +92,7 @@ $('#atras').addEventListener('click', () => { $('#pago').hidden = true; $('#f').
 function cargar(src) { return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
 async function iniciarPayPal(r) {
   try {
-    if (!window.paypal) await cargar(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(r.paypalClientId)}&currency=USD&intent=capture&locale=es_EC`);
+    if (!(window.paypal && window.paypal.Buttons)) await cargar(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(r.paypalClientId)}&currency=USD&intent=capture&locale=es_EC`);
     window.paypal.Buttons({
       style: { layout: 'vertical', shape: 'pill', color: 'gold', label: 'pay' },
       createOrder: async () => { const o = await fetch(API + '/paypal/orden', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ codigo: pedido.codigo }) }).then(x => x.json()); if (!o.ok) { err('#e2', o.error); throw new Error(o.error); } return o.id; },
@@ -103,7 +103,7 @@ async function iniciarPayPal(r) {
         if (c.ok) location.href = c.url; else err('#e2', c.error);
       },
       onError: () => err('#e2', 'PayPal tuvo un problema. Intenta de nuevo o paga con Payphone.')
-    }).render('#paypal');
+    }).render("#pp-paypal");
   } catch (x) { err('#e2', 'No se pudo cargar PayPal. Recarga la página.'); }
 }
 async function cajita(c) {
