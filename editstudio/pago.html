@@ -19,13 +19,17 @@ h1{font:900 32px/1.1 Montserrat,sans-serif;margin:0 0 6px}.mut{color:var(--mut)}
 .plan:has(input:checked){border-color:var(--cyan);background:rgba(0,200,255,.06)}.plan input{accent-color:var(--cyan);width:20px;height:20px}
 .plan .t{flex:1}.plan .p{font:900 22px Montserrat,sans-serif}
 label.f{display:block;margin-top:14px;font-weight:600;font-size:14px}
-input[type=text],input[type=email],input[type=tel],select{width:100%;margin-top:6px;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:#081022;color:var(--ink);font:16px Inter}
+#f input[type=text],#f input[type=email],#f input[type=tel],#f select{width:100%;margin-top:6px;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:#081022;color:var(--ink);font:16px Inter}
 .chk{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;color:var(--mut)}.chk input{margin-top:3px;width:18px;height:18px}
-.btn{display:flex;justify-content:center;width:100%;margin-top:20px;padding:16px;border:0;border-radius:999px;background:var(--cyan);color:#040810;font:800 17px Inter;cursor:pointer}
-.btn[disabled]{opacity:.6}.btn.sec{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+#go,#atras{display:flex;justify-content:center;width:100%;margin-top:20px;padding:16px;border:0;border-radius:999px;background:var(--cyan);color:#040810;font:800 17px Inter;cursor:pointer}
+#go[disabled]{opacity:.6}#atras{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
 .err{margin-top:12px;color:var(--err);font-weight:600}.sum{display:flex;justify-content:space-between;padding:14px 16px;border-radius:14px;background:#081022;border:1px solid var(--line)}
 .sum b{font:900 22px Montserrat,sans-serif}.code{font:700 15px ui-monospace,monospace;color:var(--gold)}
-#pp-button{margin-top:16px;min-height:80px;background:#fff;border-radius:16px;padding:6px}[hidden]{display:none!important}
+/* Cajita de Payphone: tarjeta clara y aislada del tema oscuro de la página */
+#pp-button{margin-top:16px;min-height:80px;background:#fff;color:#1b2433;color-scheme:light;font-family:Inter,system-ui,sans-serif;border-radius:18px;padding:14px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+#pp-button input,#pp-button select,#pp-button textarea{background:#fff;color:#1b2433;caret-color:#1b2433}
+#pp-button input::placeholder,#pp-button textarea::placeholder{color:#6b7a90;opacity:1}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
