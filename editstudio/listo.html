@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu compra · Ananá Edit Studio</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#040810;--card:#0B1324;--line:#1d2a44;--ink:#E8F4FF;--mut:#9fb6d6;--cyan:#00C8FF;--ok:#14c38e;--err:#ff8a8a;--gold:#F2C230}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 600px at 50% -10%,rgba(0,200,255,.22),transparent 60%),var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;min-height:100vh}
+.w{max-width:620px;margin:0 auto;padding:36px 16px 60px;text-align:center}img{height:46px}
+.card{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:30px 24px;text-align:left}
+.ic{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font:900 36px Montserrat,sans-serif}
+h1{font:900 30px/1.15 Montserrat,sans-serif;margin:0;text-align:center}.mut{color:var(--mut)}.code{font:700 15px ui-monospace,monospace;color:var(--gold)}
+.btn{display:block;text-align:center;margin-top:18px;padding:15px;border-radius:999px;background:var(--cyan);color:#04122b;font-weight:800;text-decoration:none}
+.btn.wa{background:var(--ok);color:#04130d}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="w"><img src="assets/logo.png" alt="Ananá Producciones">
+<div class="card">
+  <div id="ok" hidden>
+    <div class="ic" style="background:rgba(20,195,142,.15);color:var(--ok)">✓</div>
+    <h1>¡Pago confirmado!</h1>
+    <p class="mut" style="text-align:center">Pedido <span class="code" id="cod"></span> · <span id="prod"></span> · pago único</p>
+    <p>Tu enlace de descarga es <b>temporal</b>: vence el <b id="vence"></b>. Además te enviamos el kit a <b id="correo"></b> (revisa Spam o Promociones).</p>
+    <a class="btn" id="bajar">Abrir mi kit ahora</a>
+    <a class="btn wa" id="wa" target="_blank" rel="noopener">¿Ayuda? WhatsApp</a>
+  </div>
+  <div id="mal" hidden>
+    <div class="ic" style="background:rgba(255,120,120,.15);color:var(--err)">!</div>
+    <h1 id="t2">El pago no se completó</h1>
+    <p id="msg" class="mut" style="text-align:center"></p>
+    <a class="btn" href="pago.html">Intentar de nuevo</a>
+    <a class="btn wa" id="wa2" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+  </div>
+</div></div>
+<script>
+const WHATSAPP = '593987237025';
+const P = new URLSearchParams(location.search), $ = s => document.querySelector(s);
+const wa = t => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`;
+(async () => {
+  const codigo = P.get('codigo') || '';
+  if (P.get('error') || P.get('vencido') || !P.get('t')) {
+    $('#t2').textContent = P.get('vencido') ? 'Tu enlace temporal venció' : 'El pago no se completó';
+    $('#msg').textContent = P.get('vencido') ? 'Escríbenos con tu código y te enviamos uno nuevo.' : (P.get('error') || 'No encontramos el pago.');
+    $('#wa2').href = wa('Hola Ananá, necesito ayuda con mi pedido ' + codigo); $('#mal').hidden = false; return;
+  }
+  let e = {}; try { e = await fetch('https://api.ananapro.com/api/estado?codigo=' + encodeURIComponent(codigo)).then(r => r.json()); } catch (x) {}
+  $('#cod').textContent = codigo; $('#prod').textContent = e.producto || ''; $('#correo').textContent = e.correo || 'tu correo';
+  $('#vence').textContent = e.vence ? new Date(e.vence).toLocaleString('es-EC', { dateStyle: 'long', timeStyle: 'short' }) : 'en 72 horas';
+  $('#bajar').href = 'https://api.ananapro.com/api/descarga?t=' + encodeURIComponent(P.get('t'));
+  $('#wa').href = wa('Hola Ananá, ya compré (' + codigo + ') y necesito ayuda con la instalación');
+  $('#ok').hidden = false;
+})();
+</script>
+</body>
+</html>

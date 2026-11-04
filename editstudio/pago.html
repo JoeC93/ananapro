@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="origin-when-cross-origin">
+<title>Pagar · Ananá Edit Studio</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.css">
+<style>
+:root{--bg:#040810;--card:#0B1324;--line:#1d2a44;--ink:#E8F4FF;--mut:#9fb6d6;--cyan:#00C8FF;--gold:#F2C230;--err:#ff8a8a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 600px at 80% -10%,rgba(0,91,217,.35),transparent 60%),var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;min-height:100vh}
+a{color:var(--cyan)}.w{max-width:680px;margin:0 auto;padding:28px 16px 60px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:22px}header img{height:42px}header b{font:900 18px Montserrat,sans-serif}
+h1{font:900 32px/1.1 Montserrat,sans-serif;margin:0 0 6px}.mut{color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;margin-top:18px}
+.plan{display:flex;gap:14px;align-items:center;padding:16px 18px;border:1.5px solid var(--line);border-radius:16px;cursor:pointer;margin-top:10px}
+.plan:has(input:checked){border-color:var(--cyan);background:rgba(0,200,255,.06)}.plan input{accent-color:var(--cyan);width:20px;height:20px}
+.plan .t{flex:1}.plan .p{font:900 22px Montserrat,sans-serif}
+label.f{display:block;margin-top:14px;font-weight:600;font-size:14px}
+input[type=text],input[type=email],input[type=tel],select{width:100%;margin-top:6px;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:#081022;color:var(--ink);font:16px Inter}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;color:var(--mut)}.chk input{margin-top:3px;width:18px;height:18px}
+.btn{display:flex;justify-content:center;width:100%;margin-top:20px;padding:16px;border:0;border-radius:999px;background:var(--cyan);color:#040810;font:800 17px Inter;cursor:pointer}
+.btn[disabled]{opacity:.6}.btn.sec{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.err{margin-top:12px;color:var(--err);font-weight:600}.sum{display:flex;justify-content:space-between;padding:14px 16px;border-radius:14px;background:#081022;border:1px solid var(--line)}
+.sum b{font:900 22px Montserrat,sans-serif}.code{font:700 15px ui-monospace,monospace;color:var(--gold)}
+#pp-button{margin-top:16px;min-height:80px;background:#fff;border-radius:16px;padding:6px}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="w">
+<header><a href="./" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none"><img src="assets/logo.png" alt="Ananá Producciones"><b>Edit Studio</b></a><a href="./" style="margin-left:auto;font-size:14px">← Volver</a></header>
+<h1>Tu editor de video, <span style="color:var(--cyan)">pago único</span></h1>
+<p class="mut" style="margin:0">Pagas con PayPal o Payphone y recibes el kit al instante: enlace de descarga en pantalla y acceso en tu correo.</p>
+
+<form id="f" class="card" novalidate>
+  <b>1 · Elige tu versión</b>
+  <label class="plan"><input type="radio" name="plan" value="basico"><span class="t"><b>Básico</b></span><span class="p">$24,99</span></label>
+  <label class="plan"><input type="radio" name="plan" value="pro" checked><span class="t"><b>Pro</b></span><span class="p">$49,99</span></label>
+  <label class="plan"><input type="radio" name="plan" value="upgrade"><span class="t"><b>Ya tengo el Básico → Pro</b></span><span class="p">$25</span></label>
+  <div style="margin-top:22px"><b>2 · Tus datos</b></div>
+  <label class="f" for="nombre">Nombre y apellido</label><input type="text" id="nombre" autocomplete="name">
+  <label class="f" for="correo">Correo de Google (Gmail)</label><input type="email" id="correo" autocomplete="email">
+  <label class="f" for="pais">País</label><input type="text" id="pais" value="Ecuador">
+  <label class="f" for="whatsapp">WhatsApp (opcional)</label><input type="tel" id="whatsapp" placeholder="+593 99 999 9999">
+  <label class="chk"><input type="checkbox" id="acepto"><span>Tengo o tendré la app de escritorio de Claude con plan de pago y acepto la <a href="./#terminos" target="_blank">licencia de uso personal</a>.</span></label>
+  <p class="err" id="e1" hidden></p>
+  <button class="btn" id="go">Continuar al pago →</button>
+</form>
+
+<section class="card" id="pago" hidden>
+  <div class="sum"><span><span id="prod"></span><br><span class="mut" style="font-size:14px">Pedido <span class="code" id="cod"></span> · pago único</span></span><b id="monto"></b></div>
+  <div id="paypal" style="margin-top:16px"></div>
+  <p class="mut" id="sep" style="text-align:center;font-size:14px;margin:14px 0 0" hidden>— o con tarjeta en Payphone —</p>
+  <div id="pp-button" hidden></div>
+  <p class="mut" id="espera" hidden style="text-align:center">Confirmando tu pago con PayPal… no cierres esta página.</p>
+  <p class="mut" id="nota" style="font-size:14px;margin-top:12px">Paga con tu cuenta PayPal o con tarjeta de crédito o débito. Al terminar confirmamos tu pago al instante y te mostramos tu enlace de descarga.</p>
+  <p class="err" id="e2" hidden></p>
+  <button class="btn sec" type="button" id="atras">← Cambiar datos</button>
+</section>
+</div>
+<script>
+const API = 'https://api.ananapro.com/api';   // Worker anana-pagos (dominio propio)
+let pedido = null;                       // el Worker atiende https://ananapro.com/api/*
+const $ = s => document.querySelector(s);
+const err = (id, m) => { $(id).textContent = m || ''; $(id).hidden = !m; };
+const q = new URLSearchParams(location.search).get('plan');
+if (['basico', 'pro', 'upgrade'].includes(q)) document.querySelector(`[name=plan][value=${q}]`).checked = true;
+
+$('#f').addEventListener('submit', async e => {
+  e.preventDefault(); err('#e1');
+  const d = { plan: document.querySelector('[name=plan]:checked').value, nombre: $('#nombre').value.trim(), correo: $('#correo').value.trim(),
+              pais: $('#pais').value.trim(), whatsapp: $('#whatsapp').value.trim(), acepto: $('#acepto').checked };
+  if (!d.nombre) return err('#e1', 'Escribe tu nombre.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.correo)) return err('#e1', 'Revisa tu correo de Google.');
+  if (!d.acepto) return err('#e1', 'Acepta la licencia para continuar.');
+  const b = $('#go'); b.disabled = true; b.textContent = 'Preparando el pago…';
+  try {
+    const r = await fetch(API + '/pedido', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(d) }).then(r => r.json());
+    if (!r.ok) throw new Error(r.error);
+    $('#prod').textContent = r.producto; $('#cod').textContent = r.codigo; $('#monto').textContent = '$' + r.monto.replace('.', ',');
+    $('#f').hidden = true; $('#pago').hidden = false;
+    pedido = r; $('#paypal').innerHTML = '';
+    if (r.paypalClientId) await paypal(r);
+    if (r.cajita) { $('#pp-button').hidden = false; $('#sep').hidden = !r.paypalClientId; await cajita(r.cajita); }
+  } catch (x) { err('#e1', x.message || 'No pudimos preparar el pago.'); }
+  b.disabled = false; b.textContent = 'Continuar al pago →';
+});
+$('#atras').addEventListener('click', () => { $('#pago').hidden = true; $('#f').hidden = false; $('#pp-button').innerHTML = ''; });
+
+function cargar(src) { return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+async function paypal(r) {
+  try {
+    if (!window.paypal) await cargar(`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(r.paypalClientId)}&currency=USD&intent=capture&locale=es_EC`);
+    window.paypal.Buttons({
+      style: { layout: 'vertical', shape: 'pill', color: 'gold', label: 'pay' },
+      createOrder: async () => { const o = await fetch(API + '/paypal/orden', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ codigo: pedido.codigo }) }).then(x => x.json()); if (!o.ok) { err('#e2', o.error); throw new Error(o.error); } return o.id; },
+      onApprove: async data => {
+        $('#espera').hidden = false;
+        const c = await fetch(API + '/paypal/capturar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ codigo: pedido.codigo, orderID: data.orderID }) }).then(x => x.json());
+        $('#espera').hidden = true;
+        if (c.ok) location.href = c.url; else err('#e2', c.error);
+      },
+      onError: () => err('#e2', 'PayPal tuvo un problema. Intenta de nuevo o paga con Payphone.')
+    }).render('#paypal');
+  } catch (x) { err('#e2', 'No se pudo cargar PayPal. Recarga la página.'); }
+}
+async function cajita(c) {
+  if (!window.PPaymentButtonBox) await import('https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.js');
+  for (let i = 0; i < 40 && !window.PPaymentButtonBox; i++) await new Promise(r => setTimeout(r, 100));
+  if (!window.PPaymentButtonBox) return err('#e2', 'No se pudo cargar Payphone. Recarga la página.');
+  $('#pp-button').innerHTML = '';
+  new PPaymentButtonBox(c).render('pp-button');   // token, storeId, clientTransactionId, amount, amountWithoutTax, currency, reference, email…
+}
+</script>
+</body>
+</html>
