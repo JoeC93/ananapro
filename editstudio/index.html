@@ -129,6 +129,19 @@ article.rv{transition-property:opacity,transform,border-color,box-shadow}
 #funciones article:hover{border-color:#2f4a80 !important;box-shadow:0 18px 50px rgba(0,91,217,.25)}
 @media (prefers-reduced-motion:reduce){.fx *,.fx,.lib-tape div{animation:none !important}.fx4-big,.fx3-bg.b2,.fx3-mask,.fx3-labels span:not(:nth-child(2)){opacity:0 !important}.fx3-labels span:nth-child(2),.fx3-word,.fx2-msg,.fx4-line span{opacity:1 !important}.fx2-route{stroke-dashoffset:0}.js .rv{opacity:1;transform:none}}
 </style>
+<!-- Meta Pixel (dataset Ananá Edit Studio) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2369533367133908');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2369533367133908&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
 </head>
 <body>
 <div style="background: #040810; color: #E8F4FF; font-family: Inter, system-ui, sans-serif; font-size: 17px; line-height: 1.6; overflow-x: hidden">
@@ -492,6 +505,16 @@ document.documentElement.classList.add('js');
     co.observe(n);
   }
 })();
+</script>
+<script>
+/* Meta Pixel: clic en botones de compra (llevan a pago.html) */
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[href*="pago.html"]');
+  if (!a || !window.fbq) return;
+  var plan = (a.getAttribute('href').match(/plan=(basico|pro)/) || [])[1];
+  var precios = { basico: 24.99, pro: 49.99 };
+  fbq('track', 'AddToCart', { content_name: 'Ananá Edit Studio ' + (plan || ''), value: precios[plan] || 0, currency: 'USD' });
+});
 </script>
 </body>
 </html>

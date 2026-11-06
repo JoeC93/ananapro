@@ -16,6 +16,19 @@ h1{font:900 30px/1.15 Montserrat,sans-serif;margin:0;text-align:center}.mut{colo
 .btn{display:block;text-align:center;margin-top:18px;padding:15px;border-radius:999px;background:var(--cyan);color:#04122b;font-weight:800;text-decoration:none}
 .btn.wa{background:var(--ok);color:#04130d}[hidden]{display:none!important}
 </style>
+<!-- Meta Pixel (dataset Ananá Edit Studio) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2369533367133908');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2369533367133908&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
 </head>
 <body>
 <div class="w"><img src="assets/logo.png" alt="Ananá Producciones">
@@ -53,7 +66,17 @@ const wa = t => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(t)}`;
   $('#bajar').href = 'https://api.ananapro.com/api/descarga?t=' + encodeURIComponent(P.get('t'));
   $('#wa').href = wa('Hola Ananá, ya compré (' + codigo + ') y necesito ayuda con la instalación');
   $('#ok').hidden = false;
+  compraMeta(codigo, e);
 })();
+/* Meta Pixel: Purchase SOLO si el Worker confirma que el pedido está pagado. Una vez por pedido. */
+function compraMeta(codigo, e) {
+  if (!window.fbq || !codigo || !e || !e.ok || ['pagado', 'entregado'].indexOf(e.estado) < 0) return;
+  var k = 'fb_purchase_' + codigo;
+  try { if (localStorage.getItem(k) || sessionStorage.getItem(k)) return; } catch (x) {}
+  var pro = /pro/i.test(e.producto || '');
+  fbq('track', 'Purchase', { value: pro ? 49.99 : 24.99, currency: 'USD', content_name: e.producto || 'Ananá Edit Studio' }, { eventID: codigo });
+  try { localStorage.setItem(k, '1'); sessionStorage.setItem(k, '1'); } catch (x) {}
+}
 </script>
 </body>
 </html>
