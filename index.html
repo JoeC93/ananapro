@@ -1156,7 +1156,7 @@ footer .socials a:hover { color: var(--blue); }
 ════════════════════════════════════════ -->
 <section id="about" class="snap">
   <div class="about-visual">
-    <img src="img/perfil.jpg" alt="Joseph Calvopiña" id="about-img"/>
+    <img loading="lazy" decoding="async" src="img/perfil.jpg" alt="Joseph Calvopiña" id="about-img"/>
     <div class="about-vignette"></div>
     <div class="about-spotlight"></div>
   </div>
@@ -1309,15 +1309,34 @@ footer .socials a:hover { color: var(--blue); }
 <!-- ════════════════════════════════════════
      GSAP
 ════════════════════════════════════════ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script src="js/gsap.min.js"></script>
+<script src="js/ScrollTrigger.min.js"></script>
+<script src="js/ScrollToPlugin.min.js"></script>
 
+<style>
+/* Respaldo: si las animaciones no cargan, la web se ve igual */
+html.no-anim #loader, html.no-anim #shutter, html.no-anim #wipe { display:none !important; }
+html.no-anim .hero-eyebrow, html.no-anim .hero-sub, html.no-anim .hero-ctas, html.no-anim #scroll-cue,
+html.no-anim .sl-cat, html.no-anim .sl-title, html.no-anim .sl-link { opacity:1 !important; transform:none !important; }
+html.no-anim .hero-word { transform:none !important; }
+html.no-anim .hero-slide:first-child { opacity:1 !important; }
+</style>
+<script>
+(function(){
+  function reveal(){
+    ['loader','shutter','wipe'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+    document.documentElement.classList.add('no-anim');
+  }
+  if (typeof gsap === 'undefined') { reveal(); return; }
+  window.__loaderTimer = setTimeout(reveal, 7000);
+})();
+</script>
 <script src="robot.js"></script>
 <script>
 /* ═══════════════════════════════════════
    GSAP REGISTER
 ═══════════════════════════════════════ */
+if (typeof gsap === 'undefined') { throw new Error('GSAP no disponible: se muestra la versión sin animaciones'); }
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 /* ═══════════════════════════════════════
@@ -1339,6 +1358,7 @@ if (isTouchOnly) {
 (function() {
   const tl = gsap.timeline({
     onComplete: function() {
+      clearTimeout(window.__loaderTimer);
       document.getElementById('loader').style.display = 'none';
       document.getElementById('shutter').style.display = 'none';
       runHero();
